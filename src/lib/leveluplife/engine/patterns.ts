@@ -5,7 +5,8 @@
  * single source of truth. Adding a move = adding an Exercise.
  * ──────────────────────────────────────────────────────────────────── */
 
-import { EXERCISES, type Exercise } from "../exercises/library";
+import { EXERCISES } from "../exercises/library";
+import type { Exercise } from "../exercises/types";
 
 export type Pattern =
   | "squat"
