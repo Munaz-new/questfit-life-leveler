@@ -4,9 +4,9 @@
  * Subtle CSS-keyframe loops are scoped via the `[data-anim]` attribute.
  * ──────────────────────────────────────────────────────────────────── */
 
-import type { CSSProperties, SVGProps } from "react";
+import type { CSSProperties, ReactElement, SVGProps } from "react";
 
-type Glyph = (p: { animated?: boolean }) => JSX.Element;
+type Glyph = (p: { animated?: boolean }) => ReactElement;
 
 const STROKE: SVGProps<SVGSVGElement> = {
   viewBox: "0 0 100 100",
