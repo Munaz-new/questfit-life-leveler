@@ -2,10 +2,11 @@ import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useEffect } from "react";
 import { MobileFrame, GlassCard, SectionTitle } from "@/components/leveluplife/Shell";
 import { XPBar } from "@/components/leveluplife/XPBar";
+import { RecommendationCard } from "@/components/leveluplife/RecommendationCard";
 import { useApp } from "@/lib/leveluplife/store";
-import { adaptiveTip } from "@/lib/leveluplife/data";
 import { modeFor } from "@/lib/leveluplife/modes";
-import { Flame, Sparkles, Check, ChevronRight } from "lucide-react";
+import { recommendationMessage } from "@/lib/leveluplife/engine/messages";
+import { Flame, Check, ChevronRight, Armchair } from "lucide-react";
 import * as Icons from "lucide-react";
 
 export const Route = createFileRoute("/home")({
@@ -15,7 +16,7 @@ export const Route = createFileRoute("/home")({
 
 function Home() {
   const navigate = useNavigate();
-  const { state, progressPct, xpForNextLevel, completeQuest } = useApp();
+  const { state, progressPct, xpForNextLevel, completeQuest, daysSinceLastWorkout, logSitting } = useApp();
 
   useEffect(() => {
     if (!state.onboarded) navigate({ to: "/auth" });
@@ -27,6 +28,12 @@ function Home() {
   const hour = new Date().getHours();
   const doneCount = state.quests.filter((q) => q.done).length;
 
+  const card = recommendationMessage(state.profile, {
+    sittingHoursToday: state.sittingHoursToday,
+    daysSinceLastWorkout,
+    streak: state.streak,
+  });
+
   return (
     <MobileFrame withNav>
       <header className="mb-5 flex items-start justify-between">
@@ -37,7 +44,7 @@ function Home() {
           <h1 className="mt-2 text-2xl font-bold leading-snug">
             {lex.greeting(hour, name)}
           </h1>
-          <p className="mt-1 text-xs italic text-muted-foreground">“{mode.identity}”</p>
+          <p className="mt-1 text-xs italic text-muted-foreground">"{mode.identity}"</p>
         </div>
         <div className="glass flex shrink-0 items-center gap-1.5 rounded-full px-3 py-1.5 text-sm">
           <Flame className="h-4 w-4 text-[var(--warn)]" />
@@ -46,7 +53,6 @@ function Home() {
         </div>
       </header>
 
-      {/* Level + XP card */}
       <GlassCard glow className="mb-5 overflow-hidden">
         <div className="flex items-end justify-between">
           <div>
@@ -65,26 +71,33 @@ function Home() {
         <XPBar pct={progressPct} className="mt-4" />
       </GlassCard>
 
-      {/* Adaptive tip */}
+      <RecommendationCard card={card} onCta={() => navigate({ to: "/workout" })} />
+
+      {/* Quick sitting log — feeds the engine. */}
       <GlassCard className="mb-5">
-        <div className="flex gap-3">
-          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-gradient-rare shadow-rare">
-            <Sparkles className="h-5 w-5 text-white" />
+        <div className="flex items-center justify-between gap-3">
+          <div className="flex items-center gap-2">
+            <Armchair className="h-4 w-4 text-[var(--cyan-glow)]" />
+            <span className="text-xs uppercase tracking-[0.18em] text-muted-foreground">Hours sat today</span>
           </div>
-          <div className="min-w-0">
-            <p className="text-[10px] uppercase tracking-[0.2em] text-muted-foreground">{lex.adaptivePrefix}</p>
-            <p className="text-sm leading-snug text-foreground/90">{adaptiveTip(state.profile)}</p>
-          </div>
+          <span className="font-display text-lg font-semibold">{state.sittingHoursToday}h</span>
         </div>
+        <input
+          type="range"
+          min={0}
+          max={12}
+          value={state.sittingHoursToday}
+          onChange={(e) => logSitting(Number(e.target.value))}
+          className="mt-3 w-full accent-[var(--cyan-glow)]"
+        />
       </GlassCard>
 
-      {/* Daily missions */}
       <SectionTitle hint={`${doneCount} / ${state.quests.length} ${lex.completed.toLowerCase()}`}>
         {lex.dailyQuests}
       </SectionTitle>
       <div className="space-y-2.5">
         {state.quests.slice(0, 4).map((q) => {
-          const Icon = (Icons as any)[q.icon] ?? Check;
+          const Icon = (Icons as unknown as Record<string, typeof Check>)[q.icon] ?? Check;
           return (
             <button
               key={q.id}
