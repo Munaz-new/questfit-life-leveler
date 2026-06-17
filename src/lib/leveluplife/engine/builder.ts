@@ -31,7 +31,7 @@ export function buildSession(
   lastMoves: string[] = [],
 ): Session {
   const skip = new Set(lastMoves);
-  const equipment = profile.equipment.length ? profile.equipment : ["none"];
+  const equipment: Equip[] = (profile.equipment.length ? profile.equipment : ["none"]) as Equip[];
   // Apartment-safe is the default; we could expose an opt-out later.
   const apartmentSafe = true;
 
