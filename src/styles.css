@@ -200,6 +200,47 @@
   animation: orb-drift 8s ease-in-out infinite;
 }
 
+/* ── Exercise illustration micro-animations ────────────────────── */
+@keyframes ex-bob { 0%,100% { transform: translateY(0); } 50% { transform: translateY(3px); } }
+@keyframes ex-push { 0%,100% { transform: translateX(0); } 50% { transform: translateX(3px); } }
+@keyframes ex-pull { 0%,100% { transform: translateX(0); } 50% { transform: translateX(-3px); } }
+@keyframes ex-hinge { 0%,100% { transform: rotate(0); } 50% { transform: rotate(-4deg); transform-origin: 60% 60%; } }
+@keyframes ex-pulse-soft { 0%,100% { opacity: 1; } 50% { opacity: 0.7; } }
+@keyframes ex-spin-slow { from { transform: rotate(0); } to { transform: rotate(360deg); } }
+@keyframes ex-rotate { 0%,100% { transform: rotate(0); } 50% { transform: rotate(20deg); transform-origin: 60% 60%; } }
+@keyframes ex-rotate-tho { 0%,100% { transform: rotate(0); } 50% { transform: rotate(8deg); transform-origin: 50% 80%; } }
+@keyframes ex-arc { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-6px); } }
+@keyframes ex-deadbug { 0%,100% { transform: rotate(0); } 50% { transform: rotate(2deg); } }
+@keyframes ex-birddog { 0%,100% { transform: translateX(0); } 50% { transform: translateX(2px); } }
+@keyframes ex-pulse { 0%,100% { transform: scale(1); } 50% { transform: scale(1.04); transform-origin: center; } }
+@keyframes ex-march { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-2px); } }
+@keyframes ex-walk { 0%,100% { transform: translateX(0); } 50% { transform: translateX(2px); } }
+@keyframes ex-catcow { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-3px); } }
+@keyframes ex-angel { 0%,100% { transform: scaleY(1); } 50% { transform: scaleY(0.96); transform-origin: 50% 100%; } }
+@keyframes ex-tuck { 0%,100% { transform: translateX(0); } 50% { transform: translateX(-2px); } }
+@keyframes ex-book { 0%,100% { transform: rotate(0); } 50% { transform: rotate(6deg); transform-origin: 60% 60%; } }
+@keyframes ex-breath { 0%,100% { transform: scale(1); opacity: 1; } 50% { transform: scale(1.04); opacity: 0.85; transform-origin: center; } }
+
+.anim-bob       { animation: ex-bob 2.2s ease-in-out infinite; }
+.anim-push      { animation: ex-push 1.8s ease-in-out infinite; }
+.anim-pull      { animation: ex-pull 1.8s ease-in-out infinite; }
+.anim-hinge     { animation: ex-hinge 2.2s ease-in-out infinite; }
+.anim-pulse-soft{ animation: ex-pulse-soft 2.4s ease-in-out infinite; }
+.anim-spin-slow { animation: ex-spin-slow 6s linear infinite; }
+.anim-rotate    { animation: ex-rotate 2s ease-in-out infinite; }
+.anim-rotate-tho{ animation: ex-rotate-tho 2.6s ease-in-out infinite; }
+.anim-arc       { animation: ex-arc 2.2s ease-in-out infinite; }
+.anim-deadbug   { animation: ex-deadbug 2.4s ease-in-out infinite; }
+.anim-birddog   { animation: ex-birddog 2.4s ease-in-out infinite; }
+.anim-pulse     { animation: ex-pulse 1.4s ease-in-out infinite; }
+.anim-march     { animation: ex-march 0.9s ease-in-out infinite; }
+.anim-walk      { animation: ex-walk 1.0s ease-in-out infinite; }
+.anim-catcow    { animation: ex-catcow 2.4s ease-in-out infinite; }
+.anim-angel     { animation: ex-angel 2.6s ease-in-out infinite; }
+.anim-tuck      { animation: ex-tuck 1.8s ease-in-out infinite; }
+.anim-book      { animation: ex-book 3.2s ease-in-out infinite; }
+.anim-breath    { animation: ex-breath 4s ease-in-out infinite; }
+
 /* Hide scrollbars on the main mobile container */
 .no-scrollbar::-webkit-scrollbar { display: none; }
 .no-scrollbar { scrollbar-width: none; }
