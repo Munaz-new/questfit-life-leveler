@@ -1,4 +1,4 @@
-import type { MotivationStyle } from "../types";
+import type { MotivationStyle } from "./types";
 
 /** Mode-themed CTAs for the Mission Player. Kept out of modes.ts so we
  *  don't have to touch six lexicons every time copy evolves. */
