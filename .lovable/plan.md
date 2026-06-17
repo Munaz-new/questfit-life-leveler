@@ -1,73 +1,70 @@
+# Adaptive Workout Engine (Pass 1.5)
 
-# LevelUp Life — Visual Shell (Pass 1)
+Rebuild the workout brain so it feels like a coach that reads the user's life, not a random exercise picker. Stays fully client-side (no AI calls, no backend) so it's instant, free, and offline — Pass 2 can later swap the rule engine for an LLM without touching the UI.
 
-A premium mobile-first PWA with the full screen set, design system, and interactions in place. Data is mocked (in-memory + localStorage) so we can perfect look/feel, then wire backend persistence and the adaptive AI engine in pass 2.
+## What changes for the user
 
-## What ships in this pass
+1. **Pre-workout check-in** (replaces "Today's workout" cold start): 4 quick taps — Energy, Time (5/10/20/40), Soreness, Stress. Remembered for the day.
+2. **Smart recommendation card** on Home: dynamic message based on signals
+   ("You've sat 7h — Recovery Mission unlocked", "3 days off — let's restart with a 5-min win", "14-day streak — ready to level up?").
+3. **Workout is now a *Protocol*** with a name + reason line ("Posture Reset · because you sat 7h today"), built from movement patterns instead of a fixed 5-move list.
+4. **Auto-unlocked Recovery Missions** for coders/gamers when sittingHours ≥ 6 — separate from the daily workout, 5–10 min, neck/wrist/thoracic/hip.
+5. **Mode-aware copy** for the same protocol (Hunter "Recovery Quest" vs Zen "Gentle Reset" vs Scientist "Mobility Protocol" — already supported by `modes.ts` lexicon, just plumb through).
 
-**All 7 screens, navigable and polished:**
-1. Splash — animated logo, glow pulse, auto-advance
-2. Welcome / Auth — Guest, Google, Email (Lovable Cloud)
-3. Onboarding — 7-step immersive flow (Basics → Lifestyle → Routine → Equipment → Goals → Level → Motivation Style) with progress bar + "Generating Your System" reveal
-4. Home — greeting, daily mission card (4 quests), adaptive AI tip (static for now), streak + XP + level widget
-5. Quests — daily adaptive list, XP rewards, recovery-mission fallback, no guilt copy
-6. Workout — adaptive workout cards, timer, set/rep tracker, rest timer, animations
-7. Progress — XP/level hero card, 7 real-life stats (Strength, Stamina, Recovery, Discipline, Vitality, Flexibility, Focus), skill cards (Posture Guardian, Endurance Core, Discipline Passive, Flex Master) with subtle glow
-8. Profile — lifestyle summary, goals, motivation style, theme, settings
+## The engine (`src/lib/leveluplife/engine/`)
 
-**Premium bottom nav** (Home / Quests / Workout / Progress / Profile) with animated active state.
+New folder, pure functions, fully unit-testable:
 
-## Design system
+- `patterns.ts` — exercise library tagged by **pattern** (squat/push/pull/hinge/core/mobility), **level** (beginner/intermediate/advanced), **equipment** (none/bands/dumbbells/chair/pullup), **apartmentSafe** (no jumping), **bodyPart**, **cue**, **scienceNote**. ~50 curated movements from the user's brief (chair squat → pistol progression, wall push-up → decline, band row → pull-up, glute bridge → RDL, dead bug/bird dog/plank, full mobility set).
+- `protocols.ts` — protocol templates: `FullBody`, `PostureReset`, `RecoveryRestart`, `LowEnergyFlow`, `MobilityOnly`, `StrengthFocus`, `StudentExamWeek`. Each declares pattern ratios + duration target.
+- `selector.ts` — `selectProtocol(profile, checkin, signals) → ProtocolPlan`. Decision tree from the brief:
+  - missed ≥3 days → `RecoveryRestart` (5 min, no guilt copy)
+  - sittingHours ≥ 6 AND lifestyle ∈ {gamer, developer, office} → `PostureReset` offered as Recovery Mission; daily workout still runs
+  - energy = low OR soreness = yes OR badSleep → `LowEnergyFlow` / `MobilityOnly`
+  - student + stress high → `StudentExamWeek` (10 min, 40/30/30 mobility/strength/cardio)
+  - office → hinge + pull + mobility bias
+  - streak ≥ 14 AND no negative signals → bump level one tier (progressive overload)
+  - default → balanced `FullBody` honoring goals (muscle_gain → strength bias, weight_loss → density, posture → pull+hinge+mobility)
+- `builder.ts` — `buildWorkout(plan, profile, checkin) → Session` assembles **Warmup → Main → Recovery → Cooldown** by sampling `patterns.ts` filtered by equipment + apartmentSafe + level, fitting the time budget, and never repeating yesterday's exact picks (stored in localStorage as `lastMoves`).
+- `messages.ts` — `recommendationMessage(profile, signals, mode)` → the smart card copy, re-skinned per motivation mode via `modes.ts` lexicon.
 
-Defined as Tailwind v4 tokens in `src/styles.css`:
+## Data model additions
 
-```text
-bg:        #070B14         (deep space)
-card:      #111827         (elevated surface)
-accent-1:  #00D4FF cyan
-accent-2:  #3B82F6 electric blue
-accent-3:  #7C3AED violet  (used sparingly for rare/level-up)
-text:      #F3F4F6 / #94A3B8
-success:   #10B981  warn: #F59E0B
-gradient-primary:  cyan → electric blue (CTAs, XP bars, hero glow)
-gradient-rare:     blue → violet (level-up, skill unlocks)
-```
+`src/lib/leveluplife/types.ts`:
+- `Checkin { date, energy: 'low'|'med'|'high', timeMin: 5|10|20|40, sore: boolean, stress: 'low'|'med'|'high' }`
+- `Session { id, protocol, reason, durationMin, moves: Move[] }` (replaces flat `WorkoutMove[]`)
+- `Move { name, pattern, reps, rest, cue, scienceNote, apartmentSafe }`
+- `AppState` gains `checkin: Checkin | null`, `lastSessionDate: string | null`, `lastMoves: string[]`, `sittingHoursToday: number` (manual quick-log on Home, optional).
 
-- Glassmorphism cards (`bg-card/60` + `backdrop-blur-xl` + 1px inner border `border-white/5`)
-- Soft outer glow on key elements (`shadow-[0_0_40px_-10px_rgba(0,212,255,0.5)]`)
-- Rounded radius scale: cards 20px, chips 12px, buttons 14px
-- Typography: Inter (body) + Space Grotesk (display/numerics)
-- Motion: fade-in + scale-in entrances, animated XP bar fill, haptic-feel button press, page transitions
-- Mobile-first — locked to phone width with safe-area insets; works full-screen as installed PWA
+## Store changes (`store.tsx`)
 
-## Architecture
+- `setCheckin(c)`, `logSitting(h)`, `markWorkoutDone(sessionId)` — the last one updates `lastSessionDate` + `lastMoves` so the engine can de-dupe and detect missed streaks.
+- Derive `daysSinceLastWorkout` for the selector.
 
-- **Stack**: TanStack Start + React + Tailwind v4 + shadcn primitives (heavily restyled — no default look)
-- **Routes**:
-  - `/` splash → redirects based on onboarding state
-  - `/auth` welcome + sign-in
-  - `/onboarding` multi-step
-  - `/_authenticated/home`, `/quests`, `/workout`, `/progress`, `/profile`
-- **State**: Zustand store for user profile + XP/quests/streak; persisted to localStorage in pass 1, replaced with Supabase in pass 2
-- **Auth**: Lovable Cloud enabled. Email + Google sign-in. Guest mode bypasses auth and stores locally. Google goes through the Lovable broker per platform requirements.
-- **PWA**: manifest + icons + theme color so it installs to Android/iOS home screen. No offline service worker in pass 1.
+## UI changes (minimal, surgical — keep current visual style)
 
-## Mock data shape (ready for pass 2)
+- **`src/routes/workout.tsx`**: if no `checkin` for today → render `<CheckinSheet />` first; on submit, call `selectProtocol` + `buildWorkout`, then show the session with new **protocol header** ("Posture Reset · 10 min · because you sat 7h"). Move list rendering stays the same shape (already supports name/reps/rest/cue).
+- **`src/routes/home.tsx`**: replace static `adaptiveTip` with `recommendationMessage(...)` card; add "Recovery Mission" CTA when posture-reset condition triggers.
+- **New `src/components/leveluplife/CheckinSheet.tsx`** — bottom sheet with 4 segmented controls + Start button. Uses existing shadcn primitives.
+- **New `src/components/leveluplife/RecommendationCard.tsx`** — wraps `GlassCard`, mode-themed.
 
-User profile, onboarding answers, today's quest list, workout library (bodyweight / chair / band / dumbbell variants), XP curve, skill definitions — all typed in `src/lib/leveluplife/*` so swapping to Supabase queries is a one-file change per concern.
+## What is explicitly NOT in this pass
 
-## Explicitly out of scope this pass (saved for pass 2)
+- No backend / Supabase / AI gateway calls (rule engine is deterministic; matches the "no random workouts" requirement better than an LLM anyway).
+- No video demos, no rep timers beyond what exists.
+- No new onboarding fields — uses what the profile already collects (`lifestyle`, `sittingHours`, `energy`, `stress`, `equipment`, `goals`, `level`); the check-in covers per-session signals.
 
-- Real adaptive AI engine (rule-based generator + Lovable AI tip generation)
-- Persisting quests/XP/streak to Postgres with RLS
-- Workout history + progress charts
-- Push notifications, reminders
-- Profile editing flows beyond display
+## Technical notes
 
-## Acceptance criteria
+- Pure TS, no new deps.
+- Engine is framework-free → trivially portable to a server function in Pass 2 if we want LLM-augmented variation.
+- Movement library and decision tree are seeded directly from the user's brief so the science rules (progressive overload, no 100-pushup challenges, no loud jumping for apartments, beginner cap 15–20 min) are encoded as filters, not vibes.
 
-- Opens on phone, installs to home screen, launches standalone with dark theme
-- Onboarding completes and produces a personalized-feeling Home screen
-- Every screen looks intentionally designed — not a shadcn-default look
-- Bottom nav transitions are smooth; no layout shift on route change
-- Guest mode works end-to-end without signing in
+## File touch list
+
+- new: `src/lib/leveluplife/engine/{patterns,protocols,selector,builder,messages}.ts`
+- new: `src/components/leveluplife/{CheckinSheet,RecommendationCard}.tsx`
+- edit: `src/lib/leveluplife/types.ts`, `src/lib/leveluplife/store.tsx`, `src/lib/leveluplife/data.ts` (keep `defaultQuestsFor`, delete old `generateWorkout`/`adaptiveTip` — replaced by engine)
+- edit: `src/routes/workout.tsx`, `src/routes/home.tsx`
+
+Ready to implement on approval.

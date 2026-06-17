@@ -1,11 +1,13 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
 import { MobileFrame, GlassCard, SectionTitle } from "@/components/leveluplife/Shell";
+import { CheckinSheet } from "@/components/leveluplife/CheckinSheet";
 import { useApp } from "@/lib/leveluplife/store";
-import { generateWorkout } from "@/lib/leveluplife/data";
 import { modeFor } from "@/lib/leveluplife/modes";
+import { selectProtocol } from "@/lib/leveluplife/engine/selector";
+import { buildSession, sessionToMoves } from "@/lib/leveluplife/engine/builder";
 import { Button } from "@/components/ui/button";
-import { Check, Play, RotateCw, Timer } from "lucide-react";
+import { Check, Play, RotateCw, Timer, Info } from "lucide-react";
 
 export const Route = createFileRoute("/workout")({
   head: () => ({ meta: [{ title: "Workout — LevelUp Life" }] }),
@@ -14,13 +16,75 @@ export const Route = createFileRoute("/workout")({
 
 function Workout() {
   const navigate = useNavigate();
-  const { state, completeQuest } = useApp();
+  const {
+    state,
+    completeQuest,
+    setCheckin,
+    logSitting,
+    markSessionDone,
+    daysSinceLastWorkout,
+  } = useApp();
   const lex = modeFor(state.profile).lexicon;
+
   useEffect(() => {
     if (!state.onboarded) navigate({ to: "/auth" });
   }, [state.onboarded, navigate]);
 
-  const moves = useMemo(() => generateWorkout(state.profile), [state.profile]);
+  if (!state.profile) return null;
+
+  const needCheckin = !state.checkin;
+
+  if (needCheckin) {
+    return (
+      <MobileFrame withNav>
+        <CheckinSheet
+          initialSitting={state.sittingHoursToday}
+          onSubmit={(c, sit) => {
+            logSitting(sit);
+            setCheckin(c);
+          }}
+        />
+      </MobileFrame>
+    );
+  }
+
+  return (
+    <Session
+      onFinish={() => navigate({ to: "/home" })}
+      completeQuest={completeQuest}
+      markSessionDone={markSessionDone}
+      lex={lex}
+      daysSinceLastWorkout={daysSinceLastWorkout}
+    />
+  );
+}
+
+function Session({
+  onFinish,
+  completeQuest,
+  markSessionDone,
+  lex,
+  daysSinceLastWorkout,
+}: {
+  onFinish: () => void;
+  completeQuest: (id: string) => void;
+  markSessionDone: (ids: string[]) => void;
+  lex: ReturnType<typeof modeFor>["lexicon"];
+  daysSinceLastWorkout: number;
+}) {
+  const { state } = useApp();
+  const session = useMemo(() => {
+    const plan = selectProtocol(state.profile!, state.checkin!, {
+      sittingHoursToday: state.sittingHoursToday,
+      daysSinceLastWorkout,
+      streak: state.streak,
+    });
+    return buildSession(state.profile!, plan, state.lastMoves);
+    // Build once per check-in; user can Reset to rebuild.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  const moves = sessionToMoves(session);
   const [active, setActive] = useState(0);
   const [done, setDone] = useState<Set<number>>(new Set());
   const [running, setRunning] = useState(false);
@@ -39,24 +103,26 @@ function Workout() {
     if (i < moves.length - 1) setActive(i + 1);
   }
 
-  function finishSession() {
+  function finish() {
+    markSessionDone(moves.map((m) => m.id));
     completeQuest("workout");
-    navigate({ to: "/home" });
+    onFinish();
   }
 
   const allDone = done.size === moves.length;
+  const protocolLabel = mapProtocolName(session.protocolName, lex);
 
   return (
     <MobileFrame withNav>
-      <header className="mb-5">
-        <p className="text-xs uppercase tracking-[0.18em] text-muted-foreground">{lex.workout}</p>
-        <h1 className="text-2xl font-bold">Today's {lex.workout.toLowerCase()}</h1>
-        <p className="mt-1 text-sm text-muted-foreground">
-          Calibrated to {state.profile?.level ?? "beginner"} · {state.profile?.equipment?.[0] ?? "no equipment"}
+      <header className="mb-4">
+        <p className="text-xs uppercase tracking-[0.18em] text-muted-foreground">{lex.workout} · {session.durationMin} min</p>
+        <h1 className="text-2xl font-bold">{protocolLabel}</h1>
+        <p className="mt-1 flex items-start gap-1.5 text-sm text-muted-foreground">
+          <Info className="mt-0.5 h-3.5 w-3.5 shrink-0" />
+          <span>{session.reason}</span>
         </p>
       </header>
 
-      {/* Rest timer */}
       {resting > 0 && (
         <GlassCard className="mb-4 border-[var(--cyan-glow)]/30">
           <div className="flex items-center justify-between">
@@ -75,14 +141,22 @@ function Workout() {
         </GlassCard>
       )}
 
-      <SectionTitle hint={`${done.size} / ${moves.length}`}>Moves</SectionTitle>
+      <SectionTitle hint={`${done.size} / ${moves.length}`}>
+        Warmup → Main → Cooldown
+      </SectionTitle>
       <div className="space-y-2.5">
         {moves.map((m, i) => {
           const isDone = done.has(i);
           const isActive = i === active && !isDone;
+          const block =
+            i < session.warmup.length
+              ? "Warmup"
+              : i >= session.warmup.length + session.main.length
+              ? "Cooldown"
+              : `Main · ${m.pattern}`;
           return (
             <div
-              key={i}
+              key={`${m.id}-${i}`}
               className={`rounded-2xl border p-4 transition ${
                 isDone
                   ? "border-[var(--success)]/30 bg-[var(--success)]/5"
@@ -93,13 +167,18 @@ function Workout() {
             >
               <div className="flex items-start justify-between gap-3">
                 <div className="min-w-0">
-                  <p className="text-[10px] uppercase tracking-[0.2em] opacity-70">{i === 0 ? "Warmup" : i === moves.length - 1 ? "Cooldown" : `Move ${i}`}</p>
+                  <p className="text-[10px] uppercase tracking-[0.2em] opacity-70">{block}</p>
                   <p className="text-base font-semibold">{m.name}</p>
                   <p className={`mt-0.5 text-xs ${isActive ? "opacity-80" : "text-muted-foreground"}`}>{m.cue}</p>
+                  {m.scienceNote && !isActive && (
+                    <p className="mt-1 text-[11px] italic text-muted-foreground/80">— {m.scienceNote}</p>
+                  )}
                 </div>
                 <div className="shrink-0 text-right">
                   <p className="font-display text-lg font-bold">{m.reps}</p>
-                  {m.rest > 0 && <p className={`text-[10px] ${isActive ? "opacity-80" : "text-muted-foreground"}`}>rest {m.rest}s</p>}
+                  {m.rest > 0 && (
+                    <p className={`text-[10px] ${isActive ? "opacity-80" : "text-muted-foreground"}`}>rest {m.rest}s</p>
+                  )}
                 </div>
               </div>
               {isActive && (
@@ -121,11 +200,15 @@ function Workout() {
       </div>
 
       <div className="mt-5 grid grid-cols-2 gap-3">
-        <Button onClick={() => { setDone(new Set()); setActive(0); setResting(0); }} variant="outline" className="glass h-12 rounded-2xl border-white/10">
+        <Button
+          onClick={() => { setDone(new Set()); setActive(0); setResting(0); }}
+          variant="outline"
+          className="glass h-12 rounded-2xl border-white/10"
+        >
           <RotateCw className="mr-2 h-4 w-4" /> Reset
         </Button>
         <Button
-          onClick={finishSession}
+          onClick={finish}
           disabled={!allDone}
           className="h-12 rounded-2xl bg-gradient-primary font-semibold text-[var(--primary-foreground)] shadow-glow disabled:opacity-50"
         >
@@ -134,4 +217,11 @@ function Workout() {
       </div>
     </MobileFrame>
   );
+}
+
+/** Re-skin the protocol name per motivation mode. */
+function mapProtocolName(name: string, lex: ReturnType<typeof modeFor>["lexicon"]): string {
+  if (/posture|recovery|mobility/i.test(name)) return `${lex.adaptivePrefix} · ${name}`;
+  if (/strength|full body/i.test(name)) return `${lex.workout}: ${name}`;
+  return name;
 }

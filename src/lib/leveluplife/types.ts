@@ -54,7 +54,7 @@ export interface Quest {
   title: string;
   subtitle: string;
   xp: number;
-  icon: string; // lucide icon name
+  icon: string;
   done: boolean;
   category: "hydration" | "stretch" | "mobility" | "walk" | "workout" | "recovery" | "focus";
 }
@@ -78,6 +78,17 @@ export interface Stats {
   focus: number;
 }
 
+/* ── Adaptive engine state ─────────────────────────────── */
+
+export interface Checkin {
+  /** YYYY-MM-DD. */
+  date: string;
+  energy: "low" | "med" | "high";
+  timeMin: 5 | 10 | 20 | 40;
+  sore: boolean;
+  stress: "low" | "med" | "high";
+}
+
 export interface AppState {
   onboarded: boolean;
   profile: UserProfile | null;
@@ -87,4 +98,12 @@ export interface AppState {
   quests: Quest[];
   stats: Stats;
   skills: SkillState[];
+  /** Today's check-in for the adaptive engine. */
+  checkin: Checkin | null;
+  /** Approx hours sat today — manually logged, used by the engine. */
+  sittingHoursToday: number;
+  /** YYYY-MM-DD of last completed workout, for streak/restart logic. */
+  lastSessionDate: string | null;
+  /** Move IDs from last session, used to de-dupe today's picks. */
+  lastMoves: string[];
 }
