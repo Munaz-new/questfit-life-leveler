@@ -1,10 +1,12 @@
 import { useEffect, useRef, useState } from "react";
-import { useNavigate } from "@tanstack/react-router";
+import { useNavigate, Link } from "@tanstack/react-router";
 import { useApp } from "@/lib/leveluplife/store";
 import { parseTarget } from "@/lib/leveluplife/engine/xp";
-import { educationFor } from "@/lib/leveluplife/engine/education";
 import { modeFor } from "@/lib/leveluplife/modes";
 import { missionCopyFor } from "@/lib/leveluplife/missionCopy";
+import { exerciseById } from "@/lib/leveluplife/exercises/library";
+import { ExerciseArt } from "@/components/leveluplife/exercises/ExerciseArt";
+import { MuscleMap } from "@/components/leveluplife/exercises/MuscleMap";
 import { Button } from "@/components/ui/button";
 import {
   Play,
@@ -15,8 +17,8 @@ import {
   ChevronRight,
   Info,
   Check,
+  BookOpen,
 } from "lucide-react";
-import { PATTERN_GLYPH } from "./glyphs";
 
 export function MissionPlayer() {
   const navigate = useNavigate();
@@ -186,12 +188,12 @@ function ExerciseScreen({
   isLast: boolean;
 }) {
   const target = parseTarget(move.reps);
-  const edu = educationFor(move);
+  const ex = exerciseById(move.id);
   const [eduOpen, setEduOpen] = useState(false);
 
   return (
     <div className="flex flex-1 flex-col">
-      <div className="mb-4">
+      <div className="mb-3">
         <p className="text-xs uppercase tracking-[0.18em] text-[var(--cyan-glow)]">
           {block} · {move.pattern}
         </p>
@@ -199,9 +201,32 @@ function ExerciseScreen({
         <p className="mt-1 text-sm text-muted-foreground">{move.cue}</p>
       </div>
 
-      <div className="glass mb-5 flex aspect-square w-full items-center justify-center rounded-[var(--radius)] text-7xl">
-        <span aria-hidden>{PATTERN_GLYPH[move.pattern]}</span>
+      <div className="glass mb-3 flex aspect-[5/4] w-full items-center justify-center rounded-[var(--radius)] text-[var(--cyan-glow)]">
+        <div className="h-3/4 w-3/4">
+          <ExerciseArt id={move.id} animated />
+        </div>
       </div>
+
+      {ex && (
+        <div className="mb-4 flex items-center gap-3 rounded-xl border border-white/10 bg-white/5 p-3">
+          <div className="h-16 w-12 shrink-0">
+            <MuscleMap primary={ex.primaryMuscles} secondary={ex.secondaryMuscles} className="!gap-1 [&_svg]:!h-16" />
+          </div>
+          <div className="min-w-0 flex-1">
+            <p className="text-[10px] uppercase tracking-[0.18em] text-muted-foreground">Targets</p>
+            <p className="truncate text-xs">
+              {ex.primaryMuscles.slice(0, 3).map((m) => m.replace("_", " ")).join(" · ")}
+            </p>
+          </div>
+          <Link
+            to="/exercises/$id"
+            params={{ id: move.id }}
+            className="inline-flex shrink-0 items-center gap-1 text-[10px] font-semibold uppercase tracking-wider text-[var(--cyan-glow)]"
+          >
+            <BookOpen className="h-3 w-3" /> Guide
+          </Link>
+        </div>
+      )}
 
       {target.kind === "reps" && (
         <RepsBlock
@@ -232,11 +257,14 @@ function ExerciseScreen({
         </span>
         <ChevronRight className={`h-4 w-4 transition ${eduOpen ? "rotate-90" : ""}`} />
       </button>
-      {eduOpen && (
+      {eduOpen && ex && (
         <div className="mt-2 space-y-2 rounded-xl border border-white/10 bg-white/5 p-4 text-xs text-muted-foreground">
-          <p><b className="text-foreground">Targets:</b> {edu.targets}</p>
-          <p><b className="text-foreground">Why:</b> {edu.benefits}</p>
-          <p><b className="text-foreground">Avoid:</b> {edu.avoid}</p>
+          {ex.benefits.slice(0, 2).map((b) => (
+            <p key={b}><b className="text-foreground">+</b> {b}</p>
+          ))}
+          {ex.mistakes.slice(0, 2).map((m) => (
+            <p key={m}><b className="text-[var(--warn)]">!</b> Avoid: {m}</p>
+          ))}
           {move.scienceNote && <p className="italic">— {move.scienceNote}</p>}
         </div>
       )}
