@@ -1,6 +1,8 @@
 import type { UserProfile } from "../types";
 import { filterMoves, type Equip, type Move, type Pattern } from "./patterns";
 import type { ProtocolPlan } from "./selector";
+import { exerciseById } from "../exercises/library";
+import { scoreExercise } from "../exercises/recommend";
 
 export interface Session {
   id: string;
@@ -17,12 +19,25 @@ export interface Session {
 const WARMUP_IDS = ["mob-catcow", "mob-thoracic", "mob-hip"];
 const COOLDOWN_IDS = ["mob-hams", "mob-neck"];
 
-function pick<T>(arr: T[], n: number, seedSkip: Set<string>, idOf: (t: T) => string): T[] {
-  const fresh = arr.filter((x) => !seedSkip.has(idOf(x)));
-  const pool = fresh.length >= n ? fresh : arr; // fall back if dedupe starves us
-  // shuffle deterministically-ish via random sort (fine for variety)
-  const sorted = [...pool].sort(() => Math.random() - 0.5);
-  return sorted.slice(0, n);
+function rankAndPick(
+  candidates: Move[],
+  n: number,
+  profile: UserProfile,
+  recentIds: Set<string>,
+): Move[] {
+  if (!candidates.length) return [];
+  const ranked = candidates
+    .map((m) => {
+      const ex = exerciseById(m.id);
+      const score = ex ? scoreExercise(ex, profile, recentIds) : Math.random();
+      return { m, score };
+    })
+    .sort((a, b) => b.score - a.score);
+
+  // Prefer un-recent, fall back to full pool if dedupe starves us.
+  const fresh = ranked.filter((r) => !recentIds.has(r.m.id));
+  const pool = fresh.length >= n ? fresh : ranked;
+  return pool.slice(0, n).map((r) => r.m);
 }
 
 export function buildSession(
@@ -32,10 +47,9 @@ export function buildSession(
 ): Session {
   const skip = new Set(lastMoves);
   const equipment: Equip[] = (profile.equipment.length ? profile.equipment : ["none"]) as Equip[];
-  // Apartment-safe is the default; we could expose an opt-out later.
   const apartmentSafe = true;
 
-  // ── pick warmup ──────────────────────────────────────────
+  // ── warmup ────────────────────────────────────────────
   const warmup = WARMUP_IDS
     .map((id) =>
       filterMoves({ level: plan.level, equipment, apartmentSafe })
@@ -44,11 +58,9 @@ export function buildSession(
     .filter((m): m is Move => Boolean(m))
     .slice(0, 2);
 
-  // ── pick main block from the protocol ratio ─────────────
+  // ── main block ────────────────────────────────────────
   const ratioEntries = Object.entries(plan.protocol.ratio) as [Pattern, number][];
   const totalWeight = ratioEntries.reduce((s, [, w]) => s + w, 0) || 1;
-
-  // Roughly 1 move per ~3 minutes of main budget; min 3, max 8.
   const targetMoves = Math.max(3, Math.min(8, Math.round(plan.protocol.mainMin / 3)));
 
   const main: Move[] = [];
@@ -57,16 +69,16 @@ export function buildSession(
     if (count === 0) continue;
     const candidates = filterMoves({ pattern, level: plan.level, equipment, apartmentSafe });
     if (!candidates.length) continue;
-    main.push(...pick(candidates, count, skip, (m) => m.id));
+    main.push(...rankAndPick(candidates, count, profile, skip));
   }
-  // Trim/pad to target.
   while (main.length > targetMoves) main.pop();
   if (main.length < 3) {
     const filler = filterMoves({ pattern: "mobility", level: plan.level, equipment, apartmentSafe });
-    main.push(...pick(filler, 3 - main.length, new Set(main.map((m) => m.id)), (m) => m.id));
+    const used = new Set(main.map((m) => m.id));
+    main.push(...rankAndPick(filler.filter((m) => !used.has(m.id)), 3 - main.length, profile, skip));
   }
 
-  // ── cooldown ────────────────────────────────────────────
+  // ── cooldown ──────────────────────────────────────────
   const cooldown = COOLDOWN_IDS
     .map((id) =>
       filterMoves({ level: plan.level, equipment, apartmentSafe })
@@ -74,7 +86,6 @@ export function buildSession(
     )
     .filter((m): m is Move => Boolean(m));
 
-  // Tone down rep volume for low-intensity protocols.
   const main2 = plan.protocol.intensity === "low"
     ? main.map((m) => ({ ...m, rest: Math.max(15, Math.round(m.rest * 0.7)) }))
     : main;

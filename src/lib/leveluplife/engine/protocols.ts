@@ -7,11 +7,20 @@ export type ProtocolId =
   | "low_energy_flow"
   | "mobility_only"
   | "strength_focus"
-  | "student_exam";
+  | "student_exam"
+  // Lifestyle recovery protocols
+  | "gamer_neck_recovery"
+  | "programmer_flow"
+  | "laptop_posture_fix"
+  | "office_mobility"
+  | "midnight_coding_recovery"
+  | "study_break_flow"
+  | "exam_week_reset"
+  | "eight_hour_sitting_reset";
 
 export interface Protocol {
   id: ProtocolId;
-  name: string;          // raw name; mode lexicon may re-skin
+  name: string;
   /** Approx body time-budget in minutes for the *main* block. */
   mainMin: number;
   /** Distribution weights over patterns; selector samples from these. */
@@ -76,7 +85,73 @@ export const PROTOCOLS: Record<ProtocolId, Protocol> = {
     name: "Study-Break Reset",
     mainMin: 10,
     intensity: "low",
-    ratio: { mobility: 4, core: 1.5, cardio: 1.5 }, // ~40/30/30 mob/strength/cardio
+    ratio: { mobility: 4, core: 1.5, cardio: 1.5 },
     whyTemplate: "Stress is high — short, calming, brain-clearing.",
+  },
+
+  /* ───────────── Lifestyle recovery protocols ───────────── */
+  gamer_neck_recovery: {
+    id: "gamer_neck_recovery",
+    name: "Gamer Neck Recovery",
+    mainMin: 9,
+    intensity: "low",
+    ratio: { mobility: 4, pull: 1 },
+    whyTemplate: "Long session, locked-in neck — let's unstick it.",
+  },
+  programmer_flow: {
+    id: "programmer_flow",
+    name: "Programmer Recovery Flow",
+    mainMin: 10,
+    intensity: "low",
+    ratio: { mobility: 3, pull: 1, hinge: 1 },
+    whyTemplate: "Hours hunched at the keyboard — wrists, thoracic, hips first.",
+  },
+  laptop_posture_fix: {
+    id: "laptop_posture_fix",
+    name: "Laptop Posture Fix",
+    mainMin: 8,
+    intensity: "low",
+    ratio: { mobility: 3, pull: 1.5 },
+    whyTemplate: "Laptop slouch detected — open the chest, wake the back.",
+  },
+  office_mobility: {
+    id: "office_mobility",
+    name: "Office Worker Mobility",
+    mainMin: 12,
+    intensity: "low",
+    ratio: { mobility: 3, hinge: 1, cardio: 1 },
+    whyTemplate: "Desk-bound day — mobilize hips, fire glutes, walk it off.",
+  },
+  midnight_coding_recovery: {
+    id: "midnight_coding_recovery",
+    name: "Midnight Coding Recovery",
+    mainMin: 8,
+    intensity: "low",
+    ratio: { mobility: 4, core: 0.5 },
+    whyTemplate: "Late session — gentle reset, calm the system, prep for sleep.",
+  },
+  study_break_flow: {
+    id: "study_break_flow",
+    name: "Study Break Flow",
+    mainMin: 5,
+    intensity: "low",
+    ratio: { mobility: 3, cardio: 1 },
+    whyTemplate: "5-minute reset between study blocks. Brain breathes.",
+  },
+  exam_week_reset: {
+    id: "exam_week_reset",
+    name: "Exam Week Reset",
+    mainMin: 10,
+    intensity: "low",
+    ratio: { mobility: 3, cardio: 1.5, core: 1 },
+    whyTemplate: "Stress is loud — short, calming, focus-clearing.",
+  },
+  eight_hour_sitting_reset: {
+    id: "eight_hour_sitting_reset",
+    name: "8-Hour Sitting Reset",
+    mainMin: 10,
+    intensity: "low",
+    ratio: { mobility: 3, hinge: 1.5, cardio: 1 },
+    whyTemplate: "{sit}h sat today — hips, glutes, thoracic, a short walk.",
   },
 };
