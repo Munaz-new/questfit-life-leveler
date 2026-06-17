@@ -169,5 +169,3 @@ function Section({ icon, title, children }: { icon: React.ReactNode; title: stri
   );
 }
 
-// Suppress unused-icon lint
-void Flame;
