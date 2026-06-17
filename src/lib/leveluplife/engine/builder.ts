@@ -1,5 +1,5 @@
 import type { UserProfile } from "../types";
-import { filterMoves, type Move, type Pattern } from "./patterns";
+import { filterMoves, type Equip, type Move, type Pattern } from "./patterns";
 import type { ProtocolPlan } from "./selector";
 
 export interface Session {
