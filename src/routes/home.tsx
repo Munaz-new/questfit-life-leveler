@@ -71,7 +71,15 @@ function Home() {
         <XPBar pct={progressPct} className="mt-4" />
       </GlassCard>
 
-      <RecommendationCard card={card} onCta={() => navigate({ to: "/workout" })} />
+      <RecommendationCard
+        card={card}
+        onCta={() =>
+          navigate({
+            to: "/workout",
+            search: card.tone === "recovery" ? { protocol: "posture_reset" } : {},
+          })
+        }
+      />
 
       {/* Quick sitting log — feeds the engine. */}
       <GlassCard className="mb-5">
