@@ -1,10 +1,12 @@
 import { useEffect, useRef, useState } from "react";
-import { useNavigate } from "@tanstack/react-router";
+import { useNavigate, Link } from "@tanstack/react-router";
 import { useApp } from "@/lib/leveluplife/store";
 import { parseTarget } from "@/lib/leveluplife/engine/xp";
-import { educationFor } from "@/lib/leveluplife/engine/education";
 import { modeFor } from "@/lib/leveluplife/modes";
 import { missionCopyFor } from "@/lib/leveluplife/missionCopy";
+import { exerciseById } from "@/lib/leveluplife/exercises/library";
+import { ExerciseArt } from "@/components/leveluplife/exercises/ExerciseArt";
+import { MuscleMap } from "@/components/leveluplife/exercises/MuscleMap";
 import { Button } from "@/components/ui/button";
 import {
   Play,
@@ -15,8 +17,8 @@ import {
   ChevronRight,
   Info,
   Check,
+  BookOpen,
 } from "lucide-react";
-import { PATTERN_GLYPH } from "./glyphs";
 
 export function MissionPlayer() {
   const navigate = useNavigate();
