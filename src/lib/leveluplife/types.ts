@@ -41,8 +41,8 @@ export interface UserProfile {
   wakeTime: string;
   sleepTime: string;
   sittingHours: number;
-  energy: number; // 1..5
-  stress: number; // 1..5
+  energy: number;
+  stress: number;
   equipment: EquipmentItem[];
   goals: Goal[];
   level: FitnessLevel;
@@ -78,15 +78,47 @@ export interface Stats {
   focus: number;
 }
 
-/* ── Adaptive engine state ─────────────────────────────── */
-
 export interface Checkin {
-  /** YYYY-MM-DD. */
   date: string;
   energy: "low" | "med" | "high";
   timeMin: 5 | 10 | 20 | 40;
   sore: boolean;
   stress: "low" | "med" | "high";
+}
+
+/** A serialized live workout session in progress. */
+export interface ActiveSessionState {
+  startedAt: number;
+  /** Linear list of move ids in order (warmup → main → cooldown). */
+  order: string[];
+  /** Cursor over `order`. */
+  cursor: number;
+  /** Set we're on for the current rep-based move (1-indexed). */
+  currentSet: number;
+  /** Whether we're in the rest screen after the current move. */
+  inRest: boolean;
+  /** Move ids the user fully completed (earn XP). */
+  completed: string[];
+  /** Move ids the user skipped (no XP). */
+  skipped: string[];
+  /** Forced protocol id (e.g. recovery mission). */
+  forceProtocol?: string;
+  /** Snapshot of the built session so we don't rebuild on every render. */
+  session: import("./engine/builder").Session;
+}
+
+export interface SummaryState {
+  date: string;
+  protocolId: string;
+  protocolName: string;
+  durationSec: number;
+  totalMoves: number;
+  completedMoves: number;
+  skippedMoves: number;
+  xpEarned: number;
+  caloriesEst: number | null;
+  patternHits: Partial<Record<string, number>>;
+  partial: boolean;
 }
 
 export interface AppState {
@@ -98,12 +130,16 @@ export interface AppState {
   quests: Quest[];
   stats: Stats;
   skills: SkillState[];
-  /** Today's check-in for the adaptive engine. */
   checkin: Checkin | null;
-  /** Approx hours sat today — manually logged, used by the engine. */
   sittingHoursToday: number;
-  /** YYYY-MM-DD of last completed workout, for streak/restart logic. */
   lastSessionDate: string | null;
-  /** Move IDs from last session, used to de-dupe today's picks. */
   lastMoves: string[];
+  /** Live workout session, null when nothing is in progress. */
+  activeSession: ActiveSessionState | null;
+  /** Last finished session summary, shown on the summary route. */
+  lastSummary: SummaryState | null;
+  /** Adaptive difficulty offset (−1 reduce / 0 baseline / +1 push). */
+  adaptiveBoost: -1 | 0 | 1;
+  /** Recent completion percentages, used to drive adaptiveBoost. */
+  recentCompletion: number[];
 }
