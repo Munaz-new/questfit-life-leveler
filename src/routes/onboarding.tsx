@@ -57,6 +57,7 @@ function Onboarding() {
   }
 
   function finish() {
+    setOnboardingOptIn(mirror ?? false);
     setProfile(p);
     navigate({ to: "/home" });
   }
