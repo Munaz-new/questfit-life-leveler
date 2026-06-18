@@ -16,6 +16,8 @@ import {
   Target,
   Users,
   Play,
+  Camera,
+
 } from "lucide-react";
 
 export const Route = createFileRoute("/exercises/$id")({
