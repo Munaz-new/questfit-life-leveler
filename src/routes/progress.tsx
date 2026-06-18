@@ -60,6 +60,23 @@ function ProgressPage() {
         <XPBar pct={progressPct} className="mt-4" />
       </GlassCard>
 
+      {/* Progress Mirror entry */}
+      <button
+        onClick={() => navigate({ to: "/progress-mirror" })}
+        className="glass mb-6 flex w-full items-center gap-3 rounded-2xl border border-white/10 p-4 text-left transition hover:border-white/20"
+      >
+        <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-gradient-rare shadow-rare">
+          <Camera className="h-5 w-5 text-white" />
+        </div>
+        <div className="min-w-0 flex-1">
+          <p className="text-sm font-semibold">Progress Mirror</p>
+          <p className="mt-0.5 text-xs text-muted-foreground">See your visual transformation — private to you</p>
+        </div>
+        <ChevronRight className="h-4 w-4 text-muted-foreground" />
+      </button>
+
+
+
       {/* Stats */}
       <SectionTitle hint="real-life stats">Attributes</SectionTitle>
       <div className="grid grid-cols-2 gap-2.5">
