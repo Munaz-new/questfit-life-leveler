@@ -25,6 +25,7 @@ function Onboarding() {
   const navigate = useNavigate();
   const { setProfile } = useApp();
   const [step, setStep] = useState(0);
+  const [mirror, setMirror] = useState<boolean | null>(null);
   const [p, setP] = useState<UserProfile>({
     displayName: "Hunter",
     isGuest: true,
