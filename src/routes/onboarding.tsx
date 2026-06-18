@@ -221,7 +221,28 @@ function Onboarding() {
               </div>
             </Step>
           )}
+
+          {step === 8 && (
+            <Step title="Enable Progress Mirror?" sub="Privately track your visual transformation over weeks and months.">
+              <div className="mb-4 flex items-start gap-2 rounded-xl border border-white/10 bg-white/5 px-3 py-2.5 text-[11px] text-muted-foreground">
+                <ShieldCheck className="mt-0.5 h-4 w-4 shrink-0 text-[var(--cyan-glow)]" />
+                Your photos and videos are private and visible only to you. Nothing is ever shared or made public.
+              </div>
+              <Grid cols={1}>
+                <Chip active={mirror === true} onClick={() => setMirror(true)}>
+                  <Camera className="h-4 w-4" /> Enable Progress Mirror
+                </Chip>
+                <Chip active={mirror === false} onClick={() => setMirror(false)}>
+                  Skip for now
+                </Chip>
+              </Grid>
+              <p className="mt-3 text-center text-[11px] text-muted-foreground">
+                You can change this anytime in your profile.
+              </p>
+            </Step>
+          )}
         </div>
+
 
         <div className="pt-4">
           {step < TOTAL - 1 ? (
