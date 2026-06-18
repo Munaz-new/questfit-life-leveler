@@ -25,10 +25,47 @@ function Profile() {
   const navigate = useNavigate();
   const { state, resetAll, setMotivation } = useApp();
   const [switching, setSwitching] = useState<MotivationStyle | null>(null);
+  const [mirrorUser, setMirrorUser] = useState<string | null>(null);
+  const [mirrorEnabled, setMirrorEnabledState] = useState<boolean | null>(null);
 
   useEffect(() => {
     if (!state.onboarded) navigate({ to: "/auth" });
   }, [state.onboarded, navigate]);
+
+  useEffect(() => {
+    let active = true;
+    (async () => {
+      const uid = await getCurrentUserId();
+      if (!active) return;
+      setMirrorUser(uid);
+      if (uid) {
+        const s = await getMirrorSettings(uid);
+        if (active) setMirrorEnabledState(s?.enabled ?? false);
+      }
+    })();
+    return () => {
+      active = false;
+    };
+  }, []);
+
+  async function toggleMirror() {
+    if (!mirrorUser) {
+      navigate({ to: "/auth" });
+      return;
+    }
+    const next = !mirrorEnabled;
+    setMirrorEnabledState(next);
+    await setMirrorEnabled(mirrorUser, next);
+    toast.success(next ? "Progress Mirror enabled" : "Progress Mirror disabled");
+  }
+
+  async function wipeMedia() {
+    if (!mirrorUser) return;
+    if (!confirm("Permanently delete ALL your progress photos and measurements? This cannot be undone.")) return;
+    await deleteAllMedia(mirrorUser);
+    toast.success("All progress media deleted");
+  }
+
 
   const p = state.profile;
   if (!p) return null;
