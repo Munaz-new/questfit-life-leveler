@@ -3,11 +3,18 @@ import { useEffect, useState, type CSSProperties } from "react";
 import { MobileFrame, GlassCard, SectionTitle } from "@/components/leveluplife/Shell";
 import { useApp } from "@/lib/leveluplife/store";
 import { Button } from "@/components/ui/button";
-import { LogOut, RefreshCcw, Trophy, Sparkles, Check } from "lucide-react";
+import { LogOut, RefreshCcw, Trophy, Sparkles, Check, Camera, ShieldCheck, Trash2 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { lifestyleOptions, goalOptions } from "@/lib/leveluplife/data";
 import { MODE_LIST, getMode } from "@/lib/leveluplife/modes";
 import type { MotivationStyle } from "@/lib/leveluplife/types";
+import {
+  getCurrentUserId,
+  getMirrorSettings,
+  setMirrorEnabled,
+  deleteAllMedia,
+} from "@/lib/leveluplife/progressMirror";
+import { toast } from "sonner";
 
 export const Route = createFileRoute("/profile")({
   head: () => ({ meta: [{ title: "Profile — LevelUp Life" }] }),
