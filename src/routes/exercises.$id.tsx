@@ -145,6 +145,19 @@ function Detail() {
         </Section>
       )}
 
+      <Section icon={<Camera className="h-4 w-4" />} title="My Progress">
+        <p className="text-sm text-muted-foreground">
+          The demonstration above always shows correct form. Track your own attempts privately —
+          photos, notes, and measurements live in your Progress Mirror.
+        </p>
+        <button
+          onClick={() => navigate({ to: "/progress-mirror" })}
+          className="mt-3 inline-flex items-center gap-2 rounded-xl bg-white/8 px-3 py-2 text-xs font-semibold text-foreground transition hover:bg-white/12"
+        >
+          <Camera className="h-3.5 w-3.5 text-[var(--cyan-glow)]" /> Track my progress
+        </button>
+      </Section>
+
       <div className="sticky bottom-24 mt-6 grid grid-cols-1 gap-2">
         <Button
           onClick={() => navigate({ to: "/workout" })}
@@ -153,6 +166,7 @@ function Detail() {
           <Play className="mr-2 h-4 w-4" /> Add to today's mission
         </Button>
       </div>
+
     </MobileFrame>
   );
 }
