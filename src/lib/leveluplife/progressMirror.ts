@@ -198,9 +198,24 @@ export async function listMeasurements(userId: string): Promise<BodyMeasurement[
   return (data ?? []) as BodyMeasurement[];
 }
 
+export type MeasurementInput = {
+  measured_at?: string;
+  note?: string | null;
+  unit?: string;
+  weight?: number | null;
+  body_fat?: number | null;
+  waist?: number | null;
+  chest?: number | null;
+  arms?: number | null;
+  legs?: number | null;
+  neck?: number | null;
+  shoulders?: number | null;
+  hip?: number | null;
+};
+
 export async function addMeasurement(
   userId: string,
-  values: Partial<Record<keyof BodyMeasurement, number | null>> & { measured_at?: string; note?: string | null },
+  values: MeasurementInput,
 ): Promise<BodyMeasurement> {
   const { data, error } = await supabase
     .from("body_measurements")
