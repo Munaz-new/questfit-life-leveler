@@ -11,6 +11,7 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as WorkoutRouteImport } from './routes/workout'
 import { Route as QuestsRouteImport } from './routes/quests'
+import { Route as ProgressMirrorRouteImport } from './routes/progress-mirror'
 import { Route as ProgressRouteImport } from './routes/progress'
 import { Route as ProfileRouteImport } from './routes/profile'
 import { Route as OnboardingRouteImport } from './routes/onboarding'
@@ -31,6 +32,11 @@ const WorkoutRoute = WorkoutRouteImport.update({
 const QuestsRoute = QuestsRouteImport.update({
   id: '/quests',
   path: '/quests',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ProgressMirrorRoute = ProgressMirrorRouteImport.update({
+  id: '/progress-mirror',
+  path: '/progress-mirror',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ProgressRoute = ProgressRouteImport.update({
@@ -96,6 +102,7 @@ export interface FileRoutesByFullPath {
   '/onboarding': typeof OnboardingRoute
   '/profile': typeof ProfileRoute
   '/progress': typeof ProgressRoute
+  '/progress-mirror': typeof ProgressMirrorRoute
   '/quests': typeof QuestsRoute
   '/workout': typeof WorkoutRouteWithChildren
   '/exercises/$id': typeof ExercisesIdRoute
@@ -111,6 +118,7 @@ export interface FileRoutesByTo {
   '/onboarding': typeof OnboardingRoute
   '/profile': typeof ProfileRoute
   '/progress': typeof ProgressRoute
+  '/progress-mirror': typeof ProgressMirrorRoute
   '/quests': typeof QuestsRoute
   '/exercises/$id': typeof ExercisesIdRoute
   '/workout/play': typeof WorkoutPlayRoute
@@ -126,6 +134,7 @@ export interface FileRoutesById {
   '/onboarding': typeof OnboardingRoute
   '/profile': typeof ProfileRoute
   '/progress': typeof ProgressRoute
+  '/progress-mirror': typeof ProgressMirrorRoute
   '/quests': typeof QuestsRoute
   '/workout': typeof WorkoutRouteWithChildren
   '/exercises/$id': typeof ExercisesIdRoute
@@ -143,6 +152,7 @@ export interface FileRouteTypes {
     | '/onboarding'
     | '/profile'
     | '/progress'
+    | '/progress-mirror'
     | '/quests'
     | '/workout'
     | '/exercises/$id'
@@ -158,6 +168,7 @@ export interface FileRouteTypes {
     | '/onboarding'
     | '/profile'
     | '/progress'
+    | '/progress-mirror'
     | '/quests'
     | '/exercises/$id'
     | '/workout/play'
@@ -172,6 +183,7 @@ export interface FileRouteTypes {
     | '/onboarding'
     | '/profile'
     | '/progress'
+    | '/progress-mirror'
     | '/quests'
     | '/workout'
     | '/exercises/$id'
@@ -188,6 +200,7 @@ export interface RootRouteChildren {
   OnboardingRoute: typeof OnboardingRoute
   ProfileRoute: typeof ProfileRoute
   ProgressRoute: typeof ProgressRoute
+  ProgressMirrorRoute: typeof ProgressMirrorRoute
   QuestsRoute: typeof QuestsRoute
   WorkoutRoute: typeof WorkoutRouteWithChildren
   ExercisesIdRoute: typeof ExercisesIdRoute
@@ -208,6 +221,13 @@ declare module '@tanstack/react-router' {
       path: '/quests'
       fullPath: '/quests'
       preLoaderRoute: typeof QuestsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/progress-mirror': {
+      id: '/progress-mirror'
+      path: '/progress-mirror'
+      fullPath: '/progress-mirror'
+      preLoaderRoute: typeof ProgressMirrorRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/progress': {
@@ -312,6 +332,7 @@ const rootRouteChildren: RootRouteChildren = {
   OnboardingRoute: OnboardingRoute,
   ProfileRoute: ProfileRoute,
   ProgressRoute: ProgressRoute,
+  ProgressMirrorRoute: ProgressMirrorRoute,
   QuestsRoute: QuestsRoute,
   WorkoutRoute: WorkoutRouteWithChildren,
   ExercisesIdRoute: ExercisesIdRoute,
@@ -320,13 +341,3 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}

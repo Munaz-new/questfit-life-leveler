@@ -3,7 +3,7 @@ import { useState, type CSSProperties } from "react";
 import { MobileFrame, GlassCard } from "@/components/leveluplife/Shell";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { ChevronLeft, ChevronRight, Sparkles, Flame } from "lucide-react";
+import { ChevronLeft, ChevronRight, Sparkles, Flame, ShieldCheck, Camera } from "lucide-react";
 import { useApp } from "@/lib/leveluplife/store";
 import {
   equipmentOptions,
@@ -11,6 +11,7 @@ import {
   lifestyleOptions,
 } from "@/lib/leveluplife/data";
 import { MODE_LIST, getMode } from "@/lib/leveluplife/modes";
+import { setOnboardingOptIn } from "@/lib/leveluplife/progressMirror";
 import type { UserProfile } from "@/lib/leveluplife/types";
 
 export const Route = createFileRoute("/onboarding")({
@@ -18,12 +19,13 @@ export const Route = createFileRoute("/onboarding")({
   component: Onboarding,
 });
 
-const TOTAL = 8;
+const TOTAL = 9;
 
 function Onboarding() {
   const navigate = useNavigate();
   const { setProfile } = useApp();
   const [step, setStep] = useState(0);
+  const [mirror, setMirror] = useState<boolean | null>(null);
   const [p, setP] = useState<UserProfile>({
     displayName: "Hunter",
     isGuest: true,
@@ -55,6 +57,7 @@ function Onboarding() {
   }
 
   function finish() {
+    setOnboardingOptIn(mirror ?? false);
     setProfile(p);
     navigate({ to: "/home" });
   }
@@ -218,7 +221,28 @@ function Onboarding() {
               </div>
             </Step>
           )}
+
+          {step === 8 && (
+            <Step title="Enable Progress Mirror?" sub="Privately track your visual transformation over weeks and months.">
+              <div className="mb-4 flex items-start gap-2 rounded-xl border border-white/10 bg-white/5 px-3 py-2.5 text-[11px] text-muted-foreground">
+                <ShieldCheck className="mt-0.5 h-4 w-4 shrink-0 text-[var(--cyan-glow)]" />
+                Your photos and videos are private and visible only to you. Nothing is ever shared or made public.
+              </div>
+              <Grid cols={1}>
+                <Chip active={mirror === true} onClick={() => setMirror(true)}>
+                  <Camera className="h-4 w-4" /> Enable Progress Mirror
+                </Chip>
+                <Chip active={mirror === false} onClick={() => setMirror(false)}>
+                  Skip for now
+                </Chip>
+              </Grid>
+              <p className="mt-3 text-center text-[11px] text-muted-foreground">
+                You can change this anytime in your profile.
+              </p>
+            </Step>
+          )}
         </div>
+
 
         <div className="pt-4">
           {step < TOTAL - 1 ? (

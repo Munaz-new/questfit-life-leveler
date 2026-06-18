@@ -14,7 +14,156 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      body_measurements: {
+        Row: {
+          arms: number | null
+          body_fat: number | null
+          chest: number | null
+          created_at: string
+          hip: number | null
+          id: string
+          legs: number | null
+          measured_at: string
+          neck: number | null
+          note: string | null
+          shoulders: number | null
+          unit: string
+          updated_at: string
+          user_id: string
+          waist: number | null
+          weight: number | null
+        }
+        Insert: {
+          arms?: number | null
+          body_fat?: number | null
+          chest?: number | null
+          created_at?: string
+          hip?: number | null
+          id?: string
+          legs?: number | null
+          measured_at?: string
+          neck?: number | null
+          note?: string | null
+          shoulders?: number | null
+          unit?: string
+          updated_at?: string
+          user_id: string
+          waist?: number | null
+          weight?: number | null
+        }
+        Update: {
+          arms?: number | null
+          body_fat?: number | null
+          chest?: number | null
+          created_at?: string
+          hip?: number | null
+          id?: string
+          legs?: number | null
+          measured_at?: string
+          neck?: number | null
+          note?: string | null
+          shoulders?: number | null
+          unit?: string
+          updated_at?: string
+          user_id?: string
+          waist?: number | null
+          weight?: number | null
+        }
+        Relationships: []
+      }
+      progress_achievements: {
+        Row: {
+          achievement_key: string
+          created_at: string
+          id: string
+          unlocked_at: string
+          user_id: string
+        }
+        Insert: {
+          achievement_key: string
+          created_at?: string
+          id?: string
+          unlocked_at?: string
+          user_id: string
+        }
+        Update: {
+          achievement_key?: string
+          created_at?: string
+          id?: string
+          unlocked_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      progress_photos: {
+        Row: {
+          confidence: number | null
+          created_at: string
+          energy: number | null
+          id: string
+          mood: number | null
+          note: string | null
+          pain_level: number | null
+          storage_path: string
+          taken_at: string
+          updated_at: string
+          user_id: string
+          view: string
+        }
+        Insert: {
+          confidence?: number | null
+          created_at?: string
+          energy?: number | null
+          id?: string
+          mood?: number | null
+          note?: string | null
+          pain_level?: number | null
+          storage_path: string
+          taken_at?: string
+          updated_at?: string
+          user_id: string
+          view?: string
+        }
+        Update: {
+          confidence?: number | null
+          created_at?: string
+          energy?: number | null
+          id?: string
+          mood?: number | null
+          note?: string | null
+          pain_level?: number | null
+          storage_path?: string
+          taken_at?: string
+          updated_at?: string
+          user_id?: string
+          view?: string
+        }
+        Relationships: []
+      }
+      progress_settings: {
+        Row: {
+          created_at: string
+          enabled: boolean
+          id: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          enabled?: boolean
+          id?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          enabled?: boolean
+          id?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
