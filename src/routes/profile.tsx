@@ -178,6 +178,50 @@ function Profile() {
         })}
       </div>
 
+      <SectionTitle hint="private">Progress Mirror</SectionTitle>
+      <GlassCard className="mb-5 space-y-1">
+        <div className="mb-1 flex items-start gap-2 rounded-xl bg-white/5 px-3 py-2 text-[11px] text-muted-foreground">
+          <ShieldCheck className="mt-0.5 h-3.5 w-3.5 shrink-0 text-[var(--cyan-glow)]" />
+          Your photos are private and visible only to you.
+        </div>
+        <SettingRow
+          icon={<Camera className="h-4 w-4" />}
+          label="Open Progress Mirror"
+          hint="Timeline, photos, measurements"
+          onClick={() => navigate({ to: "/progress-mirror" })}
+        />
+        <button
+          onClick={toggleMirror}
+          className="-mx-1 flex w-full items-center gap-3 rounded-xl px-1 py-2 text-left transition hover:bg-white/5"
+        >
+          <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-white/5 text-[var(--cyan-glow)]">
+            <Sparkles className="h-4 w-4" />
+          </div>
+          <div className="flex-1">
+            <p className="text-sm font-medium">Enable Progress Mirror</p>
+            <p className="text-xs text-muted-foreground">
+              {mirrorUser ? (mirrorEnabled ? "Enabled" : "Disabled") : "Sign in to enable"}
+            </p>
+          </div>
+          <span
+            className={`relative h-6 w-11 rounded-full transition ${mirrorEnabled && mirrorUser ? "bg-gradient-primary" : "bg-white/10"}`}
+          >
+            <span
+              className={`absolute top-0.5 h-5 w-5 rounded-full bg-white transition-all ${mirrorEnabled && mirrorUser ? "left-[1.375rem]" : "left-0.5"}`}
+            />
+          </span>
+        </button>
+        {mirrorUser && (
+          <SettingRow
+            icon={<Trash2 className="h-4 w-4" />}
+            label="Delete all my media"
+            hint="Permanently remove photos & measurements"
+            onClick={wipeMedia}
+          />
+        )}
+      </GlassCard>
+
+
       <SectionTitle>Settings</SectionTitle>
       <GlassCard className="mb-5 space-y-1">
         <SettingRow icon={<Sparkles className="h-4 w-4" />} label="Recalibrate system" hint="Re-run onboarding" onClick={() => navigate({ to: "/onboarding" })} />
