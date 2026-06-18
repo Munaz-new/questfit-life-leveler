@@ -3,7 +3,7 @@ import { useState, type CSSProperties } from "react";
 import { MobileFrame, GlassCard } from "@/components/leveluplife/Shell";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { ChevronLeft, ChevronRight, Sparkles, Flame } from "lucide-react";
+import { ChevronLeft, ChevronRight, Sparkles, Flame, ShieldCheck, Camera } from "lucide-react";
 import { useApp } from "@/lib/leveluplife/store";
 import {
   equipmentOptions,
@@ -11,6 +11,7 @@ import {
   lifestyleOptions,
 } from "@/lib/leveluplife/data";
 import { MODE_LIST, getMode } from "@/lib/leveluplife/modes";
+import { setOnboardingOptIn } from "@/lib/leveluplife/progressMirror";
 import type { UserProfile } from "@/lib/leveluplife/types";
 
 export const Route = createFileRoute("/onboarding")({
