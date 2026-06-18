@@ -5,7 +5,7 @@ import { XPBar } from "@/components/leveluplife/XPBar";
 import { useApp } from "@/lib/leveluplife/store";
 import { modeFor } from "@/lib/leveluplife/modes";
 import * as Icons from "lucide-react";
-import { Dumbbell, HeartPulse, Moon, Target, Sparkles, Wind, Brain } from "lucide-react";
+import { Dumbbell, HeartPulse, Moon, Target, Sparkles, Wind, Brain, Camera, ChevronRight } from "lucide-react";
 
 export const Route = createFileRoute("/progress")({
   head: () => ({ meta: [{ title: "Progress — LevelUp Life" }] }),
