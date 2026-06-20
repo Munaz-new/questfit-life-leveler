@@ -8,28 +8,7 @@
 
 import type { ExerciseAssets } from "./types";
 
-export const ASSET_MANIFEST: Record<string, ExerciseAssets> = {
-  "push-bw": {
-    "thumbnail": {
-      "url": "push_bw/thumbnail.webp",
-      "format": "webp",
-      "source": "free-exercise-db",
-      "license": "Unlicense",
-      "version": "1",
-      "updatedAt": "2026-06-20T05:37:15.136Z",
-      "bytes": 6686
-    },
-    "illustration": {
-      "url": "push_bw/illustration.webp",
-      "format": "webp",
-      "source": "free-exercise-db",
-      "license": "Unlicense",
-      "version": "1",
-      "updatedAt": "2026-06-20T05:37:15.136Z",
-      "bytes": 18628
-    }
-  }
-};
+export const ASSET_MANIFEST: Record<string, ExerciseAssets> = {};
 
 /** When the manifest was last regenerated (ISO). */
-export const ASSET_MANIFEST_GENERATED_AT = "2026-06-20T05:37:15.138Z";
+export const ASSET_MANIFEST_GENERATED_AT = "2026-06-20T05:37:44.747Z";
