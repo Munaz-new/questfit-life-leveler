@@ -1,5 +1,5 @@
 import { lazy, Suspense } from "react";
-import { resolveBest } from "@/lib/leveluplife/assets/assetManager";
+import { assetUrl, resolveBest } from "@/lib/leveluplife/assets/assetManager";
 import { illustrationFor } from "./illustrations";
 import placeholderUrl from "@/assets/exercise-library/placeholder.svg";
 
