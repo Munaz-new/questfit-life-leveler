@@ -1,0 +1,24 @@
+{
+  "exerciseId": "push-bw",
+  "folder": "push_bw",
+  "assets": {
+    "thumbnail": {
+      "url": "push_bw/thumbnail.webp",
+      "format": "webp",
+      "source": "free-exercise-db",
+      "license": "Unlicense",
+      "version": "1",
+      "updatedAt": "2026-06-20T05:37:15.136Z",
+      "bytes": 6686
+    },
+    "illustration": {
+      "url": "push_bw/illustration.webp",
+      "format": "webp",
+      "source": "free-exercise-db",
+      "license": "Unlicense",
+      "version": "1",
+      "updatedAt": "2026-06-20T05:37:15.136Z",
+      "bytes": 18628
+    }
+  }
+}
