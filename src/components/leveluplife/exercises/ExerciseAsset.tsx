@@ -30,18 +30,19 @@ export function ExerciseAsset({
 
   if (best) {
     const { ref } = best;
+    const src = assetUrl(ref);
     switch (ref.format) {
       case "lottie":
         inner = (
           <Suspense fallback={<InlineOrPlaceholder id={id} animated={animated} />}>
-            <LottieAsset url={ref.url} />
+            <LottieAsset url={src} />
           </Suspense>
         );
         break;
       case "mp4":
         inner = (
           <video
-            src={ref.url}
+            src={src}
             className="h-full w-full object-contain"
             autoPlay={animated}
             muted
@@ -57,7 +58,7 @@ export function ExerciseAsset({
       case "gif":
         inner = (
           <img
-            src={ref.url}
+            src={src}
             alt=""
             loading="lazy"
             className="h-full w-full object-contain"
