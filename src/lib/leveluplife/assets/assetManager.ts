@@ -16,6 +16,31 @@
 import { ASSET_MANIFEST } from "./manifest.generated";
 import type { AssetKind, AssetRef, ExerciseAssets, ResolvedAsset } from "./types";
 
+/**
+ * Bundled asset URL map. The importer writes files under
+ * src/assets/exercise-library/<folder>/<file> and stores the path relative
+ * to exercise-library/ in the manifest (e.g. "push_up/thumbnail.webp").
+ * Vite turns each bundled file into a hashed URL at build time; we resolve
+ * the manifest's relative path against that here. Absolute URLs (CDN
+ * pointers) are returned untouched.
+ */
+const BUNDLED_FILES = import.meta.glob(
+  "../../../../assets/exercise-library/**/*",
+  { eager: true, query: "?url", import: "default" },
+) as Record<string, string>;
+
+const BY_SUFFIX = new Map<string, string>();
+for (const [key, url] of Object.entries(BUNDLED_FILES)) {
+  const rel = key.split("/exercise-library/")[1];
+  if (rel) BY_SUFFIX.set(rel, url);
+}
+
+/** Resolve a manifest AssetRef to a real, loadable URL. */
+export function assetUrl(ref: AssetRef): string {
+  if (/^(https?:)?\/\//.test(ref.url) || ref.url.startsWith("data:")) return ref.url;
+  return BY_SUFFIX.get(ref.url) ?? ref.url;
+}
+
 /** Order the resolver prefers when picking the "best" visual demonstration. */
 const VISUAL_PRIORITY: AssetKind[] = ["animation", "illustration", "thumbnail"];
 
