@@ -94,6 +94,13 @@ export interface Exercise {
   /** Reserved: Lottie/Rive URL to drop in later without refactor. */
   animationUrl?: string;
 
+  /**
+   * Pipeline-managed demonstration assets. Authored exercises leave this
+   * undefined; the Asset Importer populates the generated manifest instead.
+   * Kept here so hand-authored exercises *can* inline assets if desired.
+   */
+  assets?: import("../assets/types").ExerciseAssets;
+
   /* Future-readiness — intentionally optional and empty for now. */
   poseLandmarks?: string[];
   repCountingHint?: { type: "vertical" | "horizontal"; landmark: string };

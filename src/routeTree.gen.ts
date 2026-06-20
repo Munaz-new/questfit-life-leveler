@@ -23,6 +23,7 @@ import { Route as ExercisesIndexRouteImport } from './routes/exercises.index'
 import { Route as WorkoutSummaryRouteImport } from './routes/workout.summary'
 import { Route as WorkoutPlayRouteImport } from './routes/workout.play'
 import { Route as ExercisesIdRouteImport } from './routes/exercises.$id'
+import { Route as DevAssetDashboardRouteImport } from './routes/dev.asset-dashboard'
 
 const WorkoutRoute = WorkoutRouteImport.update({
   id: '/workout',
@@ -94,6 +95,11 @@ const ExercisesIdRoute = ExercisesIdRouteImport.update({
   path: '/exercises/$id',
   getParentRoute: () => rootRouteImport,
 } as any)
+const DevAssetDashboardRoute = DevAssetDashboardRouteImport.update({
+  id: '/dev/asset-dashboard',
+  path: '/dev/asset-dashboard',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -105,6 +111,7 @@ export interface FileRoutesByFullPath {
   '/progress-mirror': typeof ProgressMirrorRoute
   '/quests': typeof QuestsRoute
   '/workout': typeof WorkoutRouteWithChildren
+  '/dev/asset-dashboard': typeof DevAssetDashboardRoute
   '/exercises/$id': typeof ExercisesIdRoute
   '/workout/play': typeof WorkoutPlayRoute
   '/workout/summary': typeof WorkoutSummaryRoute
@@ -120,6 +127,7 @@ export interface FileRoutesByTo {
   '/progress': typeof ProgressRoute
   '/progress-mirror': typeof ProgressMirrorRoute
   '/quests': typeof QuestsRoute
+  '/dev/asset-dashboard': typeof DevAssetDashboardRoute
   '/exercises/$id': typeof ExercisesIdRoute
   '/workout/play': typeof WorkoutPlayRoute
   '/workout/summary': typeof WorkoutSummaryRoute
@@ -137,6 +145,7 @@ export interface FileRoutesById {
   '/progress-mirror': typeof ProgressMirrorRoute
   '/quests': typeof QuestsRoute
   '/workout': typeof WorkoutRouteWithChildren
+  '/dev/asset-dashboard': typeof DevAssetDashboardRoute
   '/exercises/$id': typeof ExercisesIdRoute
   '/workout/play': typeof WorkoutPlayRoute
   '/workout/summary': typeof WorkoutSummaryRoute
@@ -155,6 +164,7 @@ export interface FileRouteTypes {
     | '/progress-mirror'
     | '/quests'
     | '/workout'
+    | '/dev/asset-dashboard'
     | '/exercises/$id'
     | '/workout/play'
     | '/workout/summary'
@@ -170,6 +180,7 @@ export interface FileRouteTypes {
     | '/progress'
     | '/progress-mirror'
     | '/quests'
+    | '/dev/asset-dashboard'
     | '/exercises/$id'
     | '/workout/play'
     | '/workout/summary'
@@ -186,6 +197,7 @@ export interface FileRouteTypes {
     | '/progress-mirror'
     | '/quests'
     | '/workout'
+    | '/dev/asset-dashboard'
     | '/exercises/$id'
     | '/workout/play'
     | '/workout/summary'
@@ -203,6 +215,7 @@ export interface RootRouteChildren {
   ProgressMirrorRoute: typeof ProgressMirrorRoute
   QuestsRoute: typeof QuestsRoute
   WorkoutRoute: typeof WorkoutRouteWithChildren
+  DevAssetDashboardRoute: typeof DevAssetDashboardRoute
   ExercisesIdRoute: typeof ExercisesIdRoute
   ExercisesIndexRoute: typeof ExercisesIndexRoute
 }
@@ -307,6 +320,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ExercisesIdRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/dev/asset-dashboard': {
+      id: '/dev/asset-dashboard'
+      path: '/dev/asset-dashboard'
+      fullPath: '/dev/asset-dashboard'
+      preLoaderRoute: typeof DevAssetDashboardRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -335,19 +355,10 @@ const rootRouteChildren: RootRouteChildren = {
   ProgressMirrorRoute: ProgressMirrorRoute,
   QuestsRoute: QuestsRoute,
   WorkoutRoute: WorkoutRouteWithChildren,
+  DevAssetDashboardRoute: DevAssetDashboardRoute,
   ExercisesIdRoute: ExercisesIdRoute,
   ExercisesIndexRoute: ExercisesIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}
