@@ -3,26 +3,32 @@
  *
  * The Workout Player / exercise pages never know where an asset comes from
  * (Free Exercise DB, a community folder, future official LevelUp assets,
- * AI-generated demos, 3D models…). They call resolveBest() / getAsset() and
- * render whatever comes back via <ExerciseAsset/>.
+ * AI-generated demos, 3D models…). They ask for a gallery by exercise id +
+ * gender and render whatever comes back.
  *
  * Fallback chain (guaranteed never-broken):
- *   animation  →  illustration (svg)  →  thumbnail  →  inline glyph  →  placeholder
+ *   gendered gallery → shared gallery → thumbnail → "coming soon" card
  *
- * Note: inline-glyph + placeholder handling lives in <ExerciseAsset/> (it
- * needs React); this module stays pure so the importer can reuse it.
+ * The "coming soon" card lives in the React layer; this module stays pure so
+ * the importer can reuse it.
  * ──────────────────────────────────────────────────────────────────── */
 
 import { ASSET_MANIFEST } from "./manifest.generated";
-import type { AssetKind, AssetRef, ExerciseAssets, ResolvedAsset } from "./types";
+import type {
+  AssetRef,
+  DemoImage,
+  ExerciseDemoAssets,
+  Gender,
+  ResolvedGallery,
+} from "./types";
 
 /**
  * Bundled asset URL map. The importer writes files under
  * src/assets/exercise-library/<folder>/<file> and stores the path relative
- * to exercise-library/ in the manifest (e.g. "push_up/thumbnail.webp").
- * Vite turns each bundled file into a hashed URL at build time; we resolve
- * the manifest's relative path against that here. Absolute URLs (CDN
- * pointers) are returned untouched.
+ * to exercise-library/ in the manifest (e.g. "push_up/step-0.webp"). Vite
+ * turns each bundled file into a hashed URL at build time; we resolve the
+ * manifest's relative path against that here. Absolute URLs (CDN pointers)
+ * are returned untouched.
  */
 const BUNDLED_FILES = import.meta.glob(
   "../../../../assets/exercise-library/**/*",
@@ -41,63 +47,68 @@ export function assetUrl(ref: AssetRef): string {
   return BY_SUFFIX.get(ref.url) ?? ref.url;
 }
 
-/** Order the resolver prefers when picking the "best" visual demonstration. */
-const VISUAL_PRIORITY: AssetKind[] = ["animation", "illustration", "thumbnail"];
-
-/** All imported assets for an exercise (empty object if none). */
-export function getAssets(id: string): ExerciseAssets {
+/** All imported demonstration assets for an exercise (empty object if none). */
+export function getDemo(id: string): ExerciseDemoAssets {
   return ASSET_MANIFEST[id] ?? {};
 }
 
-/** A single asset of a given kind, if it has been imported. */
-export function getAsset(id: string, kind: AssetKind): AssetRef | undefined {
-  return getAssets(id)[kind];
+/** The thumbnail ref, if imported. */
+export function getThumbnail(id: string): AssetRef | undefined {
+  return getDemo(id).thumbnail;
 }
 
-/** Convenience accessors mirroring the Player's mental model. */
-export const getThumbnail = (id: string) => getAsset(id, "thumbnail");
-export const getIllustration = (id: string) => getAsset(id, "illustration");
-export const getAnimation = (id: string) => getAsset(id, "animation");
-export const getVideo = (id: string) => getAsset(id, "video");
-
 /**
- * Best available *file-based* asset following the fallback chain. Returns
- * undefined when nothing has been imported — the caller then falls back to
- * the built-in inline SVG and finally the placeholder.
+ * The best available ordered gallery for an exercise + requested gender.
+ *
+ * Prefers a real gendered set; falls back to the shared (gender-neutral)
+ * gallery; finally synthesizes a one-image gallery from the thumbnail.
+ * Returns undefined when nothing has been imported — the caller then shows
+ * the "Illustration coming soon" card.
  */
-export function resolveBest(id: string): ResolvedAsset | undefined {
-  const assets = getAssets(id);
-  for (const kind of VISUAL_PRIORITY) {
-    const ref = assets[kind];
-    if (ref?.url) return { kind, ref };
+export function resolveGallery(id: string, gender: Gender): ResolvedGallery | undefined {
+  const demo = getDemo(id);
+
+  const gendered = demo[gender];
+  if (gendered && gendered.length) return { images: gendered, gendered: true };
+
+  if (demo.shared && demo.shared.length) return { images: demo.shared, gendered: false };
+
+  if (demo.thumbnail) {
+    const t = demo.thumbnail;
+    const single: DemoImage = { ...t, step: "demo", stepLabel: "Demonstration" };
+    return { images: [single], gendered: false };
   }
+
   return undefined;
 }
 
-/** Does this exercise have any imported asset at all? */
+/** Does this exercise have any imported demonstration asset at all? */
 export function hasImportedAsset(id: string): boolean {
-  const a = getAssets(id);
-  return Boolean(a.animation || a.illustration || a.thumbnail || a.video);
+  const d = getDemo(id);
+  return Boolean(d.thumbnail || d.shared?.length || d.male?.length || d.female?.length);
+}
+
+/** Whether a true gender-specific gallery exists for this exercise. */
+export function hasGenderedAsset(id: string, gender: Gender): boolean {
+  return Boolean(getDemo(id)[gender]?.length);
 }
 
 /**
- * 0–100 quality score for the dev dashboard. Weighted by which asset tiers
- * exist; richer media scores higher.
+ * 0–100 quality score for the dev dashboard. Weighted by which tiers exist;
+ * richer demonstration coverage scores higher.
  */
 export function qualityScore(id: string): number {
-  const a = getAssets(id);
+  const d = getDemo(id);
   let score = 0;
-  if (a.thumbnail) score += 20;
-  if (a.illustration) score += 25;
-  if (a.animation) score += 40;
-  if (a.video) score += 15;
+  if (d.thumbnail) score += 20;
+  if (d.shared?.length) score += Math.min(40, d.shared.length * 15);
+  if (d.male?.length) score += 20;
+  if (d.female?.length) score += 20;
   return Math.min(100, score);
 }
 
-/** Which kinds are still missing for an exercise. */
-export function missingKinds(id: string): AssetKind[] {
-  const a = getAssets(id);
-  return (["thumbnail", "illustration", "animation", "video"] as AssetKind[]).filter(
-    (k) => !a[k],
-  );
+/** How many demonstration images exist for an exercise (any tier). */
+export function imageCount(id: string): number {
+  const d = getDemo(id);
+  return d.shared?.length ?? d.male?.length ?? d.female?.length ?? (d.thumbnail ? 1 : 0);
 }
