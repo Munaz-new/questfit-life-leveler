@@ -1,87 +1,57 @@
-import { lazy, Suspense } from "react";
-import { assetUrl, resolveBest } from "@/lib/leveluplife/assets/assetManager";
-import { illustrationFor } from "./illustrations";
-import placeholderUrl from "@/assets/exercise-library/placeholder.svg";
+import { assetUrl, resolveGallery } from "@/lib/leveluplife/assets/assetManager";
+import { useDemoGender } from "@/lib/leveluplife/assets/gender";
+import { ImageOff } from "lucide-react";
 
 /**
- * ExerciseAsset — the format-agnostic demonstration renderer.
+ * ExerciseAsset — the compact, non-interactive demonstration renderer used in
+ * cards, the workout player and the dev dashboard. It shows the first frame of
+ * the best available gallery for the currently-selected demonstration gender.
  *
- * The Workout Player and exercise pages render this and never care whether
- * the underlying asset is a Lottie, SVG, webp, GIF, video or (future) 3D
- * model. The Asset Manager decides the best available asset; this component
- * just draws it. Fallback is guaranteed: imported asset → inline SVG glyph
- * → branded placeholder. The user never sees a broken image.
+ * Fallback is guaranteed: imported image → branded "coming soon" card. The
+ * user never sees a broken image or a stick figure.
  */
-
-const LottieAsset = lazy(() => import("./LottieAsset"));
-
 export function ExerciseAsset({
   id,
-  animated = false,
   className,
+  alt,
 }: {
   id: string;
   animated?: boolean;
   className?: string;
+  alt?: string;
 }) {
-  const best = resolveBest(id);
-
-  let inner: React.ReactNode;
-
-  if (best) {
-    const { ref } = best;
-    const src = assetUrl(ref);
-    switch (ref.format) {
-      case "lottie":
-        inner = (
-          <Suspense fallback={<InlineOrPlaceholder id={id} animated={animated} />}>
-            <LottieAsset url={src} />
-          </Suspense>
-        );
-        break;
-      case "mp4":
-        inner = (
-          <video
-            src={src}
-            className="h-full w-full object-contain"
-            autoPlay={animated}
-            muted
-            loop
-            playsInline
-          />
-        );
-        break;
-      case "svg":
-      case "webp":
-      case "png":
-      case "jpg":
-      case "gif":
-        inner = (
-          <img
-            src={src}
-            alt=""
-            loading="lazy"
-            className="h-full w-full object-contain"
-          />
-        );
-        break;
-      default:
-        inner = <InlineOrPlaceholder id={id} animated={animated} />;
-    }
-  } else {
-    inner = <InlineOrPlaceholder id={id} animated={animated} />;
-  }
+  const [gender] = useDemoGender();
+  const gallery = resolveGallery(id, gender);
 
   return (
-    <div className={`relative flex h-full w-full items-center justify-center ${className ?? ""}`}>
-      {inner}
+    <div
+      className={`relative flex h-full w-full items-center justify-center overflow-hidden ${className ?? ""}`}
+    >
+      {gallery ? (
+        <img
+          src={assetUrl(gallery.images[0])}
+          alt={alt ?? "Exercise demonstration"}
+          loading="lazy"
+          decoding="async"
+          className="h-full w-full object-cover"
+        />
+      ) : (
+        <ComingSoon />
+      )}
     </div>
   );
 }
 
-/** Inline built-in glyph if present, else the branded placeholder. */
-function InlineOrPlaceholder({ id, animated }: { id: string; animated: boolean }) {
-  const Glyph = illustrationFor(id);
-  if (Glyph) return <Glyph animated={animated} />;
-  return <img src={placeholderUrl} alt="" className="h-full w-full object-contain opacity-90" />;
+/** Branded placeholder shown when no demonstration media exists yet. */
+export function ComingSoon({ compact = false }: { compact?: boolean }) {
+  return (
+    <div className="flex h-full w-full flex-col items-center justify-center gap-2 bg-gradient-to-br from-white/5 to-white/0 text-center text-[var(--cyan-glow)]">
+      <ImageOff className={compact ? "h-5 w-5 opacity-70" : "h-8 w-8 opacity-70"} aria-hidden />
+      {!compact && (
+        <p className="px-3 text-[11px] font-medium uppercase tracking-[0.16em] text-muted-foreground">
+          Illustration coming soon
+        </p>
+      )}
+    </div>
+  );
 }
