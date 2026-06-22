@@ -97,7 +97,19 @@ function Onboarding() {
           )}
 
           {step === 1 && (
-            <Step title="The basics" sub="Used to calibrate intensity. Nothing is shared.">
+            <Step title="The basics" sub="Used to calibrate intensity and demonstrations. Nothing is shared.">
+              <Field label="Demonstration style">
+                <div className="grid grid-cols-2 gap-2">
+                  {(["male", "female"] as const).map((g) => (
+                    <Chip key={g} active={p.gender === g} onClick={() => update("gender", g)}>
+                      <span className="capitalize">{g}</span>
+                    </Chip>
+                  ))}
+                </div>
+                <p className="mt-1.5 text-[11px] text-muted-foreground">
+                  Choose which demonstrations you'd like to see. Change anytime in Settings.
+                </p>
+              </Field>
               <Row>
                 <Field label="Age range">
                   <Select value={p.ageRange} onChange={(v) => update("ageRange", v)} options={["13-17","18-24","25-34","35-44","45-54","55+"]} />
