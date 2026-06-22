@@ -20,6 +20,13 @@ export type AssetFormat =
 /** The kinds of asset an exercise can have. */
 export type AssetKind = "thumbnail" | "illustration" | "animation" | "video";
 
+/** Demonstration gender. The dataset is single-model today; the model is
+ *  future-ready so a gendered provider drops in without app changes. */
+export type Gender = "male" | "female";
+
+/** Ordered movement phases shown in the step strip. */
+export type DemoStepKey = "start" | "movement" | "end" | "return" | "demo";
+
 /** A single resolved asset plus its legal/provenance metadata. */
 export interface AssetRef {
   /** Public URL (CDN pointer, /public path, or bundled import URL). */
@@ -39,11 +46,34 @@ export interface AssetRef {
   bytes?: number;
 }
 
-/** All assets known for a single exercise. Every field optional. */
-export type ExerciseAssets = Partial<Record<AssetKind, AssetRef>>;
+/** A single demonstration step image (ordered hero/thumbnail gallery item). */
+export interface DemoImage extends AssetRef {
+  /** Movement phase this image represents. */
+  step: DemoStepKey;
+  /** Human-readable label (e.g. "Start Position"). */
+  stepLabel: string;
+}
 
-/** What the Asset Manager hands back to the Workout Player. */
-export interface ResolvedAsset {
-  kind: AssetKind;
-  ref: AssetRef;
+/**
+ * All demonstration assets known for a single exercise.
+ *
+ * `shared` is the gender-neutral gallery used when no gender-specific set is
+ * available (the case for the public-domain dataset today). `male`/`female`
+ * are reserved for a future gendered provider and take priority when present.
+ */
+export interface ExerciseDemoAssets {
+  thumbnail?: AssetRef;
+  shared?: DemoImage[];
+  male?: DemoImage[];
+  female?: DemoImage[];
+}
+
+/** Back-compat alias used by older call sites. */
+export type ExerciseAssets = ExerciseDemoAssets;
+
+/** What the Asset Manager hands back for a gallery request. */
+export interface ResolvedGallery {
+  images: DemoImage[];
+  /** True when the gallery is the user's selected gender, not the shared set. */
+  gendered: boolean;
 }
