@@ -1,7 +1,8 @@
 import { createFileRoute, useNavigate, Link } from "@tanstack/react-router";
 import { useEffect } from "react";
 import { MobileFrame, GlassCard, SectionTitle } from "@/components/leveluplife/Shell";
-import { ExerciseArt } from "@/components/leveluplife/exercises/ExerciseArt";
+import { ExerciseDemo } from "@/components/leveluplife/exercises/ExerciseDemo";
+import { BreathingPattern } from "@/components/leveluplife/exercises/BreathingPattern";
 import { MuscleMap } from "@/components/leveluplife/exercises/MuscleMap";
 import { useApp } from "@/lib/leveluplife/store";
 import { exerciseById } from "@/lib/leveluplife/exercises/library";
