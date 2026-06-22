@@ -15,6 +15,7 @@ import {
   deleteAllMedia,
 } from "@/lib/leveluplife/progressMirror";
 import { toast } from "sonner";
+import { useDemoGender } from "@/lib/leveluplife/assets/gender";
 
 export const Route = createFileRoute("/profile")({
   head: () => ({ meta: [{ title: "Profile — LevelUp Life" }] }),
