@@ -25,8 +25,9 @@ export const localProvider: AssetProvider = {
     return [];
   },
 
-  async fetchAsset(_match: ProviderMatch): Promise<Uint8Array> {
+  async fetchAsset(_match: ProviderMatch, _url: string): Promise<Uint8Array> {
     void _match;
+    void _url;
     throw new Error("localProvider.fetchAsset is handled by the importer filesystem walk");
   },
 };
