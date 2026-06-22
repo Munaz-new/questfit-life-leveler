@@ -31,7 +31,7 @@ import type {
  * are returned untouched.
  */
 const BUNDLED_FILES = import.meta.glob(
-  "../../../../assets/exercise-library/**/*",
+  "../../../assets/exercise-library/**/*",
   { eager: true, query: "?url", import: "default" },
 ) as Record<string, string>;
 
