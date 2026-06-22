@@ -29,6 +29,7 @@ function Onboarding() {
   const [p, setP] = useState<UserProfile>({
     displayName: "Hunter",
     isGuest: true,
+    gender: "male",
     ageRange: "25-34",
     height: "175",
     weight: "72",
