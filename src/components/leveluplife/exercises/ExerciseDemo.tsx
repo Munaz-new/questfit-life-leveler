@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { assetUrl, resolveGallery, hasGenderedAsset } from "@/lib/leveluplife/assets/assetManager";
 import { useDemoGender } from "@/lib/leveluplife/assets/gender";
 import { ComingSoon } from "./ExerciseAsset";
