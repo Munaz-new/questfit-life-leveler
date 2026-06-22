@@ -15,6 +15,7 @@ import {
   deleteAllMedia,
 } from "@/lib/leveluplife/progressMirror";
 import { toast } from "sonner";
+import { useDemoGender } from "@/lib/leveluplife/assets/gender";
 
 export const Route = createFileRoute("/profile")({
   head: () => ({ meta: [{ title: "Profile — LevelUp Life" }] }),
@@ -25,6 +26,7 @@ function Profile() {
   const navigate = useNavigate();
   const { state, resetAll, setMotivation } = useApp();
   const [switching, setSwitching] = useState<MotivationStyle | null>(null);
+  const [demoGender, setDemoGender] = useDemoGender();
   const [mirrorUser, setMirrorUser] = useState<string | null>(null);
   const [mirrorEnabled, setMirrorEnabledState] = useState<boolean | null>(null);
 
@@ -114,6 +116,40 @@ function Profile() {
           </div>
         </div>
       </GlassCard>
+
+      <SectionTitle hint="affects demos only">Demonstration style</SectionTitle>
+      <GlassCard className="mb-5">
+        <div className="flex items-center justify-between gap-3">
+          <p className="text-sm text-muted-foreground">
+            Which exercise demonstrations you see across the app.
+          </p>
+          <div
+            role="radiogroup"
+            aria-label="Demonstration gender"
+            className="inline-flex shrink-0 rounded-full border border-white/10 bg-white/5 p-1"
+          >
+            {(["male", "female"] as const).map((g) => (
+              <button
+                key={g}
+                role="radio"
+                aria-checked={demoGender === g}
+                onClick={() => {
+                  setDemoGender(g);
+                  toast.success(`Showing ${g} demonstrations`);
+                }}
+                className={`min-h-9 rounded-full px-4 text-xs font-semibold uppercase tracking-[0.14em] transition ${
+                  demoGender === g
+                    ? "bg-gradient-primary text-[var(--primary-foreground)] shadow-glow"
+                    : "text-muted-foreground hover:text-foreground"
+                }`}
+              >
+                {g}
+              </button>
+            ))}
+          </div>
+        </div>
+      </GlassCard>
+
 
       <SectionTitle hint="switch anytime">Motivation Mode</SectionTitle>
       <div className="mb-5 grid grid-cols-2 gap-2.5">

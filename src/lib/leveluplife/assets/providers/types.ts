@@ -33,12 +33,20 @@ export interface ProviderMatch {
   label: string;
   kind: AssetKind;
   format: AssetFormat;
-  /** Remote URL to download from. */
-  remoteUrl: string;
+  /**
+   * Ordered remote URLs forming the demonstration sequence (start → end).
+   * The first entry is the hero/thumbnail source.
+   */
+  remoteUrls: string[];
   /** 0–1 confidence the match is correct. */
   confidence: number;
   license: string;
   contributor?: string;
+  /**
+   * Gender of the demonstration set, when the provider can distinguish.
+   * Omitted = gender-neutral (stored as the shared gallery).
+   */
+  gender?: "male" | "female";
 }
 
 export interface AssetProvider {
@@ -50,6 +58,6 @@ export interface AssetProvider {
   license: string;
   /** Find candidate assets for an exercise (best first). */
   search(query: ProviderQuery): Promise<ProviderMatch[]>;
-  /** Download the raw bytes for a chosen match. */
-  fetchAsset(match: ProviderMatch): Promise<Uint8Array>;
+  /** Download the raw bytes for one URL of a chosen match. */
+  fetchAsset(match: ProviderMatch, url: string): Promise<Uint8Array>;
 }

@@ -1,0 +1,39 @@
+{
+  "exerciseId": "squat-pistol",
+  "folder": "squat_pistol",
+  "assets": {
+    "thumbnail": {
+      "url": "squat_pistol/thumbnail.webp",
+      "format": "webp",
+      "source": "free-exercise-db",
+      "license": "Unlicense",
+      "version": "1",
+      "updatedAt": "2026-06-22T16:36:58.595Z",
+      "bytes": 6624
+    },
+    "shared": [
+      {
+        "url": "squat_pistol/step-0.webp",
+        "format": "webp",
+        "source": "free-exercise-db",
+        "license": "Unlicense",
+        "version": "1",
+        "updatedAt": "2026-06-22T16:36:58.595Z",
+        "bytes": 21888,
+        "step": "start",
+        "stepLabel": "Start Position"
+      },
+      {
+        "url": "squat_pistol/step-1.webp",
+        "format": "webp",
+        "source": "free-exercise-db",
+        "license": "Unlicense",
+        "version": "1",
+        "updatedAt": "2026-06-22T16:36:58.595Z",
+        "bytes": 23002,
+        "step": "end",
+        "stepLabel": "End Position"
+      }
+    ]
+  }
+}

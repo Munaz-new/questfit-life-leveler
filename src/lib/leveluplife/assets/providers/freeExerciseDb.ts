@@ -71,7 +71,8 @@ export const freeExerciseDbProvider: AssetProvider = {
           label: e.name,
           kind: "thumbnail" as const,
           format: "jpg" as const,
-          remoteUrl: IMAGE_BASE + e.images![0],
+          // Full ordered demonstration sequence (start → end), capped at 4.
+          remoteUrls: e.images!.slice(0, 4).map((img) => IMAGE_BASE + img),
           confidence,
           license: "Unlicense",
         } satisfies ProviderMatch;
@@ -81,8 +82,8 @@ export const freeExerciseDbProvider: AssetProvider = {
       .slice(0, 3);
   },
 
-  async fetchAsset(match: ProviderMatch): Promise<Uint8Array> {
-    const res = await fetch(match.remoteUrl);
+  async fetchAsset(_match: ProviderMatch, url: string): Promise<Uint8Array> {
+    const res = await fetch(url);
     if (!res.ok) throw new Error(`free-exercise-db: image fetch failed (${res.status})`);
     return new Uint8Array(await res.arrayBuffer());
   },

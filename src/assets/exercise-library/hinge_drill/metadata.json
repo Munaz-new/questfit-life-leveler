@@ -1,0 +1,39 @@
+{
+  "exerciseId": "hinge-drill",
+  "folder": "hinge_drill",
+  "assets": {
+    "thumbnail": {
+      "url": "hinge_drill/thumbnail.webp",
+      "format": "webp",
+      "source": "free-exercise-db",
+      "license": "Unlicense",
+      "version": "1",
+      "updatedAt": "2026-06-22T16:37:02.231Z",
+      "bytes": 8650
+    },
+    "shared": [
+      {
+        "url": "hinge_drill/step-0.webp",
+        "format": "webp",
+        "source": "free-exercise-db",
+        "license": "Unlicense",
+        "version": "1",
+        "updatedAt": "2026-06-22T16:37:02.231Z",
+        "bytes": 27824,
+        "step": "start",
+        "stepLabel": "Start Position"
+      },
+      {
+        "url": "hinge_drill/step-1.webp",
+        "format": "webp",
+        "source": "free-exercise-db",
+        "license": "Unlicense",
+        "version": "1",
+        "updatedAt": "2026-06-22T16:37:02.231Z",
+        "bytes": 26468,
+        "step": "end",
+        "stepLabel": "End Position"
+      }
+    ]
+  }
+}

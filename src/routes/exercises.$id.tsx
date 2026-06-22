@@ -1,7 +1,8 @@
 import { createFileRoute, useNavigate, Link } from "@tanstack/react-router";
 import { useEffect } from "react";
 import { MobileFrame, GlassCard, SectionTitle } from "@/components/leveluplife/Shell";
-import { ExerciseArt } from "@/components/leveluplife/exercises/ExerciseArt";
+import { ExerciseDemo } from "@/components/leveluplife/exercises/ExerciseDemo";
+import { BreathingPattern } from "@/components/leveluplife/exercises/BreathingPattern";
 import { MuscleMap } from "@/components/leveluplife/exercises/MuscleMap";
 import { useApp } from "@/lib/leveluplife/store";
 import { exerciseById } from "@/lib/leveluplife/exercises/library";
@@ -17,6 +18,8 @@ import {
   Users,
   Play,
   Camera,
+  Wind,
+
 
 } from "lucide-react";
 
@@ -62,11 +65,7 @@ function Detail() {
       </header>
 
       <GlassCard glow className="mb-5 overflow-hidden">
-        <div className="mb-3 flex aspect-[5/3] w-full items-center justify-center rounded-xl bg-gradient-to-br from-white/5 to-white/0 text-[var(--cyan-glow)]">
-          <div className="h-3/4 w-3/4">
-            <ExerciseArt id={ex.id} animated />
-          </div>
-        </div>
+        <ExerciseDemo id={ex.id} name={ex.name} className="mb-3" />
         <h1 className="font-display text-2xl font-bold leading-tight">{ex.name}</h1>
         <p className="mt-1 text-sm text-muted-foreground">{ex.cue}</p>
         <div className="mt-3 flex flex-wrap gap-2 text-[10px] uppercase tracking-[0.16em]">
@@ -114,6 +113,12 @@ function Detail() {
           ))}
         </ol>
       </Section>
+
+      <Section icon={<Wind className="h-4 w-4" />} title="Breathing pattern">
+        <BreathingPattern ex={ex} />
+      </Section>
+
+
 
       <Section icon={<Target className="h-4 w-4" />} title="Common mistakes">
         <ul className="space-y-1.5 text-sm">

@@ -1,0 +1,39 @@
+{
+  "exerciseId": "core-side",
+  "folder": "core_side",
+  "assets": {
+    "thumbnail": {
+      "url": "core_side/thumbnail.webp",
+      "format": "webp",
+      "source": "free-exercise-db",
+      "license": "Unlicense",
+      "version": "1",
+      "updatedAt": "2026-06-22T16:37:04.398Z",
+      "bytes": 5870
+    },
+    "shared": [
+      {
+        "url": "core_side/step-0.webp",
+        "format": "webp",
+        "source": "free-exercise-db",
+        "license": "Unlicense",
+        "version": "1",
+        "updatedAt": "2026-06-22T16:37:04.398Z",
+        "bytes": 20592,
+        "step": "start",
+        "stepLabel": "Start Position"
+      },
+      {
+        "url": "core_side/step-1.webp",
+        "format": "webp",
+        "source": "free-exercise-db",
+        "license": "Unlicense",
+        "version": "1",
+        "updatedAt": "2026-06-22T16:37:04.398Z",
+        "bytes": 22590,
+        "step": "end",
+        "stepLabel": "End Position"
+      }
+    ]
+  }
+}

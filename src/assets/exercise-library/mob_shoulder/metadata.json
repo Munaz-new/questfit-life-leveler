@@ -1,0 +1,39 @@
+{
+  "exerciseId": "mob-shoulder",
+  "folder": "mob_shoulder",
+  "assets": {
+    "thumbnail": {
+      "url": "mob_shoulder/thumbnail.webp",
+      "format": "webp",
+      "source": "free-exercise-db",
+      "license": "Unlicense",
+      "version": "1",
+      "updatedAt": "2026-06-22T16:37:05.672Z",
+      "bytes": 4716
+    },
+    "shared": [
+      {
+        "url": "mob_shoulder/step-0.webp",
+        "format": "webp",
+        "source": "free-exercise-db",
+        "license": "Unlicense",
+        "version": "1",
+        "updatedAt": "2026-06-22T16:37:05.672Z",
+        "bytes": 12556,
+        "step": "start",
+        "stepLabel": "Start Position"
+      },
+      {
+        "url": "mob_shoulder/step-1.webp",
+        "format": "webp",
+        "source": "free-exercise-db",
+        "license": "Unlicense",
+        "version": "1",
+        "updatedAt": "2026-06-22T16:37:05.672Z",
+        "bytes": 11800,
+        "step": "end",
+        "stepLabel": "End Position"
+      }
+    ]
+  }
+}

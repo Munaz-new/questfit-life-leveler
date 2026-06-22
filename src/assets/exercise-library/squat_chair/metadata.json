@@ -1,0 +1,39 @@
+{
+  "exerciseId": "squat-chair",
+  "folder": "squat_chair",
+  "assets": {
+    "thumbnail": {
+      "url": "squat_chair/thumbnail.webp",
+      "format": "webp",
+      "source": "free-exercise-db",
+      "license": "Unlicense",
+      "version": "1",
+      "updatedAt": "2026-06-22T16:36:56.401Z",
+      "bytes": 8182
+    },
+    "shared": [
+      {
+        "url": "squat_chair/step-0.webp",
+        "format": "webp",
+        "source": "free-exercise-db",
+        "license": "Unlicense",
+        "version": "1",
+        "updatedAt": "2026-06-22T16:36:56.401Z",
+        "bytes": 29454,
+        "step": "start",
+        "stepLabel": "Start Position"
+      },
+      {
+        "url": "squat_chair/step-1.webp",
+        "format": "webp",
+        "source": "free-exercise-db",
+        "license": "Unlicense",
+        "version": "1",
+        "updatedAt": "2026-06-22T16:36:56.401Z",
+        "bytes": 27818,
+        "step": "end",
+        "stepLabel": "End Position"
+      }
+    ]
+  }
+}

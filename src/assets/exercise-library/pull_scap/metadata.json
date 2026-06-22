@@ -1,0 +1,39 @@
+{
+  "exerciseId": "pull-scap",
+  "folder": "pull_scap",
+  "assets": {
+    "thumbnail": {
+      "url": "pull_scap/thumbnail.webp",
+      "format": "webp",
+      "source": "free-exercise-db",
+      "license": "Unlicense",
+      "version": "1",
+      "updatedAt": "2026-06-22T16:37:00.892Z",
+      "bytes": 8208
+    },
+    "shared": [
+      {
+        "url": "pull_scap/step-0.webp",
+        "format": "webp",
+        "source": "free-exercise-db",
+        "license": "Unlicense",
+        "version": "1",
+        "updatedAt": "2026-06-22T16:37:00.892Z",
+        "bytes": 27676,
+        "step": "start",
+        "stepLabel": "Start Position"
+      },
+      {
+        "url": "pull_scap/step-1.webp",
+        "format": "webp",
+        "source": "free-exercise-db",
+        "license": "Unlicense",
+        "version": "1",
+        "updatedAt": "2026-06-22T16:37:00.892Z",
+        "bytes": 29178,
+        "step": "end",
+        "stepLabel": "End Position"
+      }
+    ]
+  }
+}

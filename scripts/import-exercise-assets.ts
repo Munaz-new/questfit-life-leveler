@@ -43,13 +43,35 @@ const DRY = flag("dry-run");
 
 const folderOf = (id: string) => id.replace(/[^a-z0-9]+/gi, "_").toLowerCase();
 
+/** Human step labels for an ordered gallery of N images. */
+function stepLabels(n: number): { step: string; stepLabel: string }[] {
+  if (n <= 1) return [{ step: "demo", stepLabel: "Demonstration" }];
+  if (n === 2)
+    return [
+      { step: "start", stepLabel: "Start Position" },
+      { step: "end", stepLabel: "End Position" },
+    ];
+  if (n === 3)
+    return [
+      { step: "start", stepLabel: "Start Position" },
+      { step: "movement", stepLabel: "Movement" },
+      { step: "end", stepLabel: "End Position" },
+    ];
+  return [
+    { step: "start", stepLabel: "Start Position" },
+    { step: "movement", stepLabel: "Movement" },
+    { step: "end", stepLabel: "End Position" },
+    { step: "return", stepLabel: "Return" },
+  ];
+}
+
 async function importOne(ex: (typeof EXERCISES)[number]): Promise<boolean> {
   const folder = folderOf(ex.id);
   const dir = join(LIB_DIR, folder);
-  const thumbPath = join(dir, "thumbnail.webp");
+  const metaPath = join(dir, "metadata.json");
 
-  if (existsSync(thumbPath) && !FORCE) {
-    console.log(`  · ${ex.id}: thumbnail exists (skip; --force to redo)`);
+  if (existsSync(metaPath) && !FORCE) {
+    console.log(`  · ${ex.id}: assets exist (skip; --force to redo)`);
     return false;
   }
 
@@ -63,23 +85,51 @@ async function importOne(ex: (typeof EXERCISES)[number]): Promise<boolean> {
         primaryMuscles: ex.primaryMuscles as string[],
       });
       const best = matches[0];
-      if (!best) continue;
+      if (!best || !best.remoteUrls.length) continue;
 
       console.log(
-        `  ↓ ${ex.id} ← ${provider.id} "${best.label}" (conf ${best.confidence.toFixed(2)})`,
+        `  ↓ ${ex.id} ← ${provider.id} "${best.label}" (${best.remoteUrls.length} img, conf ${best.confidence.toFixed(2)})`,
       );
       if (DRY) return true;
 
-      const raw = await provider.fetchAsset(best);
       await mkdir(dir, { recursive: true });
-
-      // Optimize: full webp + small square thumbnail.
-      const webp = await sharp(Buffer.from(raw)).resize(640, 640, { fit: "inside" }).webp({ quality: 82 }).toBuffer();
-      const thumb = await sharp(Buffer.from(raw)).resize(256, 256, { fit: "cover" }).webp({ quality: 80 }).toBuffer();
-      await writeFile(join(dir, "illustration.webp"), webp);
-      await writeFile(thumbPath, thumb);
-
       const now = new Date().toISOString();
+      const labels = stepLabels(best.remoteUrls.length);
+      const gallery: unknown[] = [];
+
+      for (let i = 0; i < best.remoteUrls.length; i++) {
+        const raw = await provider.fetchAsset(best, best.remoteUrls[i]);
+        const webp = await sharp(Buffer.from(raw))
+          .resize(720, 720, { fit: "inside" })
+          .webp({ quality: 82 })
+          .toBuffer();
+        const file = `step-${i}.webp`;
+        await writeFile(join(dir, file), webp);
+        gallery.push({
+          url: `${folder}/${file}`,
+          format: "webp",
+          source: provider.id,
+          license: best.license,
+          contributor: best.contributor,
+          version: "1",
+          updatedAt: now,
+          bytes: webp.byteLength,
+          step: labels[i].step,
+          stepLabel: labels[i].stepLabel,
+        });
+      }
+
+      // Square thumbnail from the first frame.
+      const thumbRaw = await provider.fetchAsset(best, best.remoteUrls[0]);
+      const thumb = await sharp(Buffer.from(thumbRaw))
+        .resize(256, 256, { fit: "cover" })
+        .webp({ quality: 80 })
+        .toBuffer();
+      await writeFile(join(dir, "thumbnail.webp"), thumb);
+
+      // A real gendered provider would store under `male`/`female`; today the
+      // public-domain dataset is gender-neutral, so it lives in `shared`.
+      const genderKey = best.gender ?? "shared";
       const meta = {
         exerciseId: ex.id,
         folder,
@@ -94,20 +144,11 @@ async function importOne(ex: (typeof EXERCISES)[number]): Promise<boolean> {
             updatedAt: now,
             bytes: thumb.byteLength,
           },
-          illustration: {
-            url: `${folder}/illustration.webp`,
-            format: "webp",
-            source: provider.id,
-            license: best.license,
-            contributor: best.contributor,
-            version: "1",
-            updatedAt: now,
-            bytes: webp.byteLength,
-          },
+          [genderKey]: gallery,
         },
       };
-      await writeFile(join(dir, "metadata.json"), JSON.stringify(meta, null, 2) + "\n");
-      console.log(`  ✓ ${ex.id} → ${folder}/`);
+      await writeFile(metaPath, JSON.stringify(meta, null, 2) + "\n");
+      console.log(`  ✓ ${ex.id} → ${folder}/ (${gallery.length} frames)`);
       return true;
     } catch (err) {
       console.warn(`  ! ${ex.id} via ${provider.id}: ${(err as Error).message}`);

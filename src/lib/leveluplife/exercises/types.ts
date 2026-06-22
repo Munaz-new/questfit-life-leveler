@@ -88,6 +88,8 @@ export interface Exercise {
   defaultRest: number;
   cue: string;
   scienceNote?: string;
+  /** Optional explicit breathing guidance; otherwise derived from pattern. */
+  breathing?: string;
 
   /** Registry key into illustrations index. Defaults to id. */
   illustration?: string;

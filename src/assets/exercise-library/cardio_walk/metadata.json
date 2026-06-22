@@ -1,0 +1,39 @@
+{
+  "exerciseId": "cardio-walk",
+  "folder": "cardio_walk",
+  "assets": {
+    "thumbnail": {
+      "url": "cardio_walk/thumbnail.webp",
+      "format": "webp",
+      "source": "free-exercise-db",
+      "license": "Unlicense",
+      "version": "1",
+      "updatedAt": "2026-06-22T16:37:07.702Z",
+      "bytes": 12478
+    },
+    "shared": [
+      {
+        "url": "cardio_walk/step-0.webp",
+        "format": "webp",
+        "source": "free-exercise-db",
+        "license": "Unlicense",
+        "version": "1",
+        "updatedAt": "2026-06-22T16:37:07.702Z",
+        "bytes": 41312,
+        "step": "start",
+        "stepLabel": "Start Position"
+      },
+      {
+        "url": "cardio_walk/step-1.webp",
+        "format": "webp",
+        "source": "free-exercise-db",
+        "license": "Unlicense",
+        "version": "1",
+        "updatedAt": "2026-06-22T16:37:07.702Z",
+        "bytes": 38708,
+        "step": "end",
+        "stepLabel": "End Position"
+      }
+    ]
+  }
+}

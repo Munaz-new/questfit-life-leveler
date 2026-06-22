@@ -1,0 +1,39 @@
+{
+  "exerciseId": "hinge-single",
+  "folder": "hinge_single",
+  "assets": {
+    "thumbnail": {
+      "url": "hinge_single/thumbnail.webp",
+      "format": "webp",
+      "source": "free-exercise-db",
+      "license": "Unlicense",
+      "version": "1",
+      "updatedAt": "2026-06-22T16:37:03.040Z",
+      "bytes": 13462
+    },
+    "shared": [
+      {
+        "url": "hinge_single/step-0.webp",
+        "format": "webp",
+        "source": "free-exercise-db",
+        "license": "Unlicense",
+        "version": "1",
+        "updatedAt": "2026-06-22T16:37:03.040Z",
+        "bytes": 56456,
+        "step": "start",
+        "stepLabel": "Start Position"
+      },
+      {
+        "url": "hinge_single/step-1.webp",
+        "format": "webp",
+        "source": "free-exercise-db",
+        "license": "Unlicense",
+        "version": "1",
+        "updatedAt": "2026-06-22T16:37:03.040Z",
+        "bytes": 55698,
+        "step": "end",
+        "stepLabel": "End Position"
+      }
+    ]
+  }
+}

@@ -1,0 +1,39 @@
+{
+  "exerciseId": "hinge-bridge",
+  "folder": "hinge_bridge",
+  "assets": {
+    "thumbnail": {
+      "url": "hinge_bridge/thumbnail.webp",
+      "format": "webp",
+      "source": "free-exercise-db",
+      "license": "Unlicense",
+      "version": "1",
+      "updatedAt": "2026-06-22T16:37:01.783Z",
+      "bytes": 8272
+    },
+    "shared": [
+      {
+        "url": "hinge_bridge/step-0.webp",
+        "format": "webp",
+        "source": "free-exercise-db",
+        "license": "Unlicense",
+        "version": "1",
+        "updatedAt": "2026-06-22T16:37:01.783Z",
+        "bytes": 26480,
+        "step": "start",
+        "stepLabel": "Start Position"
+      },
+      {
+        "url": "hinge_bridge/step-1.webp",
+        "format": "webp",
+        "source": "free-exercise-db",
+        "license": "Unlicense",
+        "version": "1",
+        "updatedAt": "2026-06-22T16:37:01.783Z",
+        "bytes": 24168,
+        "step": "end",
+        "stepLabel": "End Position"
+      }
+    ]
+  }
+}

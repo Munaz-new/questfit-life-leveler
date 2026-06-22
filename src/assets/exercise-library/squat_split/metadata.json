@@ -1,0 +1,39 @@
+{
+  "exerciseId": "squat-split",
+  "folder": "squat_split",
+  "assets": {
+    "thumbnail": {
+      "url": "squat_split/thumbnail.webp",
+      "format": "webp",
+      "source": "free-exercise-db",
+      "license": "Unlicense",
+      "version": "1",
+      "updatedAt": "2026-06-22T16:36:58.093Z",
+      "bytes": 13130
+    },
+    "shared": [
+      {
+        "url": "squat_split/step-0.webp",
+        "format": "webp",
+        "source": "free-exercise-db",
+        "license": "Unlicense",
+        "version": "1",
+        "updatedAt": "2026-06-22T16:36:58.093Z",
+        "bytes": 46706,
+        "step": "start",
+        "stepLabel": "Start Position"
+      },
+      {
+        "url": "squat_split/step-1.webp",
+        "format": "webp",
+        "source": "free-exercise-db",
+        "license": "Unlicense",
+        "version": "1",
+        "updatedAt": "2026-06-22T16:36:58.093Z",
+        "bytes": 48880,
+        "step": "end",
+        "stepLabel": "End Position"
+      }
+    ]
+  }
+}

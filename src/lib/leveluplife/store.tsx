@@ -119,14 +119,20 @@ export function AppProvider({ children }: { children: ReactNode }) {
       xpForNextLevel,
       progressPct: Math.min(100, Math.round((state.xp / xpForNextLevel) * 100)),
       daysSinceLastWorkout,
-      setProfile: (p) =>
+      setProfile: (p) => {
+        // Seed the demonstration gender preference from onboarding.
+        if (typeof window !== "undefined") {
+          window.localStorage.setItem("leveluplife.demoGender", p.gender);
+          window.dispatchEvent(new CustomEvent("leveluplife:demoGender", { detail: p.gender }));
+        }
         setState((s) => ({
           ...s,
           profile: p,
           onboarded: true,
           quests: s.quests.length ? s.quests : defaultQuestsFor(p),
           streak: s.streak || 1,
-        })),
+        }));
+      },
       setMotivation: (m) =>
         setState((s) => (s.profile ? { ...s, profile: { ...s.profile, motivation: m } } : s)),
       completeQuest: (id) =>

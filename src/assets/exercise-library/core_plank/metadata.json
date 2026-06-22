@@ -1,0 +1,39 @@
+{
+  "exerciseId": "core-plank",
+  "folder": "core_plank",
+  "assets": {
+    "thumbnail": {
+      "url": "core_plank/thumbnail.webp",
+      "format": "webp",
+      "source": "free-exercise-db",
+      "license": "Unlicense",
+      "version": "1",
+      "updatedAt": "2026-06-22T16:37:03.961Z",
+      "bytes": 6186
+    },
+    "shared": [
+      {
+        "url": "core_plank/step-0.webp",
+        "format": "webp",
+        "source": "free-exercise-db",
+        "license": "Unlicense",
+        "version": "1",
+        "updatedAt": "2026-06-22T16:37:03.961Z",
+        "bytes": 21664,
+        "step": "start",
+        "stepLabel": "Start Position"
+      },
+      {
+        "url": "core_plank/step-1.webp",
+        "format": "webp",
+        "source": "free-exercise-db",
+        "license": "Unlicense",
+        "version": "1",
+        "updatedAt": "2026-06-22T16:37:03.961Z",
+        "bytes": 22284,
+        "step": "end",
+        "stepLabel": "End Position"
+      }
+    ]
+  }
+}

@@ -1,0 +1,39 @@
+{
+  "exerciseId": "pull-pullup",
+  "folder": "pull_pullup",
+  "assets": {
+    "thumbnail": {
+      "url": "pull_pullup/thumbnail.webp",
+      "format": "webp",
+      "source": "free-exercise-db",
+      "license": "Unlicense",
+      "version": "1",
+      "updatedAt": "2026-06-22T16:37:01.334Z",
+      "bytes": 6962
+    },
+    "shared": [
+      {
+        "url": "pull_pullup/step-0.webp",
+        "format": "webp",
+        "source": "free-exercise-db",
+        "license": "Unlicense",
+        "version": "1",
+        "updatedAt": "2026-06-22T16:37:01.334Z",
+        "bytes": 24256,
+        "step": "start",
+        "stepLabel": "Start Position"
+      },
+      {
+        "url": "pull_pullup/step-1.webp",
+        "format": "webp",
+        "source": "free-exercise-db",
+        "license": "Unlicense",
+        "version": "1",
+        "updatedAt": "2026-06-22T16:37:01.334Z",
+        "bytes": 24608,
+        "step": "end",
+        "stepLabel": "End Position"
+      }
+    ]
+  }
+}

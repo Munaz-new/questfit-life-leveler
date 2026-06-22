@@ -8,7 +8,1233 @@
 
 import type { ExerciseAssets } from "./types";
 
-export const ASSET_MANIFEST: Record<string, ExerciseAssets> = {};
+export const ASSET_MANIFEST: Record<string, ExerciseAssets> = {
+  "squat-chair": {
+    "thumbnail": {
+      "url": "squat_chair/thumbnail.webp",
+      "format": "webp",
+      "source": "free-exercise-db",
+      "license": "Unlicense",
+      "version": "1",
+      "updatedAt": "2026-06-22T16:36:56.401Z",
+      "bytes": 8182
+    },
+    "shared": [
+      {
+        "url": "squat_chair/step-0.webp",
+        "format": "webp",
+        "source": "free-exercise-db",
+        "license": "Unlicense",
+        "version": "1",
+        "updatedAt": "2026-06-22T16:36:56.401Z",
+        "bytes": 29454,
+        "step": "start",
+        "stepLabel": "Start Position"
+      },
+      {
+        "url": "squat_chair/step-1.webp",
+        "format": "webp",
+        "source": "free-exercise-db",
+        "license": "Unlicense",
+        "version": "1",
+        "updatedAt": "2026-06-22T16:36:56.401Z",
+        "bytes": 27818,
+        "step": "end",
+        "stepLabel": "End Position"
+      }
+    ]
+  },
+  "squat-assisted": {
+    "thumbnail": {
+      "url": "squat_assisted/thumbnail.webp",
+      "format": "webp",
+      "source": "free-exercise-db",
+      "license": "Unlicense",
+      "version": "1",
+      "updatedAt": "2026-06-22T16:36:56.844Z",
+      "bytes": 8246
+    },
+    "shared": [
+      {
+        "url": "squat_assisted/step-0.webp",
+        "format": "webp",
+        "source": "free-exercise-db",
+        "license": "Unlicense",
+        "version": "1",
+        "updatedAt": "2026-06-22T16:36:56.844Z",
+        "bytes": 27188,
+        "step": "start",
+        "stepLabel": "Start Position"
+      },
+      {
+        "url": "squat_assisted/step-1.webp",
+        "format": "webp",
+        "source": "free-exercise-db",
+        "license": "Unlicense",
+        "version": "1",
+        "updatedAt": "2026-06-22T16:36:56.844Z",
+        "bytes": 27456,
+        "step": "end",
+        "stepLabel": "End Position"
+      }
+    ]
+  },
+  "squat-bw": {
+    "thumbnail": {
+      "url": "squat_bw/thumbnail.webp",
+      "format": "webp",
+      "source": "free-exercise-db",
+      "license": "Unlicense",
+      "version": "1",
+      "updatedAt": "2026-06-22T16:36:57.292Z",
+      "bytes": 5506
+    },
+    "shared": [
+      {
+        "url": "squat_bw/step-0.webp",
+        "format": "webp",
+        "source": "free-exercise-db",
+        "license": "Unlicense",
+        "version": "1",
+        "updatedAt": "2026-06-22T16:36:57.292Z",
+        "bytes": 18822,
+        "step": "start",
+        "stepLabel": "Start Position"
+      },
+      {
+        "url": "squat_bw/step-1.webp",
+        "format": "webp",
+        "source": "free-exercise-db",
+        "license": "Unlicense",
+        "version": "1",
+        "updatedAt": "2026-06-22T16:36:57.292Z",
+        "bytes": 21576,
+        "step": "end",
+        "stepLabel": "End Position"
+      }
+    ]
+  },
+  "squat-goblet": {
+    "thumbnail": {
+      "url": "squat_goblet/thumbnail.webp",
+      "format": "webp",
+      "source": "free-exercise-db",
+      "license": "Unlicense",
+      "version": "1",
+      "updatedAt": "2026-06-22T16:36:57.690Z",
+      "bytes": 6462
+    },
+    "shared": [
+      {
+        "url": "squat_goblet/step-0.webp",
+        "format": "webp",
+        "source": "free-exercise-db",
+        "license": "Unlicense",
+        "version": "1",
+        "updatedAt": "2026-06-22T16:36:57.690Z",
+        "bytes": 21652,
+        "step": "start",
+        "stepLabel": "Start Position"
+      },
+      {
+        "url": "squat_goblet/step-1.webp",
+        "format": "webp",
+        "source": "free-exercise-db",
+        "license": "Unlicense",
+        "version": "1",
+        "updatedAt": "2026-06-22T16:36:57.690Z",
+        "bytes": 21900,
+        "step": "end",
+        "stepLabel": "End Position"
+      }
+    ]
+  },
+  "squat-split": {
+    "thumbnail": {
+      "url": "squat_split/thumbnail.webp",
+      "format": "webp",
+      "source": "free-exercise-db",
+      "license": "Unlicense",
+      "version": "1",
+      "updatedAt": "2026-06-22T16:36:58.093Z",
+      "bytes": 13130
+    },
+    "shared": [
+      {
+        "url": "squat_split/step-0.webp",
+        "format": "webp",
+        "source": "free-exercise-db",
+        "license": "Unlicense",
+        "version": "1",
+        "updatedAt": "2026-06-22T16:36:58.093Z",
+        "bytes": 46706,
+        "step": "start",
+        "stepLabel": "Start Position"
+      },
+      {
+        "url": "squat_split/step-1.webp",
+        "format": "webp",
+        "source": "free-exercise-db",
+        "license": "Unlicense",
+        "version": "1",
+        "updatedAt": "2026-06-22T16:36:58.093Z",
+        "bytes": 48880,
+        "step": "end",
+        "stepLabel": "End Position"
+      }
+    ]
+  },
+  "squat-pistol": {
+    "thumbnail": {
+      "url": "squat_pistol/thumbnail.webp",
+      "format": "webp",
+      "source": "free-exercise-db",
+      "license": "Unlicense",
+      "version": "1",
+      "updatedAt": "2026-06-22T16:36:58.595Z",
+      "bytes": 6624
+    },
+    "shared": [
+      {
+        "url": "squat_pistol/step-0.webp",
+        "format": "webp",
+        "source": "free-exercise-db",
+        "license": "Unlicense",
+        "version": "1",
+        "updatedAt": "2026-06-22T16:36:58.595Z",
+        "bytes": 21888,
+        "step": "start",
+        "stepLabel": "Start Position"
+      },
+      {
+        "url": "squat_pistol/step-1.webp",
+        "format": "webp",
+        "source": "free-exercise-db",
+        "license": "Unlicense",
+        "version": "1",
+        "updatedAt": "2026-06-22T16:36:58.595Z",
+        "bytes": 23002,
+        "step": "end",
+        "stepLabel": "End Position"
+      }
+    ]
+  },
+  "push-wall": {
+    "thumbnail": {
+      "url": "push_wall/thumbnail.webp",
+      "format": "webp",
+      "source": "free-exercise-db",
+      "license": "Unlicense",
+      "version": "1",
+      "updatedAt": "2026-06-22T16:36:59.039Z",
+      "bytes": 6686
+    },
+    "shared": [
+      {
+        "url": "push_wall/step-0.webp",
+        "format": "webp",
+        "source": "free-exercise-db",
+        "license": "Unlicense",
+        "version": "1",
+        "updatedAt": "2026-06-22T16:36:59.039Z",
+        "bytes": 21110,
+        "step": "start",
+        "stepLabel": "Start Position"
+      },
+      {
+        "url": "push_wall/step-1.webp",
+        "format": "webp",
+        "source": "free-exercise-db",
+        "license": "Unlicense",
+        "version": "1",
+        "updatedAt": "2026-06-22T16:36:59.039Z",
+        "bytes": 20156,
+        "step": "end",
+        "stepLabel": "End Position"
+      }
+    ]
+  },
+  "push-incline": {
+    "thumbnail": {
+      "url": "push_incline/thumbnail.webp",
+      "format": "webp",
+      "source": "free-exercise-db",
+      "license": "Unlicense",
+      "version": "1",
+      "updatedAt": "2026-06-22T16:36:59.301Z",
+      "bytes": 10824
+    },
+    "shared": [
+      {
+        "url": "push_incline/step-0.webp",
+        "format": "webp",
+        "source": "free-exercise-db",
+        "license": "Unlicense",
+        "version": "1",
+        "updatedAt": "2026-06-22T16:36:59.301Z",
+        "bytes": 38394,
+        "step": "start",
+        "stepLabel": "Start Position"
+      },
+      {
+        "url": "push_incline/step-1.webp",
+        "format": "webp",
+        "source": "free-exercise-db",
+        "license": "Unlicense",
+        "version": "1",
+        "updatedAt": "2026-06-22T16:36:59.301Z",
+        "bytes": 38422,
+        "step": "end",
+        "stepLabel": "End Position"
+      }
+    ]
+  },
+  "push-bw": {
+    "thumbnail": {
+      "url": "push_bw/thumbnail.webp",
+      "format": "webp",
+      "source": "free-exercise-db",
+      "license": "Unlicense",
+      "version": "1",
+      "updatedAt": "2026-06-22T16:36:59.619Z",
+      "bytes": 6686
+    },
+    "shared": [
+      {
+        "url": "push_bw/step-0.webp",
+        "format": "webp",
+        "source": "free-exercise-db",
+        "license": "Unlicense",
+        "version": "1",
+        "updatedAt": "2026-06-22T16:36:59.619Z",
+        "bytes": 21110,
+        "step": "start",
+        "stepLabel": "Start Position"
+      },
+      {
+        "url": "push_bw/step-1.webp",
+        "format": "webp",
+        "source": "free-exercise-db",
+        "license": "Unlicense",
+        "version": "1",
+        "updatedAt": "2026-06-22T16:36:59.619Z",
+        "bytes": 20156,
+        "step": "end",
+        "stepLabel": "End Position"
+      }
+    ]
+  },
+  "push-decline": {
+    "thumbnail": {
+      "url": "push_decline/thumbnail.webp",
+      "format": "webp",
+      "source": "free-exercise-db",
+      "license": "Unlicense",
+      "version": "1",
+      "updatedAt": "2026-06-22T16:36:59.765Z",
+      "bytes": 9472
+    },
+    "shared": [
+      {
+        "url": "push_decline/step-0.webp",
+        "format": "webp",
+        "source": "free-exercise-db",
+        "license": "Unlicense",
+        "version": "1",
+        "updatedAt": "2026-06-22T16:36:59.765Z",
+        "bytes": 33904,
+        "step": "start",
+        "stepLabel": "Start Position"
+      },
+      {
+        "url": "push_decline/step-1.webp",
+        "format": "webp",
+        "source": "free-exercise-db",
+        "license": "Unlicense",
+        "version": "1",
+        "updatedAt": "2026-06-22T16:36:59.765Z",
+        "bytes": 34356,
+        "step": "end",
+        "stepLabel": "End Position"
+      }
+    ]
+  },
+  "pull-band-row": {
+    "thumbnail": {
+      "url": "pull_band_row/thumbnail.webp",
+      "format": "webp",
+      "source": "free-exercise-db",
+      "license": "Unlicense",
+      "version": "1",
+      "updatedAt": "2026-06-22T16:37:00.101Z",
+      "bytes": 9172
+    },
+    "shared": [
+      {
+        "url": "pull_band_row/step-0.webp",
+        "format": "webp",
+        "source": "free-exercise-db",
+        "license": "Unlicense",
+        "version": "1",
+        "updatedAt": "2026-06-22T16:37:00.101Z",
+        "bytes": 33924,
+        "step": "start",
+        "stepLabel": "Start Position"
+      },
+      {
+        "url": "pull_band_row/step-1.webp",
+        "format": "webp",
+        "source": "free-exercise-db",
+        "license": "Unlicense",
+        "version": "1",
+        "updatedAt": "2026-06-22T16:37:00.101Z",
+        "bytes": 36056,
+        "step": "end",
+        "stepLabel": "End Position"
+      }
+    ]
+  },
+  "pull-db-row": {
+    "thumbnail": {
+      "url": "pull_db_row/thumbnail.webp",
+      "format": "webp",
+      "source": "free-exercise-db",
+      "license": "Unlicense",
+      "version": "1",
+      "updatedAt": "2026-06-22T16:37:00.569Z",
+      "bytes": 14586
+    },
+    "shared": [
+      {
+        "url": "pull_db_row/step-0.webp",
+        "format": "webp",
+        "source": "free-exercise-db",
+        "license": "Unlicense",
+        "version": "1",
+        "updatedAt": "2026-06-22T16:37:00.569Z",
+        "bytes": 62704,
+        "step": "start",
+        "stepLabel": "Start Position"
+      },
+      {
+        "url": "pull_db_row/step-1.webp",
+        "format": "webp",
+        "source": "free-exercise-db",
+        "license": "Unlicense",
+        "version": "1",
+        "updatedAt": "2026-06-22T16:37:00.569Z",
+        "bytes": 62656,
+        "step": "end",
+        "stepLabel": "End Position"
+      }
+    ]
+  },
+  "pull-scap": {
+    "thumbnail": {
+      "url": "pull_scap/thumbnail.webp",
+      "format": "webp",
+      "source": "free-exercise-db",
+      "license": "Unlicense",
+      "version": "1",
+      "updatedAt": "2026-06-22T16:37:00.892Z",
+      "bytes": 8208
+    },
+    "shared": [
+      {
+        "url": "pull_scap/step-0.webp",
+        "format": "webp",
+        "source": "free-exercise-db",
+        "license": "Unlicense",
+        "version": "1",
+        "updatedAt": "2026-06-22T16:37:00.892Z",
+        "bytes": 27676,
+        "step": "start",
+        "stepLabel": "Start Position"
+      },
+      {
+        "url": "pull_scap/step-1.webp",
+        "format": "webp",
+        "source": "free-exercise-db",
+        "license": "Unlicense",
+        "version": "1",
+        "updatedAt": "2026-06-22T16:37:00.892Z",
+        "bytes": 29178,
+        "step": "end",
+        "stepLabel": "End Position"
+      }
+    ]
+  },
+  "pull-pullup": {
+    "thumbnail": {
+      "url": "pull_pullup/thumbnail.webp",
+      "format": "webp",
+      "source": "free-exercise-db",
+      "license": "Unlicense",
+      "version": "1",
+      "updatedAt": "2026-06-22T16:37:01.334Z",
+      "bytes": 6962
+    },
+    "shared": [
+      {
+        "url": "pull_pullup/step-0.webp",
+        "format": "webp",
+        "source": "free-exercise-db",
+        "license": "Unlicense",
+        "version": "1",
+        "updatedAt": "2026-06-22T16:37:01.334Z",
+        "bytes": 24256,
+        "step": "start",
+        "stepLabel": "Start Position"
+      },
+      {
+        "url": "pull_pullup/step-1.webp",
+        "format": "webp",
+        "source": "free-exercise-db",
+        "license": "Unlicense",
+        "version": "1",
+        "updatedAt": "2026-06-22T16:37:01.334Z",
+        "bytes": 24608,
+        "step": "end",
+        "stepLabel": "End Position"
+      }
+    ]
+  },
+  "hinge-bridge": {
+    "thumbnail": {
+      "url": "hinge_bridge/thumbnail.webp",
+      "format": "webp",
+      "source": "free-exercise-db",
+      "license": "Unlicense",
+      "version": "1",
+      "updatedAt": "2026-06-22T16:37:01.783Z",
+      "bytes": 8272
+    },
+    "shared": [
+      {
+        "url": "hinge_bridge/step-0.webp",
+        "format": "webp",
+        "source": "free-exercise-db",
+        "license": "Unlicense",
+        "version": "1",
+        "updatedAt": "2026-06-22T16:37:01.783Z",
+        "bytes": 26480,
+        "step": "start",
+        "stepLabel": "Start Position"
+      },
+      {
+        "url": "hinge_bridge/step-1.webp",
+        "format": "webp",
+        "source": "free-exercise-db",
+        "license": "Unlicense",
+        "version": "1",
+        "updatedAt": "2026-06-22T16:37:01.783Z",
+        "bytes": 24168,
+        "step": "end",
+        "stepLabel": "End Position"
+      }
+    ]
+  },
+  "hinge-drill": {
+    "thumbnail": {
+      "url": "hinge_drill/thumbnail.webp",
+      "format": "webp",
+      "source": "free-exercise-db",
+      "license": "Unlicense",
+      "version": "1",
+      "updatedAt": "2026-06-22T16:37:02.231Z",
+      "bytes": 8650
+    },
+    "shared": [
+      {
+        "url": "hinge_drill/step-0.webp",
+        "format": "webp",
+        "source": "free-exercise-db",
+        "license": "Unlicense",
+        "version": "1",
+        "updatedAt": "2026-06-22T16:37:02.231Z",
+        "bytes": 27824,
+        "step": "start",
+        "stepLabel": "Start Position"
+      },
+      {
+        "url": "hinge_drill/step-1.webp",
+        "format": "webp",
+        "source": "free-exercise-db",
+        "license": "Unlicense",
+        "version": "1",
+        "updatedAt": "2026-06-22T16:37:02.231Z",
+        "bytes": 26468,
+        "step": "end",
+        "stepLabel": "End Position"
+      }
+    ]
+  },
+  "hinge-rdl-db": {
+    "thumbnail": {
+      "url": "hinge_rdl_db/thumbnail.webp",
+      "format": "webp",
+      "source": "free-exercise-db",
+      "license": "Unlicense",
+      "version": "1",
+      "updatedAt": "2026-06-22T16:37:02.610Z",
+      "bytes": 8726
+    },
+    "shared": [
+      {
+        "url": "hinge_rdl_db/step-0.webp",
+        "format": "webp",
+        "source": "free-exercise-db",
+        "license": "Unlicense",
+        "version": "1",
+        "updatedAt": "2026-06-22T16:37:02.610Z",
+        "bytes": 30402,
+        "step": "start",
+        "stepLabel": "Start Position"
+      },
+      {
+        "url": "hinge_rdl_db/step-1.webp",
+        "format": "webp",
+        "source": "free-exercise-db",
+        "license": "Unlicense",
+        "version": "1",
+        "updatedAt": "2026-06-22T16:37:02.610Z",
+        "bytes": 29208,
+        "step": "end",
+        "stepLabel": "End Position"
+      }
+    ]
+  },
+  "hinge-single": {
+    "thumbnail": {
+      "url": "hinge_single/thumbnail.webp",
+      "format": "webp",
+      "source": "free-exercise-db",
+      "license": "Unlicense",
+      "version": "1",
+      "updatedAt": "2026-06-22T16:37:03.040Z",
+      "bytes": 13462
+    },
+    "shared": [
+      {
+        "url": "hinge_single/step-0.webp",
+        "format": "webp",
+        "source": "free-exercise-db",
+        "license": "Unlicense",
+        "version": "1",
+        "updatedAt": "2026-06-22T16:37:03.040Z",
+        "bytes": 56456,
+        "step": "start",
+        "stepLabel": "Start Position"
+      },
+      {
+        "url": "hinge_single/step-1.webp",
+        "format": "webp",
+        "source": "free-exercise-db",
+        "license": "Unlicense",
+        "version": "1",
+        "updatedAt": "2026-06-22T16:37:03.040Z",
+        "bytes": 55698,
+        "step": "end",
+        "stepLabel": "End Position"
+      }
+    ]
+  },
+  "core-deadbug": {
+    "thumbnail": {
+      "url": "core_deadbug/thumbnail.webp",
+      "format": "webp",
+      "source": "free-exercise-db",
+      "license": "Unlicense",
+      "version": "1",
+      "updatedAt": "2026-06-22T16:37:03.500Z",
+      "bytes": 3886
+    },
+    "shared": [
+      {
+        "url": "core_deadbug/step-0.webp",
+        "format": "webp",
+        "source": "free-exercise-db",
+        "license": "Unlicense",
+        "version": "1",
+        "updatedAt": "2026-06-22T16:37:03.500Z",
+        "bytes": 9614,
+        "step": "start",
+        "stepLabel": "Start Position"
+      },
+      {
+        "url": "core_deadbug/step-1.webp",
+        "format": "webp",
+        "source": "free-exercise-db",
+        "license": "Unlicense",
+        "version": "1",
+        "updatedAt": "2026-06-22T16:37:03.500Z",
+        "bytes": 10416,
+        "step": "end",
+        "stepLabel": "End Position"
+      }
+    ]
+  },
+  "core-plank": {
+    "thumbnail": {
+      "url": "core_plank/thumbnail.webp",
+      "format": "webp",
+      "source": "free-exercise-db",
+      "license": "Unlicense",
+      "version": "1",
+      "updatedAt": "2026-06-22T16:37:03.961Z",
+      "bytes": 6186
+    },
+    "shared": [
+      {
+        "url": "core_plank/step-0.webp",
+        "format": "webp",
+        "source": "free-exercise-db",
+        "license": "Unlicense",
+        "version": "1",
+        "updatedAt": "2026-06-22T16:37:03.961Z",
+        "bytes": 21664,
+        "step": "start",
+        "stepLabel": "Start Position"
+      },
+      {
+        "url": "core_plank/step-1.webp",
+        "format": "webp",
+        "source": "free-exercise-db",
+        "license": "Unlicense",
+        "version": "1",
+        "updatedAt": "2026-06-22T16:37:03.961Z",
+        "bytes": 22284,
+        "step": "end",
+        "stepLabel": "End Position"
+      }
+    ]
+  },
+  "core-side": {
+    "thumbnail": {
+      "url": "core_side/thumbnail.webp",
+      "format": "webp",
+      "source": "free-exercise-db",
+      "license": "Unlicense",
+      "version": "1",
+      "updatedAt": "2026-06-22T16:37:04.398Z",
+      "bytes": 5870
+    },
+    "shared": [
+      {
+        "url": "core_side/step-0.webp",
+        "format": "webp",
+        "source": "free-exercise-db",
+        "license": "Unlicense",
+        "version": "1",
+        "updatedAt": "2026-06-22T16:37:04.398Z",
+        "bytes": 20592,
+        "step": "start",
+        "stepLabel": "Start Position"
+      },
+      {
+        "url": "core_side/step-1.webp",
+        "format": "webp",
+        "source": "free-exercise-db",
+        "license": "Unlicense",
+        "version": "1",
+        "updatedAt": "2026-06-22T16:37:04.398Z",
+        "bytes": 22590,
+        "step": "end",
+        "stepLabel": "End Position"
+      }
+    ]
+  },
+  "mob-neck": {
+    "thumbnail": {
+      "url": "mob_neck/thumbnail.webp",
+      "format": "webp",
+      "source": "free-exercise-db",
+      "license": "Unlicense",
+      "version": "1",
+      "updatedAt": "2026-06-22T16:37:04.802Z",
+      "bytes": 6728
+    },
+    "shared": [
+      {
+        "url": "mob_neck/step-0.webp",
+        "format": "webp",
+        "source": "free-exercise-db",
+        "license": "Unlicense",
+        "version": "1",
+        "updatedAt": "2026-06-22T16:37:04.802Z",
+        "bytes": 21958,
+        "step": "start",
+        "stepLabel": "Start Position"
+      },
+      {
+        "url": "mob_neck/step-1.webp",
+        "format": "webp",
+        "source": "free-exercise-db",
+        "license": "Unlicense",
+        "version": "1",
+        "updatedAt": "2026-06-22T16:37:04.802Z",
+        "bytes": 19622,
+        "step": "end",
+        "stepLabel": "End Position"
+      }
+    ]
+  },
+  "mob-wrist": {
+    "thumbnail": {
+      "url": "mob_wrist/thumbnail.webp",
+      "format": "webp",
+      "source": "free-exercise-db",
+      "license": "Unlicense",
+      "version": "1",
+      "updatedAt": "2026-06-22T16:37:05.220Z",
+      "bytes": 8374
+    },
+    "shared": [
+      {
+        "url": "mob_wrist/step-0.webp",
+        "format": "webp",
+        "source": "free-exercise-db",
+        "license": "Unlicense",
+        "version": "1",
+        "updatedAt": "2026-06-22T16:37:05.220Z",
+        "bytes": 30100,
+        "step": "start",
+        "stepLabel": "Start Position"
+      },
+      {
+        "url": "mob_wrist/step-1.webp",
+        "format": "webp",
+        "source": "free-exercise-db",
+        "license": "Unlicense",
+        "version": "1",
+        "updatedAt": "2026-06-22T16:37:05.220Z",
+        "bytes": 30348,
+        "step": "end",
+        "stepLabel": "End Position"
+      }
+    ]
+  },
+  "mob-shoulder": {
+    "thumbnail": {
+      "url": "mob_shoulder/thumbnail.webp",
+      "format": "webp",
+      "source": "free-exercise-db",
+      "license": "Unlicense",
+      "version": "1",
+      "updatedAt": "2026-06-22T16:37:05.672Z",
+      "bytes": 4716
+    },
+    "shared": [
+      {
+        "url": "mob_shoulder/step-0.webp",
+        "format": "webp",
+        "source": "free-exercise-db",
+        "license": "Unlicense",
+        "version": "1",
+        "updatedAt": "2026-06-22T16:37:05.672Z",
+        "bytes": 12556,
+        "step": "start",
+        "stepLabel": "Start Position"
+      },
+      {
+        "url": "mob_shoulder/step-1.webp",
+        "format": "webp",
+        "source": "free-exercise-db",
+        "license": "Unlicense",
+        "version": "1",
+        "updatedAt": "2026-06-22T16:37:05.672Z",
+        "bytes": 11800,
+        "step": "end",
+        "stepLabel": "End Position"
+      }
+    ]
+  },
+  "mob-hip": {
+    "thumbnail": {
+      "url": "mob_hip/thumbnail.webp",
+      "format": "webp",
+      "source": "free-exercise-db",
+      "license": "Unlicense",
+      "version": "1",
+      "updatedAt": "2026-06-22T16:37:06.065Z",
+      "bytes": 6056
+    },
+    "shared": [
+      {
+        "url": "mob_hip/step-0.webp",
+        "format": "webp",
+        "source": "free-exercise-db",
+        "license": "Unlicense",
+        "version": "1",
+        "updatedAt": "2026-06-22T16:37:06.065Z",
+        "bytes": 17400,
+        "step": "start",
+        "stepLabel": "Start Position"
+      },
+      {
+        "url": "mob_hip/step-1.webp",
+        "format": "webp",
+        "source": "free-exercise-db",
+        "license": "Unlicense",
+        "version": "1",
+        "updatedAt": "2026-06-22T16:37:06.065Z",
+        "bytes": 17540,
+        "step": "end",
+        "stepLabel": "End Position"
+      }
+    ]
+  },
+  "mob-ankle": {
+    "thumbnail": {
+      "url": "mob_ankle/thumbnail.webp",
+      "format": "webp",
+      "source": "free-exercise-db",
+      "license": "Unlicense",
+      "version": "1",
+      "updatedAt": "2026-06-22T16:37:06.473Z",
+      "bytes": 7848
+    },
+    "shared": [
+      {
+        "url": "mob_ankle/step-0.webp",
+        "format": "webp",
+        "source": "free-exercise-db",
+        "license": "Unlicense",
+        "version": "1",
+        "updatedAt": "2026-06-22T16:37:06.473Z",
+        "bytes": 26366,
+        "step": "start",
+        "stepLabel": "Start Position"
+      },
+      {
+        "url": "mob_ankle/step-1.webp",
+        "format": "webp",
+        "source": "free-exercise-db",
+        "license": "Unlicense",
+        "version": "1",
+        "updatedAt": "2026-06-22T16:37:06.473Z",
+        "bytes": 27754,
+        "step": "end",
+        "stepLabel": "End Position"
+      }
+    ]
+  },
+  "mob-hams": {
+    "thumbnail": {
+      "url": "mob_hams/thumbnail.webp",
+      "format": "webp",
+      "source": "free-exercise-db",
+      "license": "Unlicense",
+      "version": "1",
+      "updatedAt": "2026-06-22T16:37:06.888Z",
+      "bytes": 5966
+    },
+    "shared": [
+      {
+        "url": "mob_hams/step-0.webp",
+        "format": "webp",
+        "source": "free-exercise-db",
+        "license": "Unlicense",
+        "version": "1",
+        "updatedAt": "2026-06-22T16:37:06.888Z",
+        "bytes": 22378,
+        "step": "start",
+        "stepLabel": "Start Position"
+      },
+      {
+        "url": "mob_hams/step-1.webp",
+        "format": "webp",
+        "source": "free-exercise-db",
+        "license": "Unlicense",
+        "version": "1",
+        "updatedAt": "2026-06-22T16:37:06.888Z",
+        "bytes": 20006,
+        "step": "end",
+        "stepLabel": "End Position"
+      }
+    ]
+  },
+  "mob-catcow": {
+    "thumbnail": {
+      "url": "mob_catcow/thumbnail.webp",
+      "format": "webp",
+      "source": "free-exercise-db",
+      "license": "Unlicense",
+      "version": "1",
+      "updatedAt": "2026-06-22T16:37:07.296Z",
+      "bytes": 6540
+    },
+    "shared": [
+      {
+        "url": "mob_catcow/step-0.webp",
+        "format": "webp",
+        "source": "free-exercise-db",
+        "license": "Unlicense",
+        "version": "1",
+        "updatedAt": "2026-06-22T16:37:07.296Z",
+        "bytes": 22250,
+        "step": "start",
+        "stepLabel": "Start Position"
+      },
+      {
+        "url": "mob_catcow/step-1.webp",
+        "format": "webp",
+        "source": "free-exercise-db",
+        "license": "Unlicense",
+        "version": "1",
+        "updatedAt": "2026-06-22T16:37:07.296Z",
+        "bytes": 21272,
+        "step": "end",
+        "stepLabel": "End Position"
+      }
+    ]
+  },
+  "cardio-walk": {
+    "thumbnail": {
+      "url": "cardio_walk/thumbnail.webp",
+      "format": "webp",
+      "source": "free-exercise-db",
+      "license": "Unlicense",
+      "version": "1",
+      "updatedAt": "2026-06-22T16:37:07.702Z",
+      "bytes": 12478
+    },
+    "shared": [
+      {
+        "url": "cardio_walk/step-0.webp",
+        "format": "webp",
+        "source": "free-exercise-db",
+        "license": "Unlicense",
+        "version": "1",
+        "updatedAt": "2026-06-22T16:37:07.702Z",
+        "bytes": 41312,
+        "step": "start",
+        "stepLabel": "Start Position"
+      },
+      {
+        "url": "cardio_walk/step-1.webp",
+        "format": "webp",
+        "source": "free-exercise-db",
+        "license": "Unlicense",
+        "version": "1",
+        "updatedAt": "2026-06-22T16:37:07.702Z",
+        "bytes": 38708,
+        "step": "end",
+        "stepLabel": "End Position"
+      }
+    ]
+  },
+  "rec-chin-tuck": {
+    "thumbnail": {
+      "url": "rec_chin_tuck/thumbnail.webp",
+      "format": "webp",
+      "source": "free-exercise-db",
+      "license": "Unlicense",
+      "version": "1",
+      "updatedAt": "2026-06-22T16:37:08.175Z",
+      "bytes": 4634
+    },
+    "shared": [
+      {
+        "url": "rec_chin_tuck/step-0.webp",
+        "format": "webp",
+        "source": "free-exercise-db",
+        "license": "Unlicense",
+        "version": "1",
+        "updatedAt": "2026-06-22T16:37:08.175Z",
+        "bytes": 14846,
+        "step": "start",
+        "stepLabel": "Start Position"
+      },
+      {
+        "url": "rec_chin_tuck/step-1.webp",
+        "format": "webp",
+        "source": "free-exercise-db",
+        "license": "Unlicense",
+        "version": "1",
+        "updatedAt": "2026-06-22T16:37:08.175Z",
+        "bytes": 21618,
+        "step": "end",
+        "stepLabel": "End Position"
+      }
+    ]
+  },
+  "rec-doorway-pec": {
+    "thumbnail": {
+      "url": "rec_doorway_pec/thumbnail.webp",
+      "format": "webp",
+      "source": "free-exercise-db",
+      "license": "Unlicense",
+      "version": "1",
+      "updatedAt": "2026-06-22T16:37:08.558Z",
+      "bytes": 4566
+    },
+    "shared": [
+      {
+        "url": "rec_doorway_pec/step-0.webp",
+        "format": "webp",
+        "source": "free-exercise-db",
+        "license": "Unlicense",
+        "version": "1",
+        "updatedAt": "2026-06-22T16:37:08.558Z",
+        "bytes": 13010,
+        "step": "start",
+        "stepLabel": "Start Position"
+      },
+      {
+        "url": "rec_doorway_pec/step-1.webp",
+        "format": "webp",
+        "source": "free-exercise-db",
+        "license": "Unlicense",
+        "version": "1",
+        "updatedAt": "2026-06-22T16:37:08.558Z",
+        "bytes": 13402,
+        "step": "end",
+        "stepLabel": "End Position"
+      }
+    ]
+  },
+  "rec-childs-pose": {
+    "thumbnail": {
+      "url": "rec_childs_pose/thumbnail.webp",
+      "format": "webp",
+      "source": "free-exercise-db",
+      "license": "Unlicense",
+      "version": "1",
+      "updatedAt": "2026-06-22T16:37:08.987Z",
+      "bytes": 6792
+    },
+    "shared": [
+      {
+        "url": "rec_childs_pose/step-0.webp",
+        "format": "webp",
+        "source": "free-exercise-db",
+        "license": "Unlicense",
+        "version": "1",
+        "updatedAt": "2026-06-22T16:37:08.987Z",
+        "bytes": 21580,
+        "step": "start",
+        "stepLabel": "Start Position"
+      },
+      {
+        "url": "rec_childs_pose/step-1.webp",
+        "format": "webp",
+        "source": "free-exercise-db",
+        "license": "Unlicense",
+        "version": "1",
+        "updatedAt": "2026-06-22T16:37:08.987Z",
+        "bytes": 21678,
+        "step": "end",
+        "stepLabel": "End Position"
+      }
+    ]
+  },
+  "rec-figure4": {
+    "thumbnail": {
+      "url": "rec_figure4/thumbnail.webp",
+      "format": "webp",
+      "source": "free-exercise-db",
+      "license": "Unlicense",
+      "version": "1",
+      "updatedAt": "2026-06-22T16:37:09.377Z",
+      "bytes": 8272
+    },
+    "shared": [
+      {
+        "url": "rec_figure4/step-0.webp",
+        "format": "webp",
+        "source": "free-exercise-db",
+        "license": "Unlicense",
+        "version": "1",
+        "updatedAt": "2026-06-22T16:37:09.377Z",
+        "bytes": 26480,
+        "step": "start",
+        "stepLabel": "Start Position"
+      },
+      {
+        "url": "rec_figure4/step-1.webp",
+        "format": "webp",
+        "source": "free-exercise-db",
+        "license": "Unlicense",
+        "version": "1",
+        "updatedAt": "2026-06-22T16:37:09.377Z",
+        "bytes": 24168,
+        "step": "end",
+        "stepLabel": "End Position"
+      }
+    ]
+  },
+  "rec-box-breath": {
+    "thumbnail": {
+      "url": "rec_box_breath/thumbnail.webp",
+      "format": "webp",
+      "source": "free-exercise-db",
+      "license": "Unlicense",
+      "version": "1",
+      "updatedAt": "2026-06-22T16:37:09.519Z",
+      "bytes": 10928
+    },
+    "shared": [
+      {
+        "url": "rec_box_breath/step-0.webp",
+        "format": "webp",
+        "source": "free-exercise-db",
+        "license": "Unlicense",
+        "version": "1",
+        "updatedAt": "2026-06-22T16:37:09.519Z",
+        "bytes": 38500,
+        "step": "start",
+        "stepLabel": "Start Position"
+      },
+      {
+        "url": "rec_box_breath/step-1.webp",
+        "format": "webp",
+        "source": "free-exercise-db",
+        "license": "Unlicense",
+        "version": "1",
+        "updatedAt": "2026-06-22T16:37:09.519Z",
+        "bytes": 39342,
+        "step": "end",
+        "stepLabel": "End Position"
+      }
+    ]
+  },
+  "rec-glute-activation": {
+    "thumbnail": {
+      "url": "rec_glute_activation/thumbnail.webp",
+      "format": "webp",
+      "source": "free-exercise-db",
+      "license": "Unlicense",
+      "version": "1",
+      "updatedAt": "2026-06-22T16:37:09.940Z",
+      "bytes": 8272
+    },
+    "shared": [
+      {
+        "url": "rec_glute_activation/step-0.webp",
+        "format": "webp",
+        "source": "free-exercise-db",
+        "license": "Unlicense",
+        "version": "1",
+        "updatedAt": "2026-06-22T16:37:09.940Z",
+        "bytes": 26480,
+        "step": "start",
+        "stepLabel": "Start Position"
+      },
+      {
+        "url": "rec_glute_activation/step-1.webp",
+        "format": "webp",
+        "source": "free-exercise-db",
+        "license": "Unlicense",
+        "version": "1",
+        "updatedAt": "2026-06-22T16:37:09.940Z",
+        "bytes": 24168,
+        "step": "end",
+        "stepLabel": "End Position"
+      }
+    ]
+  }
+};
 
 /** When the manifest was last regenerated (ISO). */
-export const ASSET_MANIFEST_GENERATED_AT = "2026-06-20T05:37:44.747Z";
+export const ASSET_MANIFEST_GENERATED_AT = "2026-06-22T16:37:10.088Z";

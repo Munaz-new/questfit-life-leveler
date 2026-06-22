@@ -1,0 +1,39 @@
+{
+  "exerciseId": "squat-goblet",
+  "folder": "squat_goblet",
+  "assets": {
+    "thumbnail": {
+      "url": "squat_goblet/thumbnail.webp",
+      "format": "webp",
+      "source": "free-exercise-db",
+      "license": "Unlicense",
+      "version": "1",
+      "updatedAt": "2026-06-22T16:36:57.690Z",
+      "bytes": 6462
+    },
+    "shared": [
+      {
+        "url": "squat_goblet/step-0.webp",
+        "format": "webp",
+        "source": "free-exercise-db",
+        "license": "Unlicense",
+        "version": "1",
+        "updatedAt": "2026-06-22T16:36:57.690Z",
+        "bytes": 21652,
+        "step": "start",
+        "stepLabel": "Start Position"
+      },
+      {
+        "url": "squat_goblet/step-1.webp",
+        "format": "webp",
+        "source": "free-exercise-db",
+        "license": "Unlicense",
+        "version": "1",
+        "updatedAt": "2026-06-22T16:36:57.690Z",
+        "bytes": 21900,
+        "step": "end",
+        "stepLabel": "End Position"
+      }
+    ]
+  }
+}

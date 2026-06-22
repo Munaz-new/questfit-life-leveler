@@ -1,0 +1,39 @@
+{
+  "exerciseId": "hinge-rdl-db",
+  "folder": "hinge_rdl_db",
+  "assets": {
+    "thumbnail": {
+      "url": "hinge_rdl_db/thumbnail.webp",
+      "format": "webp",
+      "source": "free-exercise-db",
+      "license": "Unlicense",
+      "version": "1",
+      "updatedAt": "2026-06-22T16:37:02.610Z",
+      "bytes": 8726
+    },
+    "shared": [
+      {
+        "url": "hinge_rdl_db/step-0.webp",
+        "format": "webp",
+        "source": "free-exercise-db",
+        "license": "Unlicense",
+        "version": "1",
+        "updatedAt": "2026-06-22T16:37:02.610Z",
+        "bytes": 30402,
+        "step": "start",
+        "stepLabel": "Start Position"
+      },
+      {
+        "url": "hinge_rdl_db/step-1.webp",
+        "format": "webp",
+        "source": "free-exercise-db",
+        "license": "Unlicense",
+        "version": "1",
+        "updatedAt": "2026-06-22T16:37:02.610Z",
+        "bytes": 29208,
+        "step": "end",
+        "stepLabel": "End Position"
+      }
+    ]
+  }
+}

@@ -1,0 +1,39 @@
+{
+  "exerciseId": "mob-ankle",
+  "folder": "mob_ankle",
+  "assets": {
+    "thumbnail": {
+      "url": "mob_ankle/thumbnail.webp",
+      "format": "webp",
+      "source": "free-exercise-db",
+      "license": "Unlicense",
+      "version": "1",
+      "updatedAt": "2026-06-22T16:37:06.473Z",
+      "bytes": 7848
+    },
+    "shared": [
+      {
+        "url": "mob_ankle/step-0.webp",
+        "format": "webp",
+        "source": "free-exercise-db",
+        "license": "Unlicense",
+        "version": "1",
+        "updatedAt": "2026-06-22T16:37:06.473Z",
+        "bytes": 26366,
+        "step": "start",
+        "stepLabel": "Start Position"
+      },
+      {
+        "url": "mob_ankle/step-1.webp",
+        "format": "webp",
+        "source": "free-exercise-db",
+        "license": "Unlicense",
+        "version": "1",
+        "updatedAt": "2026-06-22T16:37:06.473Z",
+        "bytes": 27754,
+        "step": "end",
+        "stepLabel": "End Position"
+      }
+    ]
+  }
+}

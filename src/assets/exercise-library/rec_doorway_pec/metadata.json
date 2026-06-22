@@ -1,0 +1,39 @@
+{
+  "exerciseId": "rec-doorway-pec",
+  "folder": "rec_doorway_pec",
+  "assets": {
+    "thumbnail": {
+      "url": "rec_doorway_pec/thumbnail.webp",
+      "format": "webp",
+      "source": "free-exercise-db",
+      "license": "Unlicense",
+      "version": "1",
+      "updatedAt": "2026-06-22T16:37:08.558Z",
+      "bytes": 4566
+    },
+    "shared": [
+      {
+        "url": "rec_doorway_pec/step-0.webp",
+        "format": "webp",
+        "source": "free-exercise-db",
+        "license": "Unlicense",
+        "version": "1",
+        "updatedAt": "2026-06-22T16:37:08.558Z",
+        "bytes": 13010,
+        "step": "start",
+        "stepLabel": "Start Position"
+      },
+      {
+        "url": "rec_doorway_pec/step-1.webp",
+        "format": "webp",
+        "source": "free-exercise-db",
+        "license": "Unlicense",
+        "version": "1",
+        "updatedAt": "2026-06-22T16:37:08.558Z",
+        "bytes": 13402,
+        "step": "end",
+        "stepLabel": "End Position"
+      }
+    ]
+  }
+}

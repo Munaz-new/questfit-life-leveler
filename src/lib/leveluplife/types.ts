@@ -34,6 +34,8 @@ export type FitnessLevel = "beginner" | "intermediate" | "advanced";
 export interface UserProfile {
   displayName: string;
   isGuest: boolean;
+  /** Demonstration gender preference. Affects demo media only, never logic. */
+  gender: "male" | "female";
   ageRange: string;
   height: string;
   weight: string;
