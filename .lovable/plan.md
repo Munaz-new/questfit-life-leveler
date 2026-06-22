@@ -1,101 +1,57 @@
-# Exercise Asset Pipeline
+# Production Exercise Demonstration System
 
-A scalable, provider-agnostic system so every exercise automatically shows the best available demonstration, and new exercises are added by importing or dropping a folder — no manual wiring. The Workout Player only ever asks the Asset Manager for `thumbnail / illustration / animation / video` and gets back the best available asset (with guaranteed fallback).
+Replace the placeholder SVG/stick-figure demonstrations with a real-human, coach-quality demonstration system across the whole app, keeping all workout logic untouched.
 
-## Architecture
+## What changes for the user
 
-```text
-Exercise DB (library.ts)
-      │
-Asset Manager  ──►  resolve(exerciseId, kind) → best asset + fallback chain
-      │
-Asset Registry (generated manifest)  ◄── Asset Importer (dev-time Node script)
-      │                                         │
-In-repo asset library  ◄── Approved Providers (Free Exercise DB, local, community)
-```
+- Every exercise shows **real human demonstration photos** instead of stick figures.
+- A **Male / Female toggle** sits at the top of the demonstration. The choice is remembered (set during onboarding, changeable in Settings) and applies everywhere.
+- Demonstration layout: **large hero image** + a **row of step thumbnails** (Start → Movement → End → Return) with the current step highlighted.
+- Exercises with no available photo show a clean **"Illustration coming soon"** card — never a broken image.
+- The exercise page keeps all its existing sections (muscles, level, equipment, time, type, how-to, benefits, mistakes, safety, recommended for, Track My Progress) plus a new **Breathing Pattern** section.
+- Private user photos/videos stay only in Progress Mirror — official demos are never replaced by user uploads.
 
-The app reads only the **generated manifest** + the in-repo files. The **importer** is the only thing that talks to providers. Swapping/adding a provider never touches app code.
+> Note on gender media (per your choice): the approved free dataset has one demonstrator per exercise. The toggle and `male_images[] / female_images[]` data model are built now; both genders display the available shared photos until a gendered dataset is plugged in later. A small inline note signals when a true gender-specific set isn't available yet.
 
-## 1. Asset library + folder structure
+## Data model & provider
 
-```text
-src/assets/exercise-library/
-  push_up/
-    thumbnail.webp
-    illustration.svg
-    animation.lottie      (optional)
-    preview.mp4           (optional)
-    metadata.json         (source, license, contributor, version, updatedAt, checksums)
-  squat/ ...
-```
-- Consistent naming derived from exercise id (`push_up`, never random).
-- Large binaries (webp/mp4/lottie) are externalized to the Lovable CDN via `.asset.json` pointers; small SVGs stay inline. `metadata.json` always committed.
+- Extend the asset pipeline to carry **galleries** (ordered step images) per gender, not just single thumbnails:
+  - Per exercise, store: `exerciseId`, `male.images[]`, `female.images[]`, `thumbnail`, plus existing license/provenance.
+  - Each image carries a `step` label (Start / Movement / End / Return) derived from dataset order.
+- Keep the existing `ExerciseAssetProvider` interface; extend `ProviderMatch` to return an **ordered image set** (the yuhonas dataset already ships 2 images per exercise = start/end). Provider stays swappable so a future gendered dataset is a drop-in.
+- Fallback chain (guaranteed): gendered gallery → shared gallery → thumbnail → "Illustration coming soon" card. The inline SVG/stick-figure glyphs are removed from the render path.
 
-## 2. Asset metadata schema
+## Components
 
-Extend `Exercise` (types.ts) with an optional `assets` block and per-asset provenance:
-```ts
-assets?: {
-  thumbnail?: AssetRef; illustration?: AssetRef;
-  animation?: AssetRef; video?: AssetRef;
-}
-// AssetRef: { url, format, source, license, contributor?, version, updatedAt, bytes? }
-```
-Existing inline-SVG illustrations remain valid as the built-in `illustration` source.
+- **`ExerciseDemo`** (new): the centerpiece. Renders the gender toggle, large hero (selected step), step thumbnail strip, zoom-on-tap, lazy-loaded `<img>` with fixed aspect ratio (no layout shift), `loading="lazy"`, `decoding="async"`, and preloads the next step image. Accessible: alt text per step, `aria-label` on toggle and thumbnails, ≥44px touch targets, high-contrast captions.
+- **`ExerciseAsset` / `ExerciseArt`**: refactored to delegate to `ExerciseDemo` (or a compact variant for cards/player). Stick-figure glyph fallback replaced by the "coming soon" card.
+- **`BreathingPattern`** section on the exercise page (derived from a new optional `breathing` field on `Exercise`, with a sensible default by pattern).
 
-## 3. Asset Manager (`src/lib/leveluplife/assets/`)
+## Gender preference (no workout-logic change)
 
-- `manifest.generated.ts` — typed map `exerciseId → assets`, produced by the importer. Checked in.
-- `assetManager.ts` — `getAsset(id, kind)` and `resolveBest(id)` implementing the **fallback chain**:
-  `animation → illustration(svg) → thumbnail → LEVELUP placeholder`. Never returns broken.
-- `ExerciseAsset.tsx` — single render component that switches on format (Lottie / SVG / `<img>` webp / `<video>` mp4 / future 3D) behind one API. Workout Player and exercise pages render this and stay format-agnostic.
-- Lottie: add `lottie-react` (only loaded when an animation asset exists).
+- Add `gender?: "male" | "female"` to `UserProfile`.
+- Add an onboarding step (gender selection) and a Settings toggle in `profile.tsx`.
+- A small selector reads the profile gender as the default for all demonstrations; the in-page toggle overrides per session.
 
-`ExerciseArt` is refactored to delegate to `ExerciseAsset`, so existing call sites keep working.
+## Files
 
-## 4. Provider abstraction (`src/lib/leveluplife/assets/providers/`)
+- **New**: `src/components/leveluplife/exercises/ExerciseDemo.tsx`, `.../BreathingPattern.tsx`, `src/lib/leveluplife/assets/gender.ts` (preference helper).
+- **Edit**: `assets/types.ts` (gallery + gender model), `assets/assetManager.ts` (gallery resolution + gender selection), `providers/types.ts` + `providers/freeExerciseDb.ts` (return ordered image sets), `scripts/import-exercise-assets.ts` (write galleries + step labels), `components/.../ExerciseAsset.tsx` + `ExerciseArt.tsx` + `ExerciseCard.tsx`, `player/MissionPlayer.tsx` (use new demo, compact), `routes/exercises.$id.tsx` (new layout + breathing + toggle), `routes/onboarding.tsx` (gender step), `routes/profile.tsx` (gender toggle), `exercises/types.ts` (`breathing` field), `manifest.generated.ts` (regenerated).
+- **Remove from render path**: `illustrations.tsx` stick figures (file may stay but is no longer used for demos).
 
-```ts
-interface AssetProvider {
-  id: string; license: string;
-  search(exercise): Promise<ProviderMatch[]>;
-  fetchAsset(match): Promise<Buffer>;
-}
-```
-Registered in a `providers/index.ts` array — add/remove a provider = add/remove one file. Ship:
-- `freeExerciseDb.ts` — **Free Exercise DB (yuhonas, Unlicense / public domain)**, first real provider: matches by name/alias, pulls demonstration images.
-- `local.ts` — reads hand-placed/community folders already in the asset library.
+## Import
 
-## 5. Importer (dev-time Node script: `scripts/import-exercise-assets.ts`)
+- Run the dev-time importer for the current exercise library to pull and optimize a **starter batch** of real photos (webp + thumbnail + step ordering), skipping exercises with no confident match. Regenerate the manifest. Unmatched exercises display "Illustration coming soon".
 
-Run via `bun scripts/import-exercise-assets.ts [--exercise=push_up] [--provider=free-exercise-db]`. Steps per exercise:
-1. Verify asset exists at provider; skip if already current (checksum/version dedupe).
-2. Download, **optimize/compress** to webp + generate thumbnail (uses `sharp`/`cwebp` available in the dev sandbox — never at app runtime).
-3. Write into `src/assets/exercise-library/<id>/` with consistent names + `metadata.json` (source, license, contributor, version, updatedAt).
-4. Externalize large binaries to CDN, regenerate `manifest.generated.ts`.
-No manual linking; the Workout Player picks it up automatically on next load.
+## Design
 
-## 6. Fallback system
+- Dark premium LevelUp branding, glassmorphism cards, blue neon accents, generous spacing, large readable type, smooth step transitions and toggle animation. Uses existing design tokens — no hardcoded colors.
 
-Guaranteed by `resolveBest`. Add one branded `placeholder.svg` as the final fallback so users never see a broken image.
+## Performance & accessibility
 
-## 7. Community support
+- Lazy-load + async decode, fixed aspect ratios to avoid CLS, preload next step/exercise image, optimized webp from the importer, browser caching via stable hashed URLs. Screen-reader alt text, zoomable hero, large touch targets, high contrast.
 
-`metadata.json` carries `source / license / contributor / version`. Contributors add a folder + metadata or run the importer; `local` provider ingests it. A `CONTRIBUTING-assets.md` documents the format and the legal rule (only redistributable / appropriately licensed assets — no scraping, no copyrighted media, no image search).
+## Out of scope
 
-## 8. Developer dashboard
-
-New **unlinked dev route `/dev/asset-dashboard`** (reachable by URL only). Table over all exercises showing: thumbnail, asset status per kind (animation/video/illustration), license, source, last updated, missing-asset flags, and a simple **quality score** (weighted by which asset tiers are present). Lets devs see at a glance which exercises still need better assets.
-
-## 9. Future-ready
-
-The format switch in `ExerciseAsset` + provider array mean official LEVELUP assets, trainer videos, 3D (glb), or AI-generated demos are added as new providers/formats with zero Workout Player changes.
-
-## Out of scope (v1)
-- Runtime in-app importing (edge runtime can't compress) — importer stays dev-time.
-- Bulk import of all 500+ now: I'll wire the pipeline and import a starter set (the existing core exercises) to prove it end-to-end.
-
-## Technical notes / files
-- New: `src/lib/leveluplife/assets/{assetManager.ts,manifest.generated.ts,providers/*}`, `src/components/leveluplife/exercises/ExerciseAsset.tsx`, `scripts/import-exercise-assets.ts`, `src/routes/dev.asset-dashboard.tsx`, `src/assets/exercise-library/*`, `placeholder.svg`, `CONTRIBUTING-assets.md`.
-- Edited: `exercises/types.ts` (assets block), `ExerciseArt.tsx` (delegate), `MissionPlayer.tsx` + `exercises.$id.tsx` (render via asset manager — visual only).
-- Deps: `lottie-react` (app), `sharp` (dev script only).
+- No real per-gender photo sourcing (needs a gendered dataset — structurally ready).
+- No changes to workout generation, XP, or session logic.
