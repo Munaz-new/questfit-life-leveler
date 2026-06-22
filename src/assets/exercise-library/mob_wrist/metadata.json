@@ -1,0 +1,39 @@
+{
+  "exerciseId": "mob-wrist",
+  "folder": "mob_wrist",
+  "assets": {
+    "thumbnail": {
+      "url": "mob_wrist/thumbnail.webp",
+      "format": "webp",
+      "source": "free-exercise-db",
+      "license": "Unlicense",
+      "version": "1",
+      "updatedAt": "2026-06-22T16:37:05.220Z",
+      "bytes": 8374
+    },
+    "shared": [
+      {
+        "url": "mob_wrist/step-0.webp",
+        "format": "webp",
+        "source": "free-exercise-db",
+        "license": "Unlicense",
+        "version": "1",
+        "updatedAt": "2026-06-22T16:37:05.220Z",
+        "bytes": 30100,
+        "step": "start",
+        "stepLabel": "Start Position"
+      },
+      {
+        "url": "mob_wrist/step-1.webp",
+        "format": "webp",
+        "source": "free-exercise-db",
+        "license": "Unlicense",
+        "version": "1",
+        "updatedAt": "2026-06-22T16:37:05.220Z",
+        "bytes": 30348,
+        "step": "end",
+        "stepLabel": "End Position"
+      }
+    ]
+  }
+}

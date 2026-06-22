@@ -1,0 +1,39 @@
+{
+  "exerciseId": "mob-neck",
+  "folder": "mob_neck",
+  "assets": {
+    "thumbnail": {
+      "url": "mob_neck/thumbnail.webp",
+      "format": "webp",
+      "source": "free-exercise-db",
+      "license": "Unlicense",
+      "version": "1",
+      "updatedAt": "2026-06-22T16:37:04.802Z",
+      "bytes": 6728
+    },
+    "shared": [
+      {
+        "url": "mob_neck/step-0.webp",
+        "format": "webp",
+        "source": "free-exercise-db",
+        "license": "Unlicense",
+        "version": "1",
+        "updatedAt": "2026-06-22T16:37:04.802Z",
+        "bytes": 21958,
+        "step": "start",
+        "stepLabel": "Start Position"
+      },
+      {
+        "url": "mob_neck/step-1.webp",
+        "format": "webp",
+        "source": "free-exercise-db",
+        "license": "Unlicense",
+        "version": "1",
+        "updatedAt": "2026-06-22T16:37:04.802Z",
+        "bytes": 19622,
+        "step": "end",
+        "stepLabel": "End Position"
+      }
+    ]
+  }
+}

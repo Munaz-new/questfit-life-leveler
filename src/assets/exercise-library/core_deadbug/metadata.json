@@ -1,0 +1,39 @@
+{
+  "exerciseId": "core-deadbug",
+  "folder": "core_deadbug",
+  "assets": {
+    "thumbnail": {
+      "url": "core_deadbug/thumbnail.webp",
+      "format": "webp",
+      "source": "free-exercise-db",
+      "license": "Unlicense",
+      "version": "1",
+      "updatedAt": "2026-06-22T16:37:03.500Z",
+      "bytes": 3886
+    },
+    "shared": [
+      {
+        "url": "core_deadbug/step-0.webp",
+        "format": "webp",
+        "source": "free-exercise-db",
+        "license": "Unlicense",
+        "version": "1",
+        "updatedAt": "2026-06-22T16:37:03.500Z",
+        "bytes": 9614,
+        "step": "start",
+        "stepLabel": "Start Position"
+      },
+      {
+        "url": "core_deadbug/step-1.webp",
+        "format": "webp",
+        "source": "free-exercise-db",
+        "license": "Unlicense",
+        "version": "1",
+        "updatedAt": "2026-06-22T16:37:03.500Z",
+        "bytes": 10416,
+        "step": "end",
+        "stepLabel": "End Position"
+      }
+    ]
+  }
+}

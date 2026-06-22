@@ -1,0 +1,39 @@
+{
+  "exerciseId": "rec-chin-tuck",
+  "folder": "rec_chin_tuck",
+  "assets": {
+    "thumbnail": {
+      "url": "rec_chin_tuck/thumbnail.webp",
+      "format": "webp",
+      "source": "free-exercise-db",
+      "license": "Unlicense",
+      "version": "1",
+      "updatedAt": "2026-06-22T16:37:08.175Z",
+      "bytes": 4634
+    },
+    "shared": [
+      {
+        "url": "rec_chin_tuck/step-0.webp",
+        "format": "webp",
+        "source": "free-exercise-db",
+        "license": "Unlicense",
+        "version": "1",
+        "updatedAt": "2026-06-22T16:37:08.175Z",
+        "bytes": 14846,
+        "step": "start",
+        "stepLabel": "Start Position"
+      },
+      {
+        "url": "rec_chin_tuck/step-1.webp",
+        "format": "webp",
+        "source": "free-exercise-db",
+        "license": "Unlicense",
+        "version": "1",
+        "updatedAt": "2026-06-22T16:37:08.175Z",
+        "bytes": 21618,
+        "step": "end",
+        "stepLabel": "End Position"
+      }
+    ]
+  }
+}

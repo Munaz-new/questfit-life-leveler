@@ -1,0 +1,39 @@
+{
+  "exerciseId": "rec-figure4",
+  "folder": "rec_figure4",
+  "assets": {
+    "thumbnail": {
+      "url": "rec_figure4/thumbnail.webp",
+      "format": "webp",
+      "source": "free-exercise-db",
+      "license": "Unlicense",
+      "version": "1",
+      "updatedAt": "2026-06-22T16:37:09.377Z",
+      "bytes": 8272
+    },
+    "shared": [
+      {
+        "url": "rec_figure4/step-0.webp",
+        "format": "webp",
+        "source": "free-exercise-db",
+        "license": "Unlicense",
+        "version": "1",
+        "updatedAt": "2026-06-22T16:37:09.377Z",
+        "bytes": 26480,
+        "step": "start",
+        "stepLabel": "Start Position"
+      },
+      {
+        "url": "rec_figure4/step-1.webp",
+        "format": "webp",
+        "source": "free-exercise-db",
+        "license": "Unlicense",
+        "version": "1",
+        "updatedAt": "2026-06-22T16:37:09.377Z",
+        "bytes": 24168,
+        "step": "end",
+        "stepLabel": "End Position"
+      }
+    ]
+  }
+}

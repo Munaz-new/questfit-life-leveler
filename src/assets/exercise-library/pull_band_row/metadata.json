@@ -1,0 +1,39 @@
+{
+  "exerciseId": "pull-band-row",
+  "folder": "pull_band_row",
+  "assets": {
+    "thumbnail": {
+      "url": "pull_band_row/thumbnail.webp",
+      "format": "webp",
+      "source": "free-exercise-db",
+      "license": "Unlicense",
+      "version": "1",
+      "updatedAt": "2026-06-22T16:37:00.101Z",
+      "bytes": 9172
+    },
+    "shared": [
+      {
+        "url": "pull_band_row/step-0.webp",
+        "format": "webp",
+        "source": "free-exercise-db",
+        "license": "Unlicense",
+        "version": "1",
+        "updatedAt": "2026-06-22T16:37:00.101Z",
+        "bytes": 33924,
+        "step": "start",
+        "stepLabel": "Start Position"
+      },
+      {
+        "url": "pull_band_row/step-1.webp",
+        "format": "webp",
+        "source": "free-exercise-db",
+        "license": "Unlicense",
+        "version": "1",
+        "updatedAt": "2026-06-22T16:37:00.101Z",
+        "bytes": 36056,
+        "step": "end",
+        "stepLabel": "End Position"
+      }
+    ]
+  }
+}

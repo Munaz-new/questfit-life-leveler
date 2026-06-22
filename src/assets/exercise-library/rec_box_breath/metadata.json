@@ -1,0 +1,39 @@
+{
+  "exerciseId": "rec-box-breath",
+  "folder": "rec_box_breath",
+  "assets": {
+    "thumbnail": {
+      "url": "rec_box_breath/thumbnail.webp",
+      "format": "webp",
+      "source": "free-exercise-db",
+      "license": "Unlicense",
+      "version": "1",
+      "updatedAt": "2026-06-22T16:37:09.519Z",
+      "bytes": 10928
+    },
+    "shared": [
+      {
+        "url": "rec_box_breath/step-0.webp",
+        "format": "webp",
+        "source": "free-exercise-db",
+        "license": "Unlicense",
+        "version": "1",
+        "updatedAt": "2026-06-22T16:37:09.519Z",
+        "bytes": 38500,
+        "step": "start",
+        "stepLabel": "Start Position"
+      },
+      {
+        "url": "rec_box_breath/step-1.webp",
+        "format": "webp",
+        "source": "free-exercise-db",
+        "license": "Unlicense",
+        "version": "1",
+        "updatedAt": "2026-06-22T16:37:09.519Z",
+        "bytes": 39342,
+        "step": "end",
+        "stepLabel": "End Position"
+      }
+    ]
+  }
+}

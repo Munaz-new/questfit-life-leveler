@@ -1,0 +1,39 @@
+{
+  "exerciseId": "mob-hams",
+  "folder": "mob_hams",
+  "assets": {
+    "thumbnail": {
+      "url": "mob_hams/thumbnail.webp",
+      "format": "webp",
+      "source": "free-exercise-db",
+      "license": "Unlicense",
+      "version": "1",
+      "updatedAt": "2026-06-22T16:37:06.888Z",
+      "bytes": 5966
+    },
+    "shared": [
+      {
+        "url": "mob_hams/step-0.webp",
+        "format": "webp",
+        "source": "free-exercise-db",
+        "license": "Unlicense",
+        "version": "1",
+        "updatedAt": "2026-06-22T16:37:06.888Z",
+        "bytes": 22378,
+        "step": "start",
+        "stepLabel": "Start Position"
+      },
+      {
+        "url": "mob_hams/step-1.webp",
+        "format": "webp",
+        "source": "free-exercise-db",
+        "license": "Unlicense",
+        "version": "1",
+        "updatedAt": "2026-06-22T16:37:06.888Z",
+        "bytes": 20006,
+        "step": "end",
+        "stepLabel": "End Position"
+      }
+    ]
+  }
+}

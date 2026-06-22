@@ -1,0 +1,39 @@
+{
+  "exerciseId": "push-decline",
+  "folder": "push_decline",
+  "assets": {
+    "thumbnail": {
+      "url": "push_decline/thumbnail.webp",
+      "format": "webp",
+      "source": "free-exercise-db",
+      "license": "Unlicense",
+      "version": "1",
+      "updatedAt": "2026-06-22T16:36:59.765Z",
+      "bytes": 9472
+    },
+    "shared": [
+      {
+        "url": "push_decline/step-0.webp",
+        "format": "webp",
+        "source": "free-exercise-db",
+        "license": "Unlicense",
+        "version": "1",
+        "updatedAt": "2026-06-22T16:36:59.765Z",
+        "bytes": 33904,
+        "step": "start",
+        "stepLabel": "Start Position"
+      },
+      {
+        "url": "push_decline/step-1.webp",
+        "format": "webp",
+        "source": "free-exercise-db",
+        "license": "Unlicense",
+        "version": "1",
+        "updatedAt": "2026-06-22T16:36:59.765Z",
+        "bytes": 34356,
+        "step": "end",
+        "stepLabel": "End Position"
+      }
+    ]
+  }
+}

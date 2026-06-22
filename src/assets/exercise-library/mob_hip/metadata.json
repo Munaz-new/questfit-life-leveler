@@ -1,0 +1,39 @@
+{
+  "exerciseId": "mob-hip",
+  "folder": "mob_hip",
+  "assets": {
+    "thumbnail": {
+      "url": "mob_hip/thumbnail.webp",
+      "format": "webp",
+      "source": "free-exercise-db",
+      "license": "Unlicense",
+      "version": "1",
+      "updatedAt": "2026-06-22T16:37:06.065Z",
+      "bytes": 6056
+    },
+    "shared": [
+      {
+        "url": "mob_hip/step-0.webp",
+        "format": "webp",
+        "source": "free-exercise-db",
+        "license": "Unlicense",
+        "version": "1",
+        "updatedAt": "2026-06-22T16:37:06.065Z",
+        "bytes": 17400,
+        "step": "start",
+        "stepLabel": "Start Position"
+      },
+      {
+        "url": "mob_hip/step-1.webp",
+        "format": "webp",
+        "source": "free-exercise-db",
+        "license": "Unlicense",
+        "version": "1",
+        "updatedAt": "2026-06-22T16:37:06.065Z",
+        "bytes": 17540,
+        "step": "end",
+        "stepLabel": "End Position"
+      }
+    ]
+  }
+}

@@ -1,0 +1,39 @@
+{
+  "exerciseId": "mob-catcow",
+  "folder": "mob_catcow",
+  "assets": {
+    "thumbnail": {
+      "url": "mob_catcow/thumbnail.webp",
+      "format": "webp",
+      "source": "free-exercise-db",
+      "license": "Unlicense",
+      "version": "1",
+      "updatedAt": "2026-06-22T16:37:07.296Z",
+      "bytes": 6540
+    },
+    "shared": [
+      {
+        "url": "mob_catcow/step-0.webp",
+        "format": "webp",
+        "source": "free-exercise-db",
+        "license": "Unlicense",
+        "version": "1",
+        "updatedAt": "2026-06-22T16:37:07.296Z",
+        "bytes": 22250,
+        "step": "start",
+        "stepLabel": "Start Position"
+      },
+      {
+        "url": "mob_catcow/step-1.webp",
+        "format": "webp",
+        "source": "free-exercise-db",
+        "license": "Unlicense",
+        "version": "1",
+        "updatedAt": "2026-06-22T16:37:07.296Z",
+        "bytes": 21272,
+        "step": "end",
+        "stepLabel": "End Position"
+      }
+    ]
+  }
+}

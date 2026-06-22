@@ -1,0 +1,39 @@
+{
+  "exerciseId": "rec-childs-pose",
+  "folder": "rec_childs_pose",
+  "assets": {
+    "thumbnail": {
+      "url": "rec_childs_pose/thumbnail.webp",
+      "format": "webp",
+      "source": "free-exercise-db",
+      "license": "Unlicense",
+      "version": "1",
+      "updatedAt": "2026-06-22T16:37:08.987Z",
+      "bytes": 6792
+    },
+    "shared": [
+      {
+        "url": "rec_childs_pose/step-0.webp",
+        "format": "webp",
+        "source": "free-exercise-db",
+        "license": "Unlicense",
+        "version": "1",
+        "updatedAt": "2026-06-22T16:37:08.987Z",
+        "bytes": 21580,
+        "step": "start",
+        "stepLabel": "Start Position"
+      },
+      {
+        "url": "rec_childs_pose/step-1.webp",
+        "format": "webp",
+        "source": "free-exercise-db",
+        "license": "Unlicense",
+        "version": "1",
+        "updatedAt": "2026-06-22T16:37:08.987Z",
+        "bytes": 21678,
+        "step": "end",
+        "stepLabel": "End Position"
+      }
+    ]
+  }
+}
