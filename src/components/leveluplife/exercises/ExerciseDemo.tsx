@@ -159,6 +159,3 @@ export function ExerciseDemo({
   );
 }
 
-// Avoid unused import warning when SSR strips Image usage.
-const _ref = useRef;
-void _ref;
