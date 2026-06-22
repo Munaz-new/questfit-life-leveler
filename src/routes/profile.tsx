@@ -26,6 +26,7 @@ function Profile() {
   const navigate = useNavigate();
   const { state, resetAll, setMotivation } = useApp();
   const [switching, setSwitching] = useState<MotivationStyle | null>(null);
+  const [demoGender, setDemoGender] = useDemoGender();
   const [mirrorUser, setMirrorUser] = useState<string | null>(null);
   const [mirrorEnabled, setMirrorEnabledState] = useState<boolean | null>(null);
 
