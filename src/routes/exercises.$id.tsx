@@ -112,6 +112,12 @@ function Detail() {
         </ol>
       </Section>
 
+      <Section icon={<Wind className="h-4 w-4" />} title="Breathing pattern">
+        <BreathingPattern ex={ex} />
+      </Section>
+
+
+
       <Section icon={<Target className="h-4 w-4" />} title="Common mistakes">
         <ul className="space-y-1.5 text-sm">
           {ex.mistakes.map((m) => (
