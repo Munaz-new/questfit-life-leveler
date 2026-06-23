@@ -247,7 +247,7 @@ function Onboarding() {
             </Step>
           )}
 
-          {step === 8 && (
+          {step === 9 && (
             <Step title="Enable Progress Mirror?" sub="Privately track your visual transformation over weeks and months.">
               <div className="mb-4 flex items-start gap-2 rounded-xl border border-white/10 bg-white/5 px-3 py-2.5 text-[11px] text-muted-foreground">
                 <ShieldCheck className="mt-0.5 h-4 w-4 shrink-0 text-[var(--cyan-glow)]" />
