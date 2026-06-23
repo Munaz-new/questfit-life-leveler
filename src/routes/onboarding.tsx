@@ -139,7 +139,7 @@ function Onboarding() {
             </Step>
           )}
 
-          {step === 2 && (
+          {step === 3 && (
             <Step title="What's your lifestyle?" sub="Workouts adapt to how you actually live.">
               <Grid>
                 {lifestyleOptions.map((o) => (
