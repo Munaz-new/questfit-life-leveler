@@ -180,7 +180,7 @@ function Onboarding() {
             </Step>
           )}
 
-          {step === 5 && (
+          {step === 6 && (
             <Step title="Goals" sub="Pick a few. Quests bias toward these.">
               <Grid>
                 {goalOptions.map((o) => (
