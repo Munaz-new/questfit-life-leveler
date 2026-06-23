@@ -62,6 +62,7 @@ interface Ctx {
   state: AppState;
   setProfile: (p: UserProfile) => void;
   setMotivation: (m: UserProfile["motivation"]) => void;
+  setDemoGenderDefault: (g: UserProfile["gender"]) => void;
   completeQuest: (id: string) => void;
   setCheckin: (c: Checkin) => void;
   logSitting: (h: number) => void;
