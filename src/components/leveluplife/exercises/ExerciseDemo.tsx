@@ -1,9 +1,12 @@
 import { useEffect, useState } from "react";
 import { assetUrl, resolveGallery, hasGenderedAsset } from "@/lib/leveluplife/assets/assetManager";
 import { useDemoGender } from "@/lib/leveluplife/assets/gender";
+import { useApp } from "@/lib/leveluplife/store";
+import type { Gender } from "@/lib/leveluplife/assets/types";
 import { ComingSoon } from "./ExerciseAsset";
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
-import { ZoomIn, Info } from "lucide-react";
+import { ZoomIn, Info, Check, X } from "lucide-react";
+import { toast } from "sonner";
 
 /**
  * ExerciseDemo — the production demonstration centerpiece for an exercise.
@@ -12,6 +15,12 @@ import { ZoomIn, Info } from "lucide-react";
  * (Start → Movement → End → Return) with the active step highlighted. Tapping
  * the hero opens a zoomed view. Images are lazy-loaded with fixed aspect ratio
  * to avoid layout shift, and the next step is preloaded for instant stepping.
+ *
+ * Demonstrator selection has three layers:
+ *   1. saved default (profile.gender, mirrored into the demoGender preference)
+ *   2. a non-persistent per-exercise override (resets when leaving the page)
+ * Switching to the OTHER demonstrator shows a small prompt:
+ *   "Use only for this exercise" (keep override) vs "Make this my default".
  */
 export function ExerciseDemo({
   id,
@@ -22,9 +31,35 @@ export function ExerciseDemo({
   name: string;
   className?: string;
 }) {
-  const [gender, setGender] = useDemoGender();
+  const [savedGender] = useDemoGender();
+  const { setDemoGenderDefault } = useApp();
+  // Per-exercise temporary override — dropped on unmount / id change.
+  const [override, setOverride] = useState<Gender | null>(null);
+  const [prompt, setPrompt] = useState(false);
   const [active, setActive] = useState(0);
   const [zoom, setZoom] = useState(false);
+
+  // Reset the temporary override when navigating to a different exercise.
+  useEffect(() => {
+    setOverride(null);
+    setPrompt(false);
+    setActive(0);
+  }, [id]);
+
+  const gender: Gender = override ?? savedGender;
+
+  function pick(g: Gender) {
+    setActive(0);
+    if (g === savedGender) {
+      // Switching back to the saved demonstrator — just clear the override.
+      setOverride(null);
+      setPrompt(false);
+      return;
+    }
+    // Switched to the other demonstrator — preview it and ask what to do.
+    setOverride(g);
+    setPrompt(true);
+  }
 
   const gallery = resolveGallery(id, gender);
   const images = gallery?.images ?? [];
