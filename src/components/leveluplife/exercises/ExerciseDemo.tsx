@@ -80,30 +80,63 @@ export function ExerciseDemo({
   return (
     <div className={className}>
       {/* Gender toggle */}
-      <div
-        role="radiogroup"
-        aria-label="Demonstration gender"
-        className="mb-3 inline-flex rounded-full border border-white/10 bg-white/5 p-1"
-      >
-        {(["male", "female"] as const).map((g) => (
-          <button
-            key={g}
-            role="radio"
-            aria-checked={gender === g}
-            onClick={() => {
-              setGender(g);
-              setActive(0);
-            }}
-            className={`min-h-9 rounded-full px-4 text-xs font-semibold uppercase tracking-[0.14em] transition ${
-              gender === g
-                ? "bg-gradient-primary text-[var(--primary-foreground)] shadow-glow"
-                : "text-muted-foreground hover:text-foreground"
-            }`}
-          >
-            {g}
-          </button>
-        ))}
+      <div className="mb-3 flex flex-wrap items-center gap-2">
+        <div
+          role="radiogroup"
+          aria-label="Demonstration gender"
+          className="inline-flex rounded-full border border-white/10 bg-white/5 p-1"
+        >
+          {(["male", "female"] as const).map((g) => (
+            <button
+              key={g}
+              role="radio"
+              aria-checked={gender === g}
+              onClick={() => pick(g)}
+              className={`min-h-9 rounded-full px-4 text-xs font-semibold uppercase tracking-[0.14em] transition ${
+                gender === g
+                  ? "bg-gradient-primary text-[var(--primary-foreground)] shadow-glow"
+                  : "text-muted-foreground hover:text-foreground"
+              }`}
+            >
+              {g}
+            </button>
+          ))}
+        </div>
+        {override && !prompt && (
+          <span className="rounded-full bg-white/8 px-2.5 py-1 text-[10px] font-medium uppercase tracking-wide text-muted-foreground">
+            Preview · this exercise only
+          </span>
+        )}
       </div>
+
+      {/* Temporary-switch prompt */}
+      {prompt && override && (
+        <div className="mb-3 rounded-2xl border border-white/10 bg-white/5 p-3">
+          <p className="text-xs text-muted-foreground">
+            Showing the <span className="font-semibold capitalize text-foreground">{override}</span>{" "}
+            demonstrator. How should we apply this?
+          </p>
+          <div className="mt-2.5 flex flex-wrap gap-2">
+            <button
+              onClick={() => setPrompt(false)}
+              className="inline-flex items-center gap-1.5 rounded-xl bg-white/8 px-3 py-2 text-xs font-semibold text-foreground transition hover:bg-white/12"
+            >
+              <X className="h-3.5 w-3.5" /> Use only for this exercise
+            </button>
+            <button
+              onClick={() => {
+                setDemoGenderDefault(override);
+                setOverride(null);
+                setPrompt(false);
+                toast.success(`${override[0].toUpperCase()}${override.slice(1)} set as your default`);
+              }}
+              className="inline-flex items-center gap-1.5 rounded-xl bg-gradient-primary px-3 py-2 text-xs font-semibold text-[var(--primary-foreground)] shadow-glow"
+            >
+              <Check className="h-3.5 w-3.5" /> Make this my default
+            </button>
+          </div>
+        </div>
+      )}
 
       {/* Hero */}
       <div className="relative aspect-[4/3] w-full overflow-hidden rounded-2xl border border-white/10 bg-gradient-to-br from-white/5 to-white/0">
