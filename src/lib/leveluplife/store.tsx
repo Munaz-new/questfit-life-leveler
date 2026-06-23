@@ -136,6 +136,13 @@ export function AppProvider({ children }: { children: ReactNode }) {
       },
       setMotivation: (m) =>
         setState((s) => (s.profile ? { ...s, profile: { ...s.profile, motivation: m } } : s)),
+      setDemoGenderDefault: (g) => {
+        if (typeof window !== "undefined") {
+          window.localStorage.setItem("leveluplife.demoGender", g);
+          window.dispatchEvent(new CustomEvent("leveluplife:demoGender", { detail: g }));
+        }
+        setState((s) => (s.profile ? { ...s, profile: { ...s.profile, gender: g } } : s));
+      },
       completeQuest: (id) =>
         setState((s) => {
           const q = s.quests.find((x) => x.id === id);
