@@ -168,7 +168,7 @@ function Onboarding() {
             </Step>
           )}
 
-          {step === 4 && (
+          {step === 5 && (
             <Step title="Equipment" sub="Multi-select. We adapt the moves to what you own.">
               <Grid>
                 {equipmentOptions.map((o) => (
