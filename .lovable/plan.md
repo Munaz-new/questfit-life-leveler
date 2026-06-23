@@ -1,57 +1,40 @@
-# Production Exercise Demonstration System
+# Exercise Demonstration Preference
 
-Replace the placeholder SVG/stick-figure demonstrations with a real-human, coach-quality demonstration system across the whole app, keeping all workout logic untouched.
+Today the demonstrator (male/female) is set in a generic "The basics" onboarding sub-field, and the per-exercise toggle silently overwrites the global default. We'll make it a first-class, well-explained preference with a proper temporary-preview flow.
 
 ## What changes for the user
 
-- Every exercise shows **real human demonstration photos** instead of stick figures.
-- A **Male / Female toggle** sits at the top of the demonstration. The choice is remembered (set during onboarding, changeable in Settings) and applies everywhere.
-- Demonstration layout: **large hero image** + a **row of step thumbnails** (Start → Movement → End → Return) with the current step highlighted.
-- Exercises with no available photo show a clean **"Illustration coming soon"** card — never a broken image.
-- The exercise page keeps all its existing sections (muscles, level, equipment, time, type, how-to, benefits, mistakes, safety, recommended for, Track My Progress) plus a new **Breathing Pattern** section.
-- Private user photos/videos stay only in Progress Mirror — official demos are never replaced by user uploads.
+1. **New onboarding step** — A dedicated "Exercise Demonstration Preference" screen asking *"Which exercise demonstrator would you like to follow?"* with two clear options (Male / Female Demonstrator) and the note: *"This only changes the instructor shown in exercise guides. Your workout plan stays exactly the same."*
+2. **Per-exercise preview switch** — On each exercise page, the existing Male/Female switch becomes a true temporary preview. When the user switches to the *other* demonstrator, a small prompt appears:
+   - **Use only for this exercise** — applies just on this page, reverts when they leave.
+   - **Make this my default** — updates the saved default everywhere.
+3. **Settings > Workout Preferences** — A new section in the profile/settings screen where the saved default demonstrator can be changed anytime (replaces today's loose "Demonstration style" card, restyled and relabeled).
 
-> Note on gender media (per your choice): the approved free dataset has one demonstrator per exercise. The toggle and `male_images[] / female_images[]` data model are built now; both genders display the available shared photos until a gendered dataset is plugged in later. A small inline note signals when a true gender-specific set isn't available yet.
+## How it works (technical)
 
-## Data model & provider
+**Default vs. session vs. per-exercise override (3 layers).** The default lives in `profile.gender` (persisted) and is mirrored into the existing `demoGender` localStorage value, which `useDemoGender()` already reads app-wide. We add a third, non-persistent **per-exercise override** held in React state inside `ExerciseDemo`, so "this exercise only" never touches the saved default.
 
-- Extend the asset pipeline to carry **galleries** (ordered step images) per gender, not just single thumbnails:
-  - Per exercise, store: `exerciseId`, `male.images[]`, `female.images[]`, `thumbnail`, plus existing license/provenance.
-  - Each image carries a `step` label (Start / Movement / End / Return) derived from dataset order.
-- Keep the existing `ExerciseAssetProvider` interface; extend `ProviderMatch` to return an **ordered image set** (the yuhonas dataset already ships 2 images per exercise = start/end). Provider stays swappable so a future gendered dataset is a drop-in.
-- Fallback chain (guaranteed): gendered gallery → shared gallery → thumbnail → "Illustration coming soon" card. The inline SVG/stick-figure glyphs are removed from the render path.
+- `src/routes/onboarding.tsx`
+  - Remove the "Demonstration style" field from the current "The basics" step (step 1).
+  - Insert a new dedicated step with the exact question, two large option cards, and the reassurance copy. Bump `TOTAL` from 9 to 10 and renumber the conditional `step === n` blocks accordingly. The selection still writes to `p.gender`, which `setProfile` already seeds into `demoGender`.
 
-## Components
+- `src/components/leveluplife/exercises/ExerciseDemo.tsx`
+  - Track a local `override: Gender | null` state. The displayed demonstrator = `override ?? savedGender`. On leaving the page (component unmount / id change) the override is dropped automatically.
+  - When the user taps the other demonstrator, instead of immediately calling `setDemoGender`, set the local override AND show a small inline prompt (lightweight popover/inline card, reusing existing UI tokens) with the two actions:
+    - "Use only for this exercise" → keep local override only, dismiss prompt.
+    - "Make this my default" → call `setDemoGender(g)` (updates the global default + persists), clear override, dismiss prompt.
+  - Switching back to the saved demonstrator just clears the override with no prompt.
 
-- **`ExerciseDemo`** (new): the centerpiece. Renders the gender toggle, large hero (selected step), step thumbnail strip, zoom-on-tap, lazy-loaded `<img>` with fixed aspect ratio (no layout shift), `loading="lazy"`, `decoding="async"`, and preloads the next step image. Accessible: alt text per step, `aria-label` on toggle and thumbnails, ≥44px touch targets, high-contrast captions.
-- **`ExerciseAsset` / `ExerciseArt`**: refactored to delegate to `ExerciseDemo` (or a compact variant for cards/player). Stick-figure glyph fallback replaced by the "coming soon" card.
-- **`BreathingPattern`** section on the exercise page (derived from a new optional `breathing` field on `Exercise`, with a sensible default by pattern).
+- `src/lib/leveluplife/store.tsx`
+  - Add a small helper so "Make this my default" also updates `profile.gender` (not just the `demoGender` localStorage), keeping profile and demo preference in sync. (Re-use the existing `setProfile`/seed logic.)
 
-## Gender preference (no workout-logic change)
+- `src/routes/profile.tsx`
+  - Rename the "Demonstration style" card to a **"Workout Preferences"** section containing the demonstrator default toggle (keeps current behavior of writing the persisted default), with copy clarifying it only affects demonstration media.
 
-- Add `gender?: "male" | "female"` to `UserProfile`.
-- Add an onboarding step (gender selection) and a Settings toggle in `profile.tsx`.
-- A small selector reads the profile gender as the default for all demonstrations; the in-page toggle overrides per session.
+## Future-proofing (no DB changes)
 
-## Files
-
-- **New**: `src/components/leveluplife/exercises/ExerciseDemo.tsx`, `.../BreathingPattern.tsx`, `src/lib/leveluplife/assets/gender.ts` (preference helper).
-- **Edit**: `assets/types.ts` (gallery + gender model), `assets/assetManager.ts` (gallery resolution + gender selection), `providers/types.ts` + `providers/freeExerciseDb.ts` (return ordered image sets), `scripts/import-exercise-assets.ts` (write galleries + step labels), `components/.../ExerciseAsset.tsx` + `ExerciseArt.tsx` + `ExerciseCard.tsx`, `player/MissionPlayer.tsx` (use new demo, compact), `routes/exercises.$id.tsx` (new layout + breathing + toggle), `routes/onboarding.tsx` (gender step), `routes/profile.tsx` (gender toggle), `exercises/types.ts` (`breathing` field), `manifest.generated.ts` (regenerated).
-- **Remove from render path**: `illustrations.tsx` stick figures (file may stay but is no longer used for demos).
-
-## Import
-
-- Run the dev-time importer for the current exercise library to pull and optimize a **starter batch** of real photos (webp + thumbnail + step ordering), skipping exercises with no confident match. Regenerate the manifest. Unmatched exercises display "Illustration coming soon".
-
-## Design
-
-- Dark premium LevelUp branding, glassmorphism cards, blue neon accents, generous spacing, large readable type, smooth step transitions and toggle animation. Uses existing design tokens — no hardcoded colors.
-
-## Performance & accessibility
-
-- Lazy-load + async decode, fixed aspect ratios to avoid CLS, preload next step/exercise image, optimized webp from the importer, browser caching via stable hashed URLs. Screen-reader alt text, zoomable hero, large touch targets, high contrast.
+The demonstrator is already a **string key** into the asset gallery map (`ExerciseDemoAssets` keyed by demonstrator). Adding new demonstration types later (e.g. additional instructors, animated, 3D) means adding new keys to that map and to the option list — no schema or storage-shape change, since the preference is just a stored string. The plan keeps the `male | female` keys for now and leaves the resolution/fallback chain in `assetManager.ts` untouched.
 
 ## Out of scope
-
-- No real per-gender photo sourcing (needs a gendered dataset — structurally ready).
-- No changes to workout generation, XP, or session logic.
+- No new demonstrator media is sourced; both genders still fall back to the shared imported set where a gendered set doesn't exist.
+- No workout/XP/session logic changes.
