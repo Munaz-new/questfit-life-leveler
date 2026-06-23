@@ -98,19 +98,7 @@ function Onboarding() {
           )}
 
           {step === 1 && (
-            <Step title="The basics" sub="Used to calibrate intensity and demonstrations. Nothing is shared.">
-              <Field label="Demonstration style">
-                <div className="grid grid-cols-2 gap-2">
-                  {(["male", "female"] as const).map((g) => (
-                    <Chip key={g} active={p.gender === g} onClick={() => update("gender", g)}>
-                      <span className="capitalize">{g}</span>
-                    </Chip>
-                  ))}
-                </div>
-                <p className="mt-1.5 text-[11px] text-muted-foreground">
-                  Choose which demonstrations you'd like to see. Change anytime in Settings.
-                </p>
-              </Field>
+            <Step title="The basics" sub="Used to calibrate intensity. Nothing is shared.">
               <Row>
                 <Field label="Age range">
                   <Select value={p.ageRange} onChange={(v) => update("ageRange", v)} options={["13-17","18-24","25-34","35-44","45-54","55+"]} />
@@ -124,6 +112,30 @@ function Onboarding() {
                   <Input className="h-11 rounded-xl border-white/10 bg-white/5" value={p.weight} onChange={(e) => update("weight", e.target.value)} />
                 </Field>
               </Row>
+            </Step>
+          )}
+
+          {step === 2 && (
+            <Step
+              title="Exercise Demonstration Preference"
+              sub="Which exercise demonstrator would you like to follow?"
+            >
+              <Grid cols={1}>
+                {(
+                  [
+                    { id: "male", label: "Male Demonstrator" },
+                    { id: "female", label: "Female Demonstrator" },
+                  ] as const
+                ).map((o) => (
+                  <Chip key={o.id} active={p.gender === o.id} onClick={() => update("gender", o.id)}>
+                    <span>{o.label}</span>
+                  </Chip>
+                ))}
+              </Grid>
+              <p className="mt-1.5 text-[11px] text-muted-foreground">
+                This only changes the instructor shown in exercise guides. Your workout plan stays
+                exactly the same.
+              </p>
             </Step>
           )}
 
