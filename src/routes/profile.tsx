@@ -138,7 +138,7 @@ function Profile() {
                 role="radio"
                 aria-checked={demoGender === g}
                 onClick={() => {
-                  setDemoGender(g);
+                  setDemoGenderDefault(g);
                   toast.success(`${g[0].toUpperCase()}${g.slice(1)} demonstrator set as default`);
                 }}
                 className={`min-h-9 rounded-full px-4 text-xs font-semibold uppercase tracking-[0.14em] transition ${
