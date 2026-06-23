@@ -117,15 +117,19 @@ function Profile() {
         </div>
       </GlassCard>
 
-      <SectionTitle hint="affects demos only">Demonstration style</SectionTitle>
+      <SectionTitle hint="affects demos only">Workout Preferences</SectionTitle>
       <GlassCard className="mb-5">
         <div className="flex items-center justify-between gap-3">
-          <p className="text-sm text-muted-foreground">
-            Which exercise demonstrations you see across the app.
-          </p>
+          <div>
+            <p className="text-sm font-medium">Exercise demonstrator</p>
+            <p className="mt-0.5 text-xs text-muted-foreground">
+              Your default instructor. This only changes the demonstrations you see — your workout
+              plan stays exactly the same.
+            </p>
+          </div>
           <div
             role="radiogroup"
-            aria-label="Demonstration gender"
+            aria-label="Default exercise demonstrator"
             className="inline-flex shrink-0 rounded-full border border-white/10 bg-white/5 p-1"
           >
             {(["male", "female"] as const).map((g) => (
@@ -135,7 +139,7 @@ function Profile() {
                 aria-checked={demoGender === g}
                 onClick={() => {
                   setDemoGender(g);
-                  toast.success(`Showing ${g} demonstrations`);
+                  toast.success(`${g[0].toUpperCase()}${g.slice(1)} demonstrator set as default`);
                 }}
                 className={`min-h-9 rounded-full px-4 text-xs font-semibold uppercase tracking-[0.14em] transition ${
                   demoGender === g
