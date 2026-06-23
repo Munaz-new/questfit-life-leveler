@@ -1,9 +1,12 @@
 import { useEffect, useState } from "react";
 import { assetUrl, resolveGallery, hasGenderedAsset } from "@/lib/leveluplife/assets/assetManager";
 import { useDemoGender } from "@/lib/leveluplife/assets/gender";
+import { useApp } from "@/lib/leveluplife/store";
+import type { Gender } from "@/lib/leveluplife/assets/types";
 import { ComingSoon } from "./ExerciseAsset";
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
-import { ZoomIn, Info } from "lucide-react";
+import { ZoomIn, Info, Check, X } from "lucide-react";
+import { toast } from "sonner";
 
 /**
  * ExerciseDemo — the production demonstration centerpiece for an exercise.
@@ -12,6 +15,12 @@ import { ZoomIn, Info } from "lucide-react";
  * (Start → Movement → End → Return) with the active step highlighted. Tapping
  * the hero opens a zoomed view. Images are lazy-loaded with fixed aspect ratio
  * to avoid layout shift, and the next step is preloaded for instant stepping.
+ *
+ * Demonstrator selection has three layers:
+ *   1. saved default (profile.gender, mirrored into the demoGender preference)
+ *   2. a non-persistent per-exercise override (resets when leaving the page)
+ * Switching to the OTHER demonstrator shows a small prompt:
+ *   "Use only for this exercise" (keep override) vs "Make this my default".
  */
 export function ExerciseDemo({
   id,
@@ -22,9 +31,35 @@ export function ExerciseDemo({
   name: string;
   className?: string;
 }) {
-  const [gender, setGender] = useDemoGender();
+  const [savedGender] = useDemoGender();
+  const { setDemoGenderDefault } = useApp();
+  // Per-exercise temporary override — dropped on unmount / id change.
+  const [override, setOverride] = useState<Gender | null>(null);
+  const [prompt, setPrompt] = useState(false);
   const [active, setActive] = useState(0);
   const [zoom, setZoom] = useState(false);
+
+  // Reset the temporary override when navigating to a different exercise.
+  useEffect(() => {
+    setOverride(null);
+    setPrompt(false);
+    setActive(0);
+  }, [id]);
+
+  const gender: Gender = override ?? savedGender;
+
+  function pick(g: Gender) {
+    setActive(0);
+    if (g === savedGender) {
+      // Switching back to the saved demonstrator — just clear the override.
+      setOverride(null);
+      setPrompt(false);
+      return;
+    }
+    // Switched to the other demonstrator — preview it and ask what to do.
+    setOverride(g);
+    setPrompt(true);
+  }
 
   const gallery = resolveGallery(id, gender);
   const images = gallery?.images ?? [];
@@ -45,30 +80,63 @@ export function ExerciseDemo({
   return (
     <div className={className}>
       {/* Gender toggle */}
-      <div
-        role="radiogroup"
-        aria-label="Demonstration gender"
-        className="mb-3 inline-flex rounded-full border border-white/10 bg-white/5 p-1"
-      >
-        {(["male", "female"] as const).map((g) => (
-          <button
-            key={g}
-            role="radio"
-            aria-checked={gender === g}
-            onClick={() => {
-              setGender(g);
-              setActive(0);
-            }}
-            className={`min-h-9 rounded-full px-4 text-xs font-semibold uppercase tracking-[0.14em] transition ${
-              gender === g
-                ? "bg-gradient-primary text-[var(--primary-foreground)] shadow-glow"
-                : "text-muted-foreground hover:text-foreground"
-            }`}
-          >
-            {g}
-          </button>
-        ))}
+      <div className="mb-3 flex flex-wrap items-center gap-2">
+        <div
+          role="radiogroup"
+          aria-label="Demonstration gender"
+          className="inline-flex rounded-full border border-white/10 bg-white/5 p-1"
+        >
+          {(["male", "female"] as const).map((g) => (
+            <button
+              key={g}
+              role="radio"
+              aria-checked={gender === g}
+              onClick={() => pick(g)}
+              className={`min-h-9 rounded-full px-4 text-xs font-semibold uppercase tracking-[0.14em] transition ${
+                gender === g
+                  ? "bg-gradient-primary text-[var(--primary-foreground)] shadow-glow"
+                  : "text-muted-foreground hover:text-foreground"
+              }`}
+            >
+              {g}
+            </button>
+          ))}
+        </div>
+        {override && !prompt && (
+          <span className="rounded-full bg-white/8 px-2.5 py-1 text-[10px] font-medium uppercase tracking-wide text-muted-foreground">
+            Preview · this exercise only
+          </span>
+        )}
       </div>
+
+      {/* Temporary-switch prompt */}
+      {prompt && override && (
+        <div className="mb-3 rounded-2xl border border-white/10 bg-white/5 p-3">
+          <p className="text-xs text-muted-foreground">
+            Showing the <span className="font-semibold capitalize text-foreground">{override}</span>{" "}
+            demonstrator. How should we apply this?
+          </p>
+          <div className="mt-2.5 flex flex-wrap gap-2">
+            <button
+              onClick={() => setPrompt(false)}
+              className="inline-flex items-center gap-1.5 rounded-xl bg-white/8 px-3 py-2 text-xs font-semibold text-foreground transition hover:bg-white/12"
+            >
+              <X className="h-3.5 w-3.5" /> Use only for this exercise
+            </button>
+            <button
+              onClick={() => {
+                setDemoGenderDefault(override);
+                setOverride(null);
+                setPrompt(false);
+                toast.success(`${override[0].toUpperCase()}${override.slice(1)} set as your default`);
+              }}
+              className="inline-flex items-center gap-1.5 rounded-xl bg-gradient-primary px-3 py-2 text-xs font-semibold text-[var(--primary-foreground)] shadow-glow"
+            >
+              <Check className="h-3.5 w-3.5" /> Make this my default
+            </button>
+          </div>
+        </div>
+      )}
 
       {/* Hero */}
       <div className="relative aspect-[4/3] w-full overflow-hidden rounded-2xl border border-white/10 bg-gradient-to-br from-white/5 to-white/0">

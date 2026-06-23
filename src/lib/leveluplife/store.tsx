@@ -62,6 +62,7 @@ interface Ctx {
   state: AppState;
   setProfile: (p: UserProfile) => void;
   setMotivation: (m: UserProfile["motivation"]) => void;
+  setDemoGenderDefault: (g: UserProfile["gender"]) => void;
   completeQuest: (id: string) => void;
   setCheckin: (c: Checkin) => void;
   logSitting: (h: number) => void;
@@ -135,6 +136,13 @@ export function AppProvider({ children }: { children: ReactNode }) {
       },
       setMotivation: (m) =>
         setState((s) => (s.profile ? { ...s, profile: { ...s.profile, motivation: m } } : s)),
+      setDemoGenderDefault: (g) => {
+        if (typeof window !== "undefined") {
+          window.localStorage.setItem("leveluplife.demoGender", g);
+          window.dispatchEvent(new CustomEvent("leveluplife:demoGender", { detail: g }));
+        }
+        setState((s) => (s.profile ? { ...s, profile: { ...s.profile, gender: g } } : s));
+      },
       completeQuest: (id) =>
         setState((s) => {
           const q = s.quests.find((x) => x.id === id);
