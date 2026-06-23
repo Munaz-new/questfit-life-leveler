@@ -204,7 +204,7 @@ function Onboarding() {
             </Step>
           )}
 
-          {step === 7 && (
+          {step === 8 && (
             <Step title="Pick your motivation mode" sub="Same workouts — radically different feel. Preview each before committing.">
               <ModePreview motivation={p.motivation} />
               <div className="grid grid-cols-2 gap-2.5">
