@@ -19,7 +19,7 @@ export const Route = createFileRoute("/onboarding")({
   component: Onboarding,
 });
 
-const TOTAL = 9;
+const TOTAL = 10;
 
 function Onboarding() {
   const navigate = useNavigate();
