@@ -192,7 +192,7 @@ function Onboarding() {
             </Step>
           )}
 
-          {step === 6 && (
+          {step === 7 && (
             <Step title="Fitness level" sub="We start where you are and ramp safely.">
               <Grid cols={1}>
                 {(["beginner","intermediate","advanced"] as const).map((lvl) => (
