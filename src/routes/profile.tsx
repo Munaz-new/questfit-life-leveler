@@ -24,7 +24,7 @@ export const Route = createFileRoute("/profile")({
 
 function Profile() {
   const navigate = useNavigate();
-  const { state, resetAll, setMotivation } = useApp();
+  const { state, resetAll, setMotivation, setDemoGenderDefault } = useApp();
   const [switching, setSwitching] = useState<MotivationStyle | null>(null);
   const [demoGender, setDemoGender] = useDemoGender();
   const [mirrorUser, setMirrorUser] = useState<string | null>(null);
