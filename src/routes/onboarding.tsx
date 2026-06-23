@@ -152,7 +152,7 @@ function Onboarding() {
             </Step>
           )}
 
-          {step === 3 && (
+          {step === 4 && (
             <Step title="Daily routine" sub="When the day starts, and how taxing it feels.">
               <Row>
                 <Field label="Wake">
