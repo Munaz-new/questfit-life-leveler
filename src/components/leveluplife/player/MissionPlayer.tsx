@@ -203,7 +203,7 @@ function ExerciseScreen({
 
       <div className="glass mb-3 flex aspect-[5/4] w-full items-center justify-center rounded-[var(--radius)] text-[var(--cyan-glow)]">
         <div className="h-3/4 w-3/4">
-          <ExerciseArt id={move.id} animated />
+          <ExerciseArt id={move.id} animated showFallbackNote />
         </div>
       </div>
 
