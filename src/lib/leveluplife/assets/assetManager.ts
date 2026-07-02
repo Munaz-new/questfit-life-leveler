@@ -20,6 +20,7 @@ import type {
   ExerciseDemoAssets,
   Gender,
   ResolvedGallery,
+  ResolvedMedia,
 } from "./types";
 
 /**
@@ -58,29 +59,58 @@ export function getThumbnail(id: string): AssetRef | undefined {
 }
 
 /**
- * The best available ordered gallery for an exercise + requested gender.
+ * The single source of truth for exercise demonstration media.
  *
- * Prefers a real gendered set; falls back to the shared (gender-neutral)
- * gallery; finally synthesizes a one-image gallery from the thumbnail.
+ * Treats the gender-neutral `shared` gallery as the canonical MALE
+ * demonstrator until real female assets are imported. Female requests fall
+ * back to the male/shared set and flag `isFallback` so the UI can show a
+ * subtle "Female demonstration coming soon" note — never a broken image.
+ */
+export function resolveMedia(id: string, requestedGender: Gender): ResolvedMedia {
+  const demo = getDemo(id);
+
+  const maleSet = (demo.male && demo.male.length ? demo.male : demo.shared) ?? undefined;
+
+  const thumbGallery = (): DemoImage[] | undefined => {
+    if (!demo.thumbnail) return undefined;
+    return [{ ...demo.thumbnail, step: "demo", stepLabel: "Demonstration" }];
+  };
+
+  if (requestedGender === "female") {
+    const female = demo.female && demo.female.length ? demo.female : undefined;
+    if (female) {
+      return { images: female, requestedGender, servedGender: "female", isFallback: false };
+    }
+    const fallback = maleSet ?? thumbGallery();
+    if (fallback) {
+      return {
+        images: fallback,
+        requestedGender,
+        servedGender: "male",
+        isFallback: true,
+        note: "Female demonstration coming soon",
+      };
+    }
+    return { images: [], requestedGender, servedGender: "male", isFallback: false };
+  }
+
+  // Male request — shared/male is the native set.
+  const male = maleSet ?? thumbGallery();
+  return { images: male ?? [], requestedGender, servedGender: "male", isFallback: false };
+}
+
+/**
+ * The best available ordered gallery for an exercise + requested gender.
+ * Thin wrapper over {@link resolveMedia} kept for existing call sites.
  * Returns undefined when nothing has been imported — the caller then shows
  * the "Illustration coming soon" card.
  */
 export function resolveGallery(id: string, gender: Gender): ResolvedGallery | undefined {
-  const demo = getDemo(id);
-
-  const gendered = demo[gender];
-  if (gendered && gendered.length) return { images: gendered, gendered: true };
-
-  if (demo.shared && demo.shared.length) return { images: demo.shared, gendered: false };
-
-  if (demo.thumbnail) {
-    const t = demo.thumbnail;
-    const single: DemoImage = { ...t, step: "demo", stepLabel: "Demonstration" };
-    return { images: [single], gendered: false };
-  }
-
-  return undefined;
+  const media = resolveMedia(id, gender);
+  if (!media.images.length) return undefined;
+  return { images: media.images, gendered: media.servedGender === gender && !media.isFallback };
 }
+
 
 /** Does this exercise have any imported demonstration asset at all? */
 export function hasImportedAsset(id: string): boolean {

@@ -77,3 +77,20 @@ export interface ResolvedGallery {
   /** True when the gallery is the user's selected gender, not the shared set. */
   gendered: boolean;
 }
+
+/**
+ * The richer result returned by `resolveMedia` — the single source of truth
+ * every exercise screen consumes. Carries explicit fallback info so the UI
+ * can render a consistent, subtle note without duplicating logic.
+ */
+export interface ResolvedMedia {
+  images: DemoImage[];
+  requestedGender: Gender;
+  /** Which demonstrator the returned images actually depict. */
+  servedGender: Gender;
+  /** True when a female request was served the male/shared set. */
+  isFallback: boolean;
+  /** Subtle note to surface when isFallback is true. */
+  note?: string;
+}
+

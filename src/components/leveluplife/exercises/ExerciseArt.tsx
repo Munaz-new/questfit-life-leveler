@@ -12,12 +12,22 @@ export function ExerciseArt({
   animated = false,
   className,
   animationUrl,
+  showFallbackNote = false,
 }: {
   id: string;
   animated?: boolean;
   className?: string;
   animationUrl?: string;
+  showFallbackNote?: boolean;
 }) {
   void animationUrl;
-  return <ExerciseAsset id={id} animated={animated} className={className} />;
+  return (
+    <ExerciseAsset
+      id={id}
+      animated={animated}
+      className={className}
+      showFallbackNote={showFallbackNote}
+    />
+  );
 }
+

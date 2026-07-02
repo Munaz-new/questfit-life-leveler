@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { assetUrl, resolveGallery, hasGenderedAsset } from "@/lib/leveluplife/assets/assetManager";
+import { assetUrl, resolveMedia } from "@/lib/leveluplife/assets/assetManager";
 import { useDemoGender } from "@/lib/leveluplife/assets/gender";
 import { useApp } from "@/lib/leveluplife/store";
 import type { Gender } from "@/lib/leveluplife/assets/types";
@@ -61,8 +61,8 @@ export function ExerciseDemo({
     setPrompt(true);
   }
 
-  const gallery = resolveGallery(id, gender);
-  const images = gallery?.images ?? [];
+  const media = resolveMedia(id, gender);
+  const images = media.images;
   // Clamp active step if the gallery length changes (e.g. gender switch).
   const step = Math.min(active, Math.max(0, images.length - 1));
 
@@ -75,7 +75,7 @@ export function ExerciseDemo({
     }
   }, [step, images]);
 
-  const trueGendered = hasGenderedAsset(id, gender);
+  const isFallback = media.isFallback;
 
   return (
     <div className={className}>
@@ -202,14 +202,15 @@ export function ExerciseDemo({
       )}
 
       {/* Provenance / gender-availability note */}
-      {gallery && (
+      {images.length > 0 && (
         <p className="mt-2 flex items-start gap-1.5 text-[11px] text-muted-foreground">
           <Info className="mt-0.5 h-3 w-3 shrink-0" aria-hidden />
-          {trueGendered
-            ? "Demonstration always shows correct form."
-            : "Gender-specific demonstrations are coming soon — showing the available set."}
+          {isFallback
+            ? `${media.note} — showing the available demonstration.`
+            : "Demonstration always shows correct form."}
         </p>
       )}
+
 
       <Dialog open={zoom} onOpenChange={setZoom}>
         <DialogContent className="max-w-3xl border-white/10 bg-background p-2">

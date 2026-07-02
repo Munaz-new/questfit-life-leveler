@@ -1,40 +1,51 @@
-# Exercise Demonstration Preference
+# Unified Exercise Demonstrator Media
 
-Today the demonstrator (male/female) is set in a generic "The basics" onboarding sub-field, and the per-exercise toggle silently overwrites the global default. We'll make it a first-class, well-explained preference with a proper temporary-preview flow.
+Make every exercise screen resolve demonstration media through one source of truth, driven by the global Demonstrator preference, with correct female→male fallback and a subtle note when a female asset is missing.
 
-## What changes for the user
+## Problem
 
-1. **New onboarding step** — A dedicated "Exercise Demonstration Preference" screen asking *"Which exercise demonstrator would you like to follow?"* with two clear options (Male / Female Demonstrator) and the note: *"This only changes the instructor shown in exercise guides. Your workout plan stays exactly the same."*
-2. **Per-exercise preview switch** — On each exercise page, the existing Male/Female switch becomes a true temporary preview. When the user switches to the *other* demonstrator, a small prompt appears:
-   - **Use only for this exercise** — applies just on this page, reverts when they leave.
-   - **Make this my default** — updates the saved default everywhere.
-3. **Settings > Workout Preferences** — A new section in the profile/settings screen where the saved default demonstrator can be changed anytime (replaces today's loose "Demonstration style" card, restyled and relabeled).
+- Exercise assets only exist as a `shared` gallery (male-model photos). Female selection silently shows male images with no note; male is treated as a generic fallback rather than its native set.
+- `resolveGallery` can't tell "male native" from "female fallback," so no accurate note is possible.
+- Fallback notes are missing on Library cards and the Mission Player, and the Detail page shows "coming soon" even for male.
 
-## How it works (technical)
+## Approach
 
-**Default vs. session vs. per-exercise override (3 layers).** The default lives in `profile.gender` (persisted) and is mirrored into the existing `demoGender` localStorage value, which `useDemoGender()` already reads app-wide. We add a third, non-persistent **per-exercise override** held in React state inside `ExerciseDemo`, so "this exercise only" never touches the saved default.
+Establish **one resolution function + one React hook** that all exercise UIs consume. Treat `shared` as the canonical male demonstrator until real female assets are imported. Return explicit fallback info so any screen can render a consistent, subtle note. No UI screen ever references a static image path directly.
 
-- `src/routes/onboarding.tsx`
-  - Remove the "Demonstration style" field from the current "The basics" step (step 1).
-  - Insert a new dedicated step with the exact question, two large option cards, and the reassurance copy. Bump `TOTAL` from 9 to 10 and renumber the conditional `step === n` blocks accordingly. The selection still writes to `p.gender`, which `setProfile` already seeds into `demoGender`.
+### 1. Asset resolution — single source of truth (`src/lib/leveluplife/assets/assetManager.ts`)
 
-- `src/components/leveluplife/exercises/ExerciseDemo.tsx`
-  - Track a local `override: Gender | null` state. The displayed demonstrator = `override ?? savedGender`. On leaving the page (component unmount / id change) the override is dropped automatically.
-  - When the user taps the other demonstrator, instead of immediately calling `setDemoGender`, set the local override AND show a small inline prompt (lightweight popover/inline card, reusing existing UI tokens) with the two actions:
-    - "Use only for this exercise" → keep local override only, dismiss prompt.
-    - "Make this my default" → call `setDemoGender(g)` (updates the global default + persists), clear override, dismiss prompt.
-  - Switching back to the saved demonstrator just clears the override with no prompt.
+- Add `resolveMedia(id, gender)` returning a richer result:
+  - `images: DemoImage[]`
+  - `requestedGender: Gender`
+  - `servedGender: Gender` (which demonstrator the returned images actually depict)
+  - `isFallback: boolean` (true when a female request was served male assets)
+  - `note?: string` (e.g. `"Female demonstration coming soon"`) — set only when `isFallback`.
+- Resolution order:
+  - `female`: `demo.female` → else `demo.male ?? demo.shared` (served male, `isFallback: true`) → else thumbnail → else undefined.
+  - `male`: `demo.male ?? demo.shared` (native) → thumbnail → undefined.
+- Keep existing `resolveGallery`/`assetUrl` exports working (reimplement `resolveGallery` on top of `resolveMedia`) so nothing else breaks.
 
-- `src/lib/leveluplife/store.tsx`
-  - Add a small helper so "Make this my default" also updates `profile.gender` (not just the `demoGender` localStorage), keeping profile and demo preference in sync. (Re-use the existing `setProfile`/seed logic.)
+### 2. Provider hook (new `src/lib/leveluplife/assets/useExerciseMedia.ts`)
 
-- `src/routes/profile.tsx`
-  - Rename the "Demonstration style" card to a **"Workout Preferences"** section containing the demonstrator default toggle (keeps current behavior of writing the persisted default), with copy clarifying it only affects demonstration media.
+- `useExerciseMedia(id)` = `useDemoGender()` + `resolveMedia(id, gender)`, returning `{ images, coverUrl, isFallback, note, gender }`.
+- This is the single entry point every screen uses; it re-renders automatically when the preference changes (existing `demoGender` event/`storage` sync in `gender.ts`).
 
-## Future-proofing (no DB changes)
+### 3. Screen updates (presentation only)
 
-The demonstrator is already a **string key** into the asset gallery map (`ExerciseDemoAssets` keyed by demonstrator). Adding new demonstration types later (e.g. additional instructors, animated, 3D) means adding new keys to that map and to the option list — no schema or storage-shape change, since the preference is just a stored string. The plan keeps the `male | female` keys for now and leaves the resolution/fallback chain in `assetManager.ts` untouched.
+- **`ExerciseAsset.tsx`** (used by Library cards + Mission Player): consume `useExerciseMedia`. Add an optional `showFallbackNote` prop that renders a subtle corner badge when `isFallback`. Keep the guaranteed `ComingSoon` fallback for no-asset cases (never broken/empty images).
+- **`ExerciseCard.tsx`** (Library): pass through the fallback so a subtle "Female demo coming soon" line appears under the affected card; cover image comes only from the provider.
+- **`ExerciseDemo.tsx`** (Detail): replace the current `hasGenderedAsset` note logic with `isFallback`/`note` from the resolver so Male no longer shows "coming soon," and Female shows the subtle note while displaying the male fallback.
+- **`MissionPlayer.tsx`**: `ExerciseArt` already routes through `ExerciseAsset`; enable the subtle fallback note so the Player matches Library/Detail.
 
-## Out of scope
-- No new demonstrator media is sourced; both genders still fall back to the shared imported set where a gendered set doesn't exist.
-- No workout/XP/session logic changes.
+### 4. Verification
+
+- Toggle the demonstrator in Settings/onboarding and confirm Library, Detail, and Mission Player update instantly without reload.
+- Female selection shows male fallback images plus the subtle note everywhere; Male shows no note.
+- No broken/empty images for any exercise (thumbnail/ComingSoon fallback intact).
+- `tsgo` typecheck clean.
+
+## Technical notes
+
+- Purely frontend/presentation + the pure resolver module; no changes to workout logic, store data model, or the importer/manifest schema.
+- `shared` is intentionally mapped to `male` now; when the importer later adds real `female` galleries, `resolveMedia` serves them automatically with **no UI changes** — satisfying the future-media-types requirement (videos/GIFs/animations already flow through `AssetFormat` + `assetUrl`).
+- Single source of truth = `resolveMedia` (pure) + `useExerciseMedia` (React); all screens depend on these, keeping every demonstrator view synchronized.
