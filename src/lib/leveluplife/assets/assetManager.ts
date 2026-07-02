@@ -20,6 +20,7 @@ import type {
   ExerciseDemoAssets,
   Gender,
   ResolvedGallery,
+  ResolvedMedia,
 } from "./types";
 
 /**
