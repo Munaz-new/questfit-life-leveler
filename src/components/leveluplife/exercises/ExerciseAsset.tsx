@@ -1,35 +1,39 @@
-import { assetUrl, resolveGallery } from "@/lib/leveluplife/assets/assetManager";
-import { useDemoGender } from "@/lib/leveluplife/assets/gender";
+import { assetUrl } from "@/lib/leveluplife/assets/assetManager";
+import { useExerciseMedia } from "@/lib/leveluplife/assets/useExerciseMedia";
 import { ImageOff } from "lucide-react";
 
 /**
  * ExerciseAsset — the compact, non-interactive demonstration renderer used in
- * cards, the workout player and the dev dashboard. It shows the first frame of
- * the best available gallery for the currently-selected demonstration gender.
+ * cards, the workout player and the dev dashboard. It shows the cover frame of
+ * the best available media for the currently-selected demonstration gender via
+ * the shared `useExerciseMedia` provider (single source of truth).
  *
- * Fallback is guaranteed: imported image → branded "coming soon" card. The
- * user never sees a broken image or a stick figure.
+ * Fallback is guaranteed: female→male media falls back automatically (with an
+ * optional subtle note), and when nothing is imported a branded "coming soon"
+ * card shows. The user never sees a broken image or a stick figure.
  */
 export function ExerciseAsset({
   id,
   className,
   alt,
+  showFallbackNote = false,
 }: {
   id: string;
   animated?: boolean;
   className?: string;
   alt?: string;
+  /** Render a subtle badge when the selected gender fell back to another. */
+  showFallbackNote?: boolean;
 }) {
-  const [gender] = useDemoGender();
-  const gallery = resolveGallery(id, gender);
+  const media = useExerciseMedia(id);
 
   return (
     <div
       className={`relative flex h-full w-full items-center justify-center overflow-hidden ${className ?? ""}`}
     >
-      {gallery ? (
+      {media.cover ? (
         <img
-          src={assetUrl(gallery.images[0])}
+          src={assetUrl(media.cover)}
           alt={alt ?? "Exercise demonstration"}
           loading="lazy"
           decoding="async"
@@ -38,9 +42,15 @@ export function ExerciseAsset({
       ) : (
         <ComingSoon />
       )}
+      {showFallbackNote && media.isFallback && media.note && (
+        <span className="absolute bottom-1 left-1 right-1 rounded-md bg-black/55 px-1.5 py-0.5 text-center text-[9px] font-medium uppercase tracking-[0.12em] text-white/85 backdrop-blur-sm">
+          {media.note}
+        </span>
+      )}
     </div>
   );
 }
+
 
 /** Branded placeholder shown when no demonstration media exists yet. */
 export function ComingSoon({ compact = false }: { compact?: boolean }) {
