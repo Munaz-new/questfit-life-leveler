@@ -61,8 +61,8 @@ export function ExerciseDemo({
     setPrompt(true);
   }
 
-  const gallery = resolveGallery(id, gender);
-  const images = gallery?.images ?? [];
+  const media = resolveMedia(id, gender);
+  const images = media.images;
   // Clamp active step if the gallery length changes (e.g. gender switch).
   const step = Math.min(active, Math.max(0, images.length - 1));
 
