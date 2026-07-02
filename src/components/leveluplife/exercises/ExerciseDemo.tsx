@@ -75,7 +75,7 @@ export function ExerciseDemo({
     }
   }, [step, images]);
 
-  const trueGendered = hasGenderedAsset(id, gender);
+  const isFallback = media.isFallback;
 
   return (
     <div className={className}>
