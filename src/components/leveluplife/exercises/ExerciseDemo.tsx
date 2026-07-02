@@ -202,14 +202,15 @@ export function ExerciseDemo({
       )}
 
       {/* Provenance / gender-availability note */}
-      {gallery && (
+      {images.length > 0 && (
         <p className="mt-2 flex items-start gap-1.5 text-[11px] text-muted-foreground">
           <Info className="mt-0.5 h-3 w-3 shrink-0" aria-hidden />
-          {trueGendered
-            ? "Demonstration always shows correct form."
-            : "Gender-specific demonstrations are coming soon — showing the available set."}
+          {isFallback
+            ? `${media.note} — showing the available demonstration.`
+            : "Demonstration always shows correct form."}
         </p>
       )}
+
 
       <Dialog open={zoom} onOpenChange={setZoom}>
         <DialogContent className="max-w-3xl border-white/10 bg-background p-2">
