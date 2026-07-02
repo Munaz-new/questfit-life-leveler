@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { assetUrl, resolveGallery, hasGenderedAsset } from "@/lib/leveluplife/assets/assetManager";
+import { assetUrl, resolveMedia } from "@/lib/leveluplife/assets/assetManager";
 import { useDemoGender } from "@/lib/leveluplife/assets/gender";
 import { useApp } from "@/lib/leveluplife/store";
 import type { Gender } from "@/lib/leveluplife/assets/types";
