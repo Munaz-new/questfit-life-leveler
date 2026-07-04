@@ -1127,7 +1127,66 @@ export const ASSET_MANIFEST: Record<string, ExerciseAssets> = {
         "step": "end",
         "stepLabel": "End Position"
       }
-    ]
+    ],
+    "female": [
+      {
+        "url": "squat_chair/female/step-0.webp",
+        "format": "webp",
+        "source": "ironhex-exercise-db",
+        "license": "Unlicense",
+        "version": "1",
+        "updatedAt": "2026-07-04T16:21:19.920Z",
+        "bytes": 32104,
+        "step": "start",
+        "stepLabel": "Start Position"
+      },
+      {
+        "url": "squat_chair/female/step-1.webp",
+        "format": "webp",
+        "source": "ironhex-exercise-db",
+        "license": "Unlicense",
+        "version": "1",
+        "updatedAt": "2026-07-04T16:21:19.920Z",
+        "bytes": 34118,
+        "step": "end",
+        "stepLabel": "End Position"
+      }
+    ],
+    "femaleTier": {
+      "thumbnail": {
+        "url": "squat_chair/female/thumbnail.webp",
+        "format": "webp",
+        "source": "ironhex-exercise-db",
+        "license": "Unlicense",
+        "version": "1",
+        "updatedAt": "2026-07-04T16:21:19.920Z",
+        "bytes": 8596
+      },
+      "gallery": [
+        {
+          "url": "squat_chair/female/step-0.webp",
+          "format": "webp",
+          "source": "ironhex-exercise-db",
+          "license": "Unlicense",
+          "version": "1",
+          "updatedAt": "2026-07-04T16:21:19.920Z",
+          "bytes": 32104,
+          "step": "start",
+          "stepLabel": "Start Position"
+        },
+        {
+          "url": "squat_chair/female/step-1.webp",
+          "format": "webp",
+          "source": "ironhex-exercise-db",
+          "license": "Unlicense",
+          "version": "1",
+          "updatedAt": "2026-07-04T16:21:19.920Z",
+          "bytes": 34118,
+          "step": "end",
+          "stepLabel": "End Position"
+        }
+      ]
+    }
   },
   "squat-goblet": {
     "thumbnail": {
@@ -1237,4 +1296,4 @@ export const ASSET_MANIFEST: Record<string, ExerciseAssets> = {
 };
 
 /** When the manifest was last regenerated (ISO). */
-export const ASSET_MANIFEST_GENERATED_AT = "2026-07-04T16:21:29.482Z";
+export const ASSET_MANIFEST_GENERATED_AT = "2026-07-04T16:22:06.128Z";
