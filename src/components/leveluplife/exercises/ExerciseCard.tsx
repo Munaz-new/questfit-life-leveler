@@ -12,7 +12,7 @@ export function ExerciseCard({ ex }: { ex: Exercise }) {
     >
       <div className="relative mb-2 flex aspect-square w-full items-center justify-center overflow-hidden rounded-xl bg-gradient-to-br from-white/5 to-white/0 text-[var(--cyan-glow)]">
         <div className="h-3/4 w-3/4">
-          <ExerciseArt id={ex.id} animated showFallbackNote />
+          <ExerciseArt id={ex.id} animated />
         </div>
       </div>
       <p className="truncate text-sm font-semibold">{ex.name}</p>

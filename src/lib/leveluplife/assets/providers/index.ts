@@ -6,11 +6,13 @@
  * ──────────────────────────────────────────────────────────────────── */
 
 import { freeExerciseDbProvider } from "./freeExerciseDb";
+import { ironhexExerciseDbProvider } from "./ironhexExerciseDb";
 import { localProvider } from "./local";
 import type { AssetProvider } from "./types";
 
 export const PROVIDERS: AssetProvider[] = [
   freeExerciseDbProvider,
+  ironhexExerciseDbProvider,
   localProvider,
   // Future: officialLevelUpProvider, trainerVideoProvider, model3dProvider…
 ];

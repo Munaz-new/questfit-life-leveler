@@ -75,8 +75,6 @@ export function ExerciseDemo({
     }
   }, [step, images]);
 
-  const isFallback = media.isFallback;
-
   return (
     <div className={className}>
       {/* Gender toggle */}
@@ -201,13 +199,11 @@ export function ExerciseDemo({
         </div>
       )}
 
-      {/* Provenance / gender-availability note */}
+      {/* Neutral form reassurance — never a "coming soon" note. */}
       {images.length > 0 && (
         <p className="mt-2 flex items-start gap-1.5 text-[11px] text-muted-foreground">
           <Info className="mt-0.5 h-3 w-3 shrink-0" aria-hidden />
-          {isFallback
-            ? `${media.note} — showing the available demonstration.`
-            : "Demonstration always shows correct form."}
+          Demonstration always shows correct form.
         </p>
       )}
 

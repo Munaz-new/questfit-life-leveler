@@ -3,31 +3,21 @@ import { ExerciseAsset } from "./ExerciseAsset";
 /**
  * Thin compatibility wrapper kept for existing call sites. All resolution
  * now flows through the Asset Manager via <ExerciseAsset/>, which picks the
- * best available asset (imported animation/video/image → inline glyph →
- * placeholder). The `animationUrl` prop is retained for backwards-compat but
- * is no longer needed — assets are resolved by exercise id.
+ * best available asset for the selected demonstrator and falls back silently.
+ * The `animationUrl` prop is retained for backwards-compat but is no longer
+ * needed — assets are resolved by exercise id.
  */
 export function ExerciseArt({
   id,
   animated = false,
   className,
   animationUrl,
-  showFallbackNote = false,
 }: {
   id: string;
   animated?: boolean;
   className?: string;
   animationUrl?: string;
-  showFallbackNote?: boolean;
 }) {
   void animationUrl;
-  return (
-    <ExerciseAsset
-      id={id}
-      animated={animated}
-      className={className}
-      showFallbackNote={showFallbackNote}
-    />
-  );
+  return <ExerciseAsset id={id} animated={animated} className={className} />;
 }
-

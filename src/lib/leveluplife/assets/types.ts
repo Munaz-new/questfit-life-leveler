@@ -55,17 +55,37 @@ export interface DemoImage extends AssetRef {
 }
 
 /**
+ * A per-gender demonstration bundle. Every slot is optional so a tier can hold
+ * anything from a single thumbnail to a full multi-format set. New media types
+ * (gif/mp4/lottie/glb) are expressed via the existing `AssetFormat` on each
+ * ref, so adding them needs NO schema or UI change.
+ */
+export interface AssetTier {
+  thumbnail?: AssetRef;
+  hero?: AssetRef;
+  /** Ordered start→end demonstration frames. */
+  gallery?: DemoImage[];
+  animation?: AssetRef;
+  video?: AssetRef;
+}
+
+/**
  * All demonstration assets known for a single exercise.
  *
  * `shared` is the gender-neutral gallery used when no gender-specific set is
  * available (the case for the public-domain dataset today). `male`/`female`
- * are reserved for a future gendered provider and take priority when present.
+ * hold the gender-specific galleries and take priority when present. The
+ * structured `maleTier`/`femaleTier` carry the richer multi-format bundle used
+ * by the importer and future media types; the flat arrays remain the canonical
+ * runtime shape for back-compat.
  */
 export interface ExerciseDemoAssets {
   thumbnail?: AssetRef;
   shared?: DemoImage[];
   male?: DemoImage[];
   female?: DemoImage[];
+  maleTier?: AssetTier;
+  femaleTier?: AssetTier;
 }
 
 /** Back-compat alias used by older call sites. */

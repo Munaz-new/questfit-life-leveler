@@ -6,6 +6,8 @@ import { modeFor } from "@/lib/leveluplife/modes";
 import { missionCopyFor } from "@/lib/leveluplife/missionCopy";
 import { exerciseById } from "@/lib/leveluplife/exercises/library";
 import { ExerciseArt } from "@/components/leveluplife/exercises/ExerciseArt";
+import { preloadExerciseMedia } from "@/lib/leveluplife/assets/assetManager";
+import { useDemoGender } from "@/lib/leveluplife/assets/gender";
 import { MuscleMap } from "@/components/leveluplife/exercises/MuscleMap";
 import { Button } from "@/components/ui/button";
 import {
@@ -22,6 +24,7 @@ import {
 
 export function MissionPlayer() {
   const navigate = useNavigate();
+  const [demoGender] = useDemoGender();
   const {
     state,
     completeCurrentMove,
@@ -41,6 +44,15 @@ export function MissionPlayer() {
   useEffect(() => {
     if (!a) navigate({ to: "/workout" });
   }, [a, navigate]);
+
+  // Preload every exercise's cover frame the moment the mission opens so
+  // stepping through the workout is instant.
+  useEffect(() => {
+    if (!a) return;
+    const ids = [...a.session.warmup, ...a.session.main, ...a.session.cooldown].map((m) => m.id);
+    preloadExerciseMedia(ids, demoGender);
+  }, [a, demoGender]);
+
   if (!a) return null;
 
   const allMoves = [...a.session.warmup, ...a.session.main, ...a.session.cooldown];
@@ -203,7 +215,7 @@ function ExerciseScreen({
 
       <div className="glass mb-3 flex aspect-[5/4] w-full items-center justify-center rounded-[var(--radius)] text-[var(--cyan-glow)]">
         <div className="h-3/4 w-3/4">
-          <ExerciseArt id={move.id} animated showFallbackNote />
+          <ExerciseArt id={move.id} animated />
         </div>
       </div>
 
