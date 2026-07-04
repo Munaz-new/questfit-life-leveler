@@ -62,9 +62,10 @@ export function getThumbnail(id: string): AssetRef | undefined {
  * The single source of truth for exercise demonstration media.
  *
  * Treats the gender-neutral `shared` gallery as the canonical MALE
- * demonstrator until real female assets are imported. Female requests fall
- * back to the male/shared set and flag `isFallback` so the UI can show a
- * subtle "Female demonstration coming soon" note — never a broken image.
+ * demonstrator. When a female request has no native female gallery it is
+ * served the male/shared set SILENTLY — `isFallback` is retained for internal
+ * bookkeeping (dashboard/analytics) but the UI never surfaces a note, overlay
+ * or placeholder. The user always sees a proper demonstration.
  */
 export function resolveMedia(id: string, requestedGender: Gender): ResolvedMedia {
   const demo = getDemo(id);
@@ -81,15 +82,10 @@ export function resolveMedia(id: string, requestedGender: Gender): ResolvedMedia
     if (female) {
       return { images: female, requestedGender, servedGender: "female", isFallback: false };
     }
+    // Silent fallback to the available male demonstration — no note.
     const fallback = maleSet ?? thumbGallery();
     if (fallback) {
-      return {
-        images: fallback,
-        requestedGender,
-        servedGender: "male",
-        isFallback: true,
-        note: "Female demonstration coming soon",
-      };
+      return { images: fallback, requestedGender, servedGender: "male", isFallback: true };
     }
     return { images: [], requestedGender, servedGender: "male", isFallback: false };
   }
@@ -97,6 +93,30 @@ export function resolveMedia(id: string, requestedGender: Gender): ResolvedMedia
   // Male request — shared/male is the native set.
   const male = maleSet ?? thumbGallery();
   return { images: male ?? [], requestedGender, servedGender: "male", isFallback: false };
+}
+
+/** Which gender tiers have real demonstration media for an exercise. */
+export function coverage(id: string): { male: boolean; female: boolean } {
+  const d = getDemo(id);
+  return {
+    male: Boolean(d.male?.length || d.shared?.length || d.thumbnail),
+    female: Boolean(d.female?.length),
+  };
+}
+
+/**
+ * Preload the cover frames for an ordered list of exercises so a workout can
+ * start instantly. Safe to call from the browser only; no-op during SSR.
+ */
+export function preloadExerciseMedia(ids: string[], gender: Gender): void {
+  if (typeof window === "undefined") return;
+  for (const id of ids) {
+    const first = resolveMedia(id, gender).images[0];
+    if (first) {
+      const img = new Image();
+      img.src = assetUrl(first);
+    }
+  }
 }
 
 /**

@@ -26,7 +26,7 @@ import { fileURLToPath } from "node:url";
 import sharp from "sharp";
 
 import { EXERCISES } from "../src/lib/leveluplife/exercises/library";
-import { PROVIDERS, providerById } from "../src/lib/leveluplife/assets/providers";
+import { PROVIDERS } from "../src/lib/leveluplife/assets/providers";
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), "..");
 const LIB_DIR = join(ROOT, "src/assets/exercise-library");
@@ -40,6 +40,8 @@ const ONLY_EX = opt("exercise");
 const ONLY_PROVIDER = opt("provider");
 const FORCE = flag("force");
 const DRY = flag("dry-run");
+/** Add/refresh only the female tier, merging into existing metadata (non-destructive). */
+const FEMALE_ONLY = flag("female-only");
 
 const folderOf = (id: string) => id.replace(/[^a-z0-9]+/gi, "_").toLowerCase();
 
@@ -65,17 +67,16 @@ function stepLabels(n: number): { step: string; stepLabel: string }[] {
   ];
 }
 
-async function importOne(ex: (typeof EXERCISES)[number]): Promise<boolean> {
-  const folder = folderOf(ex.id);
-  const dir = join(LIB_DIR, folder);
-  const metaPath = join(dir, "metadata.json");
+type GenderKey = "male" | "female";
 
-  if (existsSync(metaPath) && !FORCE) {
-    console.log(`  · ${ex.id}: assets exist (skip; --force to redo)`);
-    return false;
-  }
-
-  const providers = ONLY_PROVIDER ? [providerById(ONLY_PROVIDER)].filter(Boolean) : PROVIDERS;
+/** Import one gender tier from a set of providers into <folder>/<gender>/. */
+async function importTier(
+  ex: (typeof EXERCISES)[number],
+  folder: string,
+  dir: string,
+  gender: GenderKey,
+  providers: (typeof PROVIDERS)[number][],
+): Promise<Record<string, unknown> | null> {
   for (const provider of providers) {
     if (!provider || provider.id === "local-community") continue;
     try {
@@ -84,15 +85,17 @@ async function importOne(ex: (typeof EXERCISES)[number]): Promise<boolean> {
         name: ex.name,
         primaryMuscles: ex.primaryMuscles as string[],
       });
-      const best = matches[0];
+      // For female tiers, only accept genuinely female matches (no fake data).
+      const best = matches.find((m) => (gender === "female" ? m.gender === "female" : true));
       if (!best || !best.remoteUrls.length) continue;
 
       console.log(
-        `  ↓ ${ex.id} ← ${provider.id} "${best.label}" (${best.remoteUrls.length} img, conf ${best.confidence.toFixed(2)})`,
+        `  ↓ ${ex.id} [${gender}] ← ${provider.id} "${best.label}" (${best.remoteUrls.length} img)`,
       );
-      if (DRY) return true;
+      if (DRY) return { dry: true };
 
-      await mkdir(dir, { recursive: true });
+      const tierDir = join(dir, gender);
+      await mkdir(tierDir, { recursive: true });
       const now = new Date().toISOString();
       const labels = stepLabels(best.remoteUrls.length);
       const gallery: unknown[] = [];
@@ -104,9 +107,9 @@ async function importOne(ex: (typeof EXERCISES)[number]): Promise<boolean> {
           .webp({ quality: 82 })
           .toBuffer();
         const file = `step-${i}.webp`;
-        await writeFile(join(dir, file), webp);
+        await writeFile(join(tierDir, file), webp);
         gallery.push({
-          url: `${folder}/${file}`,
+          url: `${folder}/${gender}/${file}`,
           format: "webp",
           source: provider.id,
           license: best.license,
@@ -119,43 +122,122 @@ async function importOne(ex: (typeof EXERCISES)[number]): Promise<boolean> {
         });
       }
 
-      // Square thumbnail from the first frame.
       const thumbRaw = await provider.fetchAsset(best, best.remoteUrls[0]);
       const thumb = await sharp(Buffer.from(thumbRaw))
         .resize(256, 256, { fit: "cover" })
         .webp({ quality: 80 })
         .toBuffer();
-      await writeFile(join(dir, "thumbnail.webp"), thumb);
+      await writeFile(join(tierDir, "thumbnail.webp"), thumb);
 
-      // A real gendered provider would store under `male`/`female`; today the
-      // public-domain dataset is gender-neutral, so it lives in `shared`.
-      const genderKey = best.gender ?? "shared";
-      const meta = {
-        exerciseId: ex.id,
-        folder,
-        assets: {
-          thumbnail: {
-            url: `${folder}/thumbnail.webp`,
-            format: "webp",
-            source: provider.id,
-            license: best.license,
-            contributor: best.contributor,
-            version: "1",
-            updatedAt: now,
-            bytes: thumb.byteLength,
-          },
-          [genderKey]: gallery,
+      return {
+        thumbnail: {
+          url: `${folder}/${gender}/thumbnail.webp`,
+          format: "webp",
+          source: provider.id,
+          license: best.license,
+          contributor: best.contributor,
+          version: "1",
+          updatedAt: now,
+          bytes: thumb.byteLength,
         },
+        gallery,
       };
-      await writeFile(metaPath, JSON.stringify(meta, null, 2) + "\n");
-      console.log(`  ✓ ${ex.id} → ${folder}/ (${gallery.length} frames)`);
-      return true;
     } catch (err) {
-      console.warn(`  ! ${ex.id} via ${provider.id}: ${(err as Error).message}`);
+      console.warn(`  ! ${ex.id} [${gender}] via ${provider.id}: ${(err as Error).message}`);
     }
   }
-  console.log(`  ∅ ${ex.id}: no match`);
-  return false;
+  return null;
+}
+
+async function importOne(ex: (typeof EXERCISES)[number]): Promise<boolean> {
+  const folder = folderOf(ex.id);
+  const dir = join(LIB_DIR, folder);
+  const metaPath = join(dir, "metadata.json");
+
+  const femaleProviders = PROVIDERS.filter(
+    (p) => p.id === "ironhex-exercise-db" && (!ONLY_PROVIDER || p.id === ONLY_PROVIDER),
+  );
+
+  // Non-destructive female-only pass: keep existing (legacy flat) male media,
+  // only attach a female tier when a real female set is found.
+  if (FEMALE_ONLY) {
+    const existing = existsSync(metaPath)
+      ? (JSON.parse(await readFile(metaPath, "utf8")) as Record<string, unknown>)
+      : { exerciseId: ex.id, folder };
+    const tiers = ((existing.tiers as Record<string, unknown>) ?? {}) as Record<string, unknown>;
+    if (tiers.female && !FORCE) {
+      console.log(`  · ${ex.id}: female exists (skip; --force to redo)`);
+      return false;
+    }
+    const female = await importTier(ex, folder, dir, "female", femaleProviders);
+    if (DRY) return Boolean(female);
+    if (!female) {
+      console.log(`  ∅ ${ex.id}: no female match (left empty)`);
+      return false;
+    }
+    await mkdir(dir, { recursive: true });
+    tiers.female = female;
+    await writeFile(
+      metaPath,
+      JSON.stringify({ ...existing, exerciseId: ex.id, folder, tiers }, null, 2) + "\n",
+    );
+    console.log(`  ✓ ${ex.id} → female tier added`);
+    return true;
+  }
+
+  if (existsSync(metaPath) && !FORCE) {
+    console.log(`  · ${ex.id}: assets exist (skip; --force to redo)`);
+    return false;
+  }
+
+  const maleProviders = PROVIDERS.filter(
+    (p) => p.id !== "ironhex-exercise-db" && (!ONLY_PROVIDER || p.id === ONLY_PROVIDER),
+  );
+
+  const male = await importTier(ex, folder, dir, "male", maleProviders);
+  const female = await importTier(ex, folder, dir, "female", femaleProviders);
+
+  if (DRY) return Boolean(male || female);
+  if (!male && !female) {
+    console.log(`  ∅ ${ex.id}: no match`);
+    return false;
+  }
+
+  await mkdir(dir, { recursive: true });
+  const assets: Record<string, unknown> = {};
+  if (male) assets.male = male;
+  if (female) assets.female = female; // female stays absent when none found
+  await writeFile(
+    metaPath,
+    JSON.stringify({ exerciseId: ex.id, folder, tiers: assets }, null, 2) + "\n",
+  );
+  console.log(`  ✓ ${ex.id} → ${folder}/ (male:${!!male} female:${!!female})`);
+  return true;
+}
+
+/**
+ * Normalize any metadata shape (legacy flat `assets` or new nested `tiers`)
+ * into the runtime `ExerciseAssets` map the app consumes.
+ */
+function normalizeMeta(meta: Record<string, unknown>): Record<string, unknown> {
+  const out: Record<string, unknown> = {};
+
+  // Legacy flat shape: { assets: { thumbnail, shared|male|female: [...] } }
+  if (meta.assets) Object.assign(out, meta.assets as Record<string, unknown>);
+
+  // New nested shape: { tiers: { male: { thumbnail, gallery }, female: {...} } }
+  // Merges on top of any legacy assets so a female tier added later is kept.
+  const tiers = (meta.tiers ?? {}) as Record<string, { thumbnail?: unknown; gallery?: unknown }>;
+  if (tiers.male) {
+    out.male = tiers.male.gallery ?? [];
+    out.maleTier = tiers.male;
+    if (tiers.male.thumbnail && !out.thumbnail) out.thumbnail = tiers.male.thumbnail;
+  }
+  if (tiers.female) {
+    out.female = tiers.female.gallery ?? [];
+    out.femaleTier = tiers.female;
+  }
+  return out;
 }
 
 async function generateManifest() {
@@ -166,7 +248,7 @@ async function generateManifest() {
       if (!existsSync(metaPath)) continue;
       if ((await stat(join(LIB_DIR, entry))).isDirectory() === false) continue;
       const meta = JSON.parse(await readFile(metaPath, "utf8"));
-      if (meta.exerciseId && meta.assets) manifest[meta.exerciseId] = meta.assets;
+      if (meta.exerciseId) manifest[meta.exerciseId] = normalizeMeta(meta);
     }
   }
   const body = `/* ──────────────────────────────────────────────────────────────────────── 

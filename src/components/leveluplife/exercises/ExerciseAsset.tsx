@@ -8,22 +8,19 @@ import { ImageOff } from "lucide-react";
  * the best available media for the currently-selected demonstration gender via
  * the shared `useExerciseMedia` provider (single source of truth).
  *
- * Fallback is guaranteed: female→male media falls back automatically (with an
- * optional subtle note), and when nothing is imported a branded "coming soon"
- * card shows. The user never sees a broken image or a stick figure.
+ * Fallback is silent and guaranteed: female→male media falls back automatically
+ * with NO note/overlay/badge, and when nothing is imported at all a branded
+ * "coming soon" card shows. The user never sees a broken image.
  */
 export function ExerciseAsset({
   id,
   className,
   alt,
-  showFallbackNote = false,
 }: {
   id: string;
   animated?: boolean;
   className?: string;
   alt?: string;
-  /** Render a subtle badge when the selected gender fell back to another. */
-  showFallbackNote?: boolean;
 }) {
   const media = useExerciseMedia(id);
 
@@ -41,11 +38,6 @@ export function ExerciseAsset({
         />
       ) : (
         <ComingSoon />
-      )}
-      {showFallbackNote && media.isFallback && media.note && (
-        <span className="absolute bottom-1 left-1 right-1 rounded-md bg-black/55 px-1.5 py-0.5 text-center text-[9px] font-medium uppercase tracking-[0.12em] text-white/85 backdrop-blur-sm">
-          {media.note}
-        </span>
       )}
     </div>
   );

@@ -35,5 +35,42 @@
         "stepLabel": "End Position"
       }
     ]
+  },
+  "tiers": {
+    "female": {
+      "thumbnail": {
+        "url": "squat_chair/female/thumbnail.webp",
+        "format": "webp",
+        "source": "ironhex-exercise-db",
+        "license": "Unlicense",
+        "version": "1",
+        "updatedAt": "2026-07-04T16:21:19.920Z",
+        "bytes": 8596
+      },
+      "gallery": [
+        {
+          "url": "squat_chair/female/step-0.webp",
+          "format": "webp",
+          "source": "ironhex-exercise-db",
+          "license": "Unlicense",
+          "version": "1",
+          "updatedAt": "2026-07-04T16:21:19.920Z",
+          "bytes": 32104,
+          "step": "start",
+          "stepLabel": "Start Position"
+        },
+        {
+          "url": "squat_chair/female/step-1.webp",
+          "format": "webp",
+          "source": "ironhex-exercise-db",
+          "license": "Unlicense",
+          "version": "1",
+          "updatedAt": "2026-07-04T16:21:19.920Z",
+          "bytes": 34118,
+          "step": "end",
+          "stepLabel": "End Position"
+        }
+      ]
+    }
   }
 }

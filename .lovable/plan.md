@@ -1,51 +1,55 @@
-# Unified Exercise Demonstrator Media
+# Dual-Gender Exercise Media System
 
-Make every exercise screen resolve demonstration media through one source of truth, driven by the global Demonstrator preference, with correct female→male fallback and a subtle note when a female asset is missing.
+Turn the demonstration pipeline into a scalable, per-gender, multi-format system. Male shows silently when female is missing — no "coming soon" anywhere in normal use. Add a female import provider, nested `male/`|`female/` folders for new imports, and an admin-only coverage dashboard.
 
-## Problem
+## Decisions (confirmed)
+- **Female source:** wire a real provider. Candidate: `StudioAppsTeam/ironhex-exercise-db` (Unlicense fork of free-exercise-db, advertises gender-specific media). Legal gate: only import if per-asset license is redistributable; otherwise female stays empty. No fake data.
+- **Folder layout:** nested `exercise-library/<folder>/male|female/…` for new imports; existing flat files keep working via the manifest.
+- **Fallback:** silent male fallback everywhere. Remove all user-facing notes/overlays/badges.
 
-- Exercise assets only exist as a `shared` gallery (male-model photos). Female selection silently shows male images with no note; male is treated as a generic fallback rather than its native set.
-- `resolveGallery` can't tell "male native" from "female fallback," so no accurate note is possible.
-- Fallback notes are missing on Library cards and the Mission Player, and the Detail page shows "coming soon" even for male.
+## 1. Data model (single source of truth)
+Extend `assets/types.ts`:
+- Add `AssetTier` = per-gender bundle: `{ thumbnail?, hero?, gallery?: DemoImage[], animation?, video? }` where each slot is an `AssetRef` (keeps existing `AssetFormat`: webp/png/jpg/gif/mp4/lottie/glb — already future-ready).
+- `ExerciseDemoAssets` gains structured `male?: AssetTier` and `female?: AssetTier`. Keep the current `shared`/`male[]`/`female[]`/`thumbnail` shape readable for back-compat: the manifest loader normalizes legacy `shared` → `male` tier and legacy gallery arrays → `tier.gallery`.
+- `resolveMedia` return keeps `images`/`servedGender` but `isFallback`/`note` become internal-only (UI ignores them).
 
-## Approach
+## 2. Resolver + hook (silent fallback)
+`assetManager.ts`:
+- `resolveMedia(id, gender)`: female → female tier if it has media, else male tier; male → male tier (which absorbs legacy `shared`). Always returns the best available; never empties when any tier exists.
+- Drop the `note` text from all return paths used by UI. Keep `hasGenderedAsset`, `qualityScore`, `imageCount`, plus new `coverage(id)` → `{ male: boolean, female: boolean }`.
+- `useExerciseMedia.ts`: unchanged surface, but `isFallback`/`note` no longer consumed by components.
 
-Establish **one resolution function + one React hook** that all exercise UIs consume. Treat `shared` as the canonical male demonstrator until real female assets are imported. Return explicit fallback info so any screen can render a consistent, subtle note. No UI screen ever references a static image path directly.
+## 3. Remove all "coming soon" / fallback notes
+- `ExerciseAsset.tsx`: delete the `showFallbackNote` badge block and prop usage. Keep `ComingSoon` **only** for the true-empty case (no media at all for any gender).
+- `ExerciseDemo.tsx`: remove the `isFallback`/`note` provenance line ("Female demonstration coming soon" and the "showing the available demonstration" text). Keep the neutral "Demonstration always shows correct form." line.
+- `ExerciseArt.tsx`, `MissionPlayer.tsx`, `ExerciseCard.tsx`: drop `showFallbackNote` pass-through.
 
-### 1. Asset resolution — single source of truth (`src/lib/leveluplife/assets/assetManager.ts`)
+## 4. Every screen reads the global preference
+Audit and confirm all consumers go through `useExerciseMedia` (already the case for Library, Detail, Mission/Workout Player). Verify and wire the remaining surfaces named in the request that currently render exercise imagery: Daily Quests, Recommendations (`RecommendationCard.tsx`), Search/Favorites (in `exercises.index.tsx`), Progress, and any adaptive/AI preview cards. Any direct `assetUrl`/manifest access is replaced with `useExerciseMedia`.
 
-- Add `resolveMedia(id, gender)` returning a richer result:
-  - `images: DemoImage[]`
-  - `requestedGender: Gender`
-  - `servedGender: Gender` (which demonstrator the returned images actually depict)
-  - `isFallback: boolean` (true when a female request was served male assets)
-  - `note?: string` (e.g. `"Female demonstration coming soon"`) — set only when `isFallback`.
-- Resolution order:
-  - `female`: `demo.female` → else `demo.male ?? demo.shared` (served male, `isFallback: true`) → else thumbnail → else undefined.
-  - `male`: `demo.male ?? demo.shared` (native) → thumbnail → undefined.
-- Keep existing `resolveGallery`/`assetUrl` exports working (reimplement `resolveGallery` on top of `resolveMedia`) so nothing else breaks.
+## 5. Female import pipeline
+`scripts/import-exercise-assets.ts` + new provider `providers/ironhexExerciseDb.ts`:
+- Provider returns matches with `gender: "male" | "female"` when the source distinguishes; importer writes into `exercise-library/<folder>/<gender>/{thumbnail,hero,step-N}.webp`.
+- Importer flow per exercise: import male (existing free-exercise-db path, now also gender-aware), then attempt female via the female-capable provider. If found and license is redistributable → attach female tier. If not → leave female empty (no placeholder).
+- `metadata.json` schema extended to nested tiers; `generateManifest()` reads both flat-legacy and nested-tier metadata and emits the normalized `ExerciseDemoAssets`.
+- Register the provider in `providers/index.ts`. Importer stays dev-time only (never bundled/edge).
 
-### 2. Provider hook (new `src/lib/leveluplife/assets/useExerciseMedia.ts`)
+## 6. Admin dashboard
+Rework `routes/dev.asset-dashboard.tsx` (unlinked dev route, not in user nav):
+- Columns per exercise: Male ✓/�— , Female ✓/�— , formats present, import status, per-exercise coverage.
+- Header aggregate: overall coverage %, male coverage %, female coverage %, count missing female, count missing male. Filters: all / missing-female / missing-male.
 
-- `useExerciseMedia(id)` = `useDemoGender()` + `resolveMedia(id, gender)`, returning `{ images, coverUrl, isFallback, note, gender }`.
-- This is the single entry point every screen uses; it re-renders automatically when the preference changes (existing `demoGender` event/`storage` sync in `gender.ts`).
-
-### 3. Screen updates (presentation only)
-
-- **`ExerciseAsset.tsx`** (used by Library cards + Mission Player): consume `useExerciseMedia`. Add an optional `showFallbackNote` prop that renders a subtle corner badge when `isFallback`. Keep the guaranteed `ComingSoon` fallback for no-asset cases (never broken/empty images).
-- **`ExerciseCard.tsx`** (Library): pass through the fallback so a subtle "Female demo coming soon" line appears under the affected card; cover image comes only from the provider.
-- **`ExerciseDemo.tsx`** (Detail): replace the current `hasGenderedAsset` note logic with `isFallback`/`note` from the resolver so Male no longer shows "coming soon," and Female shows the subtle note while displaying the male fallback.
-- **`MissionPlayer.tsx`**: `ExerciseArt` already routes through `ExerciseAsset`; enable the subtle fallback note so the Player matches Library/Detail.
-
-### 4. Verification
-
-- Toggle the demonstrator in Settings/onboarding and confirm Library, Detail, and Mission Player update instantly without reload.
-- Female selection shows male fallback images plus the subtle note everywhere; Male shows no note.
-- No broken/empty images for any exercise (thumbnail/ComingSoon fallback intact).
-- `tsgo` typecheck clean.
+## 7. Performance
+- Keep `loading="lazy"` / `decoding="async"` on all imagery.
+- Detail player already preloads the next step; add workout-start preloading: in the Mission/Workout Player, prefetch the first frame (and thumbnail) of every exercise in the queue on mount via `new Image()`.
+- Bundled webp imports are already content-hashed and CDN/browser-cached.
 
 ## Technical notes
+- No database/schema change — all media resolved from the generated manifest; new media types (gif/mp4/lottie/glb) already expressible via `AssetFormat` + tier slots, so future additions need no UI change.
+- Back-compat: existing 36 flat-folder exercises continue rendering as the male tier with zero migration.
+- Legal: female import guarded by redistributable-license check; skip otherwise.
 
-- Purely frontend/presentation + the pure resolver module; no changes to workout logic, store data model, or the importer/manifest schema.
-- `shared` is intentionally mapped to `male` now; when the importer later adds real `female` galleries, `resolveMedia` serves them automatically with **no UI changes** — satisfying the future-media-types requirement (videos/GIFs/animations already flow through `AssetFormat` + `assetUrl`).
-- Single source of truth = `resolveMedia` (pure) + `useExerciseMedia` (React); all screens depend on these, keeping every demonstrator view synchronized.
+## Verification
+- Typecheck (`tsgo`) and `bun run build`.
+- Toggle demonstrator in Settings → confirm Library, Detail, Mission Player, Quests, Recommendations all switch together and never show a "coming soon" note when male media exists.
+- Load the dev dashboard → confirm male/female columns and coverage math.
