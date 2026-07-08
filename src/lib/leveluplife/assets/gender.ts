@@ -27,10 +27,11 @@ export function setDemoGender(g: Gender): void {
 
 /** Reactive accessor — re-renders when the preference changes anywhere. */
 export function useDemoGender(): [Gender, (g: Gender) => void] {
-  const [gender, setGender] = useState<Gender>(() => getDemoGender());
+  const [gender, setGender] = useState<Gender>("male");
 
   useEffect(() => {
     const sync = () => setGender(getDemoGender());
+    sync();
     window.addEventListener(EVENT, sync);
     window.addEventListener("storage", sync);
     return () => {

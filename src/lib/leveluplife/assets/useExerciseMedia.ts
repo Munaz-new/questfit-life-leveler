@@ -21,16 +21,17 @@ export interface ExerciseMedia {
   cover?: DemoImage;
   /** The demonstrator the user selected. */
   gender: Gender;
-  /** True when a female request was served the male/shared set. */
+  /** Internal-only: true when the requested demonstrator fell back to another real set. */
   isFallback: boolean;
-  /** Subtle note to surface when isFallback is true. */
+  /** Internal-only provenance. Normal user UI must not render fallback notes. */
   note?: string;
-  /** True when no media exists at all (caller shows a "coming soon" card). */
+  /** True only when no real imported media exists for any demonstrator. */
   isEmpty: boolean;
 }
 
-export function useExerciseMedia(id: string): ExerciseMedia {
-  const [gender] = useDemoGender();
+export function useExerciseMedia(id: string, overrideGender?: Gender): ExerciseMedia {
+  const [savedGender] = useDemoGender();
+  const gender = overrideGender ?? savedGender;
   const media = resolveMedia(id, gender);
   return {
     images: media.images,

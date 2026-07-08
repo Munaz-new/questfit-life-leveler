@@ -6,11 +6,12 @@
  * AI-generated demos, 3D models…). They ask for a gallery by exercise id +
  * gender and render whatever comes back.
  *
- * Fallback chain (guaranteed never-broken):
- *   gendered gallery → shared gallery → thumbnail → "coming soon" card
+ * Fallback chain (guaranteed never-broken when any real media exists):
+ *   requested gender gallery → requested gender thumbnail → opposite/shared
+ *   gallery → opposite/shared thumbnail → empty only when no real media exists.
  *
- * The "coming soon" card lives in the React layer; this module stays pure so
- * the importer can reuse it.
+ * This module never returns user-facing fallback notes. If a requested female
+ * set is missing, the available male/shared demonstration is served silently.
  * ──────────────────────────────────────────────────────────────────── */
 
 import { ASSET_MANIFEST } from "./manifest.generated";
@@ -55,7 +56,17 @@ export function getDemo(id: string): ExerciseDemoAssets {
 
 /** The thumbnail ref, if imported. */
 export function getThumbnail(id: string): AssetRef | undefined {
-  return getDemo(id).thumbnail;
+  const demo = getDemo(id);
+  return demo.thumbnail ?? demo.maleTier?.thumbnail ?? demo.femaleTier?.thumbnail;
+}
+
+function galleryFrom(...sources: Array<DemoImage[] | undefined>): DemoImage[] | undefined {
+  return sources.find((source) => source && source.length > 0);
+}
+
+function thumbnailGallery(ref: AssetRef | undefined): DemoImage[] | undefined {
+  if (!ref) return undefined;
+  return [{ ...ref, step: "demo", stepLabel: "Demonstration" }];
 }
 
 /**
@@ -70,37 +81,45 @@ export function getThumbnail(id: string): AssetRef | undefined {
 export function resolveMedia(id: string, requestedGender: Gender): ResolvedMedia {
   const demo = getDemo(id);
 
-  const maleSet = (demo.male && demo.male.length ? demo.male : demo.shared) ?? undefined;
-
-  const thumbGallery = (): DemoImage[] | undefined => {
-    if (!demo.thumbnail) return undefined;
-    return [{ ...demo.thumbnail, step: "demo", stepLabel: "Demonstration" }];
-  };
+  const femaleGallery = galleryFrom(demo.femaleTier?.gallery, demo.female);
+  const femaleThumb = demo.femaleTier?.thumbnail;
+  const maleGallery = galleryFrom(demo.maleTier?.gallery, demo.male, demo.shared);
+  const maleThumb = demo.maleTier?.thumbnail ?? demo.thumbnail;
 
   if (requestedGender === "female") {
-    const female = demo.female && demo.female.length ? demo.female : undefined;
-    if (female) {
+    const female = femaleGallery ?? thumbnailGallery(femaleThumb);
+    if (female?.length) {
       return { images: female, requestedGender, servedGender: "female", isFallback: false };
     }
     // Silent fallback to the available male demonstration — no note.
-    const fallback = maleSet ?? thumbGallery();
-    if (fallback) {
+    const fallback = maleGallery ?? thumbnailGallery(maleThumb);
+    if (fallback?.length) {
       return { images: fallback, requestedGender, servedGender: "male", isFallback: true };
     }
     return { images: [], requestedGender, servedGender: "male", isFallback: false };
   }
 
-  // Male request — shared/male is the native set.
-  const male = maleSet ?? thumbGallery();
-  return { images: male ?? [], requestedGender, servedGender: "male", isFallback: false };
+  // Male request — shared/male is the native set. If a future exercise only has
+  // female media, show that real demonstration rather than an empty placeholder.
+  const male = maleGallery ?? thumbnailGallery(maleThumb);
+  if (male?.length) return { images: male, requestedGender, servedGender: "male", isFallback: false };
+
+  const fallback = femaleGallery ?? thumbnailGallery(femaleThumb);
+  if (fallback?.length) {
+    return { images: fallback, requestedGender, servedGender: "female", isFallback: true };
+  }
+
+  return { images: [], requestedGender, servedGender: "male", isFallback: false };
 }
 
 /** Which gender tiers have real demonstration media for an exercise. */
 export function coverage(id: string): { male: boolean; female: boolean } {
   const d = getDemo(id);
+  const maleGallery = galleryFrom(d.maleTier?.gallery, d.male, d.shared);
+  const femaleGallery = galleryFrom(d.femaleTier?.gallery, d.female);
   return {
-    male: Boolean(d.male?.length || d.shared?.length || d.thumbnail),
-    female: Boolean(d.female?.length),
+    male: Boolean(maleGallery?.length || d.maleTier?.thumbnail || d.thumbnail),
+    female: Boolean(femaleGallery?.length || d.femaleTier?.thumbnail),
   };
 }
 
@@ -122,8 +141,8 @@ export function preloadExerciseMedia(ids: string[], gender: Gender): void {
 /**
  * The best available ordered gallery for an exercise + requested gender.
  * Thin wrapper over {@link resolveMedia} kept for existing call sites.
- * Returns undefined when nothing has been imported — the caller then shows
- * the "Illustration coming soon" card.
+ * Returns undefined only when no real media has been imported for any
+ * demonstrator; callers then render a neutral unavailable state.
  */
 export function resolveGallery(id: string, gender: Gender): ResolvedGallery | undefined {
   const media = resolveMedia(id, gender);
@@ -135,12 +154,23 @@ export function resolveGallery(id: string, gender: Gender): ResolvedGallery | un
 /** Does this exercise have any imported demonstration asset at all? */
 export function hasImportedAsset(id: string): boolean {
   const d = getDemo(id);
-  return Boolean(d.thumbnail || d.shared?.length || d.male?.length || d.female?.length);
+  return Boolean(
+    d.thumbnail ||
+      d.shared?.length ||
+      d.male?.length ||
+      d.female?.length ||
+      d.maleTier?.thumbnail ||
+      d.maleTier?.gallery?.length ||
+      d.femaleTier?.thumbnail ||
+      d.femaleTier?.gallery?.length,
+  );
 }
 
 /** Whether a true gender-specific gallery exists for this exercise. */
 export function hasGenderedAsset(id: string, gender: Gender): boolean {
-  return Boolean(getDemo(id)[gender]?.length);
+  const demo = getDemo(id);
+  const tier = gender === "male" ? demo.maleTier : demo.femaleTier;
+  return Boolean(demo[gender]?.length || tier?.gallery?.length || tier?.thumbnail);
 }
 
 /**
@@ -150,15 +180,38 @@ export function hasGenderedAsset(id: string, gender: Gender): boolean {
 export function qualityScore(id: string): number {
   const d = getDemo(id);
   let score = 0;
-  if (d.thumbnail) score += 20;
-  if (d.shared?.length) score += Math.min(40, d.shared.length * 15);
-  if (d.male?.length) score += 20;
-  if (d.female?.length) score += 20;
+  const maleGallery = galleryFrom(d.maleTier?.gallery, d.male, d.shared);
+  const femaleGallery = galleryFrom(d.femaleTier?.gallery, d.female);
+  if (d.thumbnail || d.maleTier?.thumbnail || d.femaleTier?.thumbnail) score += 20;
+  if (maleGallery?.length) score += Math.min(35, maleGallery.length * 15);
+  if (femaleGallery?.length) score += Math.min(25, femaleGallery.length * 12);
+  if (d.maleTier?.hero || d.femaleTier?.hero) score += 5;
+  if (d.maleTier?.animation || d.femaleTier?.animation) score += 8;
+  if (d.maleTier?.video || d.femaleTier?.video) score += 7;
   return Math.min(100, score);
 }
 
 /** How many demonstration images exist for an exercise (any tier). */
 export function imageCount(id: string): number {
   const d = getDemo(id);
-  return d.shared?.length ?? d.male?.length ?? d.female?.length ?? (d.thumbnail ? 1 : 0);
+  const urls = new Set<string>();
+  const add = (ref?: AssetRef) => {
+    if (ref?.url) urls.add(ref.url);
+  };
+  const addGallery = (gallery?: DemoImage[]) => gallery?.forEach(add);
+  add(d.thumbnail);
+  addGallery(d.shared);
+  addGallery(d.male);
+  addGallery(d.female);
+  add(d.maleTier?.thumbnail);
+  add(d.maleTier?.hero);
+  add(d.maleTier?.animation);
+  add(d.maleTier?.video);
+  addGallery(d.maleTier?.gallery);
+  add(d.femaleTier?.thumbnail);
+  add(d.femaleTier?.hero);
+  add(d.femaleTier?.animation);
+  add(d.femaleTier?.video);
+  addGallery(d.femaleTier?.gallery);
+  return urls.size;
 }

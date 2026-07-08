@@ -9,6 +9,7 @@ import {
   imageCount,
   qualityScore,
 } from "@/lib/leveluplife/assets/assetManager";
+import type { AssetRef } from "@/lib/leveluplife/assets/types";
 import { PROVIDERS } from "@/lib/leveluplife/assets/providers";
 
 export const Route = createFileRoute("/dev/asset-dashboard")({
@@ -42,6 +43,10 @@ function AssetDashboard() {
     const c = coverage(e.id);
     return c.male && c.female;
   }).length;
+  const anyCount = EXERCISES.filter((e) => {
+    const c = coverage(e.id);
+    return c.male || c.female;
+  }).length;
   const pct = (n: number) => Math.round((n / Math.max(1, total)) * 100);
 
   return (
@@ -61,7 +66,7 @@ function AssetDashboard() {
 
         {/* Coverage summary */}
         <div className="mb-6 grid grid-cols-2 gap-3 sm:grid-cols-4">
-          <Stat label="Overall coverage" value={`${pct(maleCount || femaleCount ? Math.max(maleCount, femaleCount) : 0)}%`} sub={`${maleCount || femaleCount} with any media`} />
+          <Stat label="Overall coverage" value={`${pct(anyCount)}%`} sub={`${anyCount}/${total} with any media`} />
           <Stat label="Male coverage" value={`${pct(maleCount)}%`} sub={`${maleCount}/${total}`} />
           <Stat label="Female coverage" value={`${pct(femaleCount)}%`} sub={`${femaleCount}/${total}`} />
           <Stat label="Both genders" value={`${pct(bothCount)}%`} sub={`${bothCount}/${total}`} />
@@ -102,15 +107,9 @@ function AssetDashboard() {
             </thead>
             <tbody>
               {rows.map(({ ex, demo, cov, count, score }) => {
-                const prov =
-                  demo.thumbnail ?? demo.male?.[0] ?? demo.shared?.[0] ?? demo.female?.[0];
-                const formats = Array.from(
-                  new Set(
-                    [...(demo.male ?? []), ...(demo.female ?? []), ...(demo.shared ?? [])].map(
-                      (a) => a.format,
-                    ),
-                  ),
-                );
+                const refs = collectRefs(demo);
+                const prov = refs[0];
+                const formats = Array.from(new Set(refs.map((a) => a.format)));
                 return (
                   <tr key={ex.id} className="border-t border-white/8">
                     <td className="p-3">
@@ -160,6 +159,29 @@ function AssetDashboard() {
       </div>
     </div>
   );
+}
+
+function collectRefs(demo: ReturnType<typeof getDemo>): AssetRef[] {
+  const refs: AssetRef[] = [];
+  const add = (ref?: AssetRef) => {
+    if (ref) refs.push(ref);
+  };
+  const addGallery = (gallery?: AssetRef[]) => gallery?.forEach(add);
+  add(demo.thumbnail);
+  addGallery(demo.shared);
+  addGallery(demo.male);
+  addGallery(demo.female);
+  add(demo.maleTier?.thumbnail);
+  add(demo.maleTier?.hero);
+  addGallery(demo.maleTier?.gallery);
+  add(demo.maleTier?.animation);
+  add(demo.maleTier?.video);
+  add(demo.femaleTier?.thumbnail);
+  add(demo.femaleTier?.hero);
+  addGallery(demo.femaleTier?.gallery);
+  add(demo.femaleTier?.animation);
+  add(demo.femaleTier?.video);
+  return refs;
 }
 
 function Stat({ label, value, sub }: { label: string; value: string; sub: string }) {

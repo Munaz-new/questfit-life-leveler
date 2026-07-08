@@ -13,6 +13,7 @@
  *   bun scripts/import-exercise-assets.ts --provider=free-exercise-db
  *   bun scripts/import-exercise-assets.ts --force         # re-import existing
  *   bun scripts/import-exercise-assets.ts --generate      # only rebuild manifest
+ *   bun scripts/import-exercise-assets.ts --diagnose      # write an import diagnostic report
  *   bun scripts/import-exercise-assets.ts --dry-run       # no writes
  *
  * LEGAL: only approved, redistributable sources. No scraping / copyrighted
@@ -40,6 +41,8 @@ const ONLY_EX = opt("exercise");
 const ONLY_PROVIDER = opt("provider");
 const FORCE = flag("force");
 const DRY = flag("dry-run");
+const DIAGNOSE = flag("diagnose") || flag("diagnostics");
+const REPORT_PATH = opt("report") ?? "/mnt/documents/exercise-asset-diagnostics.json";
 /** Add/refresh only the female tier, merging into existing metadata (non-destructive). */
 const FEMALE_ONLY = flag("female-only");
 
@@ -68,6 +71,51 @@ function stepLabels(n: number): { step: string; stepLabel: string }[] {
 }
 
 type GenderKey = "male" | "female";
+
+function tierHasGallery(tier: unknown): boolean {
+  return Boolean(
+    tier &&
+      typeof tier === "object" &&
+      Array.isArray((tier as { gallery?: unknown }).gallery) &&
+      ((tier as { gallery?: unknown[] }).gallery?.length ?? 0) > 0,
+  );
+}
+
+function tierHasThumbnail(tier: unknown): boolean {
+  return Boolean(
+    tier &&
+      typeof tier === "object" &&
+      (tier as { thumbnail?: { url?: string } }).thumbnail?.url,
+  );
+}
+
+function metadataCoverage(meta: Record<string, unknown> | null) {
+  const assets = ((meta?.assets as Record<string, unknown>) ?? {}) as Record<string, unknown>;
+  const tiers = ((meta?.tiers as Record<string, unknown>) ?? {}) as Record<string, unknown>;
+  const maleTier = tiers.male;
+  const femaleTier = tiers.female;
+  const hasArray = (v: unknown) => Array.isArray(v) && v.length > 0;
+  const hasRef = (v: unknown) => Boolean(v && typeof v === "object" && (v as { url?: string }).url);
+  return {
+    male: hasArray(assets.shared) || hasArray(assets.male) || tierHasGallery(maleTier) || hasRef(assets.thumbnail) || tierHasThumbnail(maleTier),
+    female: hasArray(assets.female) || tierHasGallery(femaleTier) || tierHasThumbnail(femaleTier),
+    thumbnail: hasRef(assets.thumbnail) || tierHasThumbnail(maleTier) || tierHasThumbnail(femaleTier),
+    hero: hasRef(assets.hero) || Boolean((maleTier as { hero?: unknown } | undefined)?.hero) || Boolean((femaleTier as { hero?: unknown } | undefined)?.hero),
+    animation: hasRef(assets.animation) || Boolean((maleTier as { animation?: unknown } | undefined)?.animation) || Boolean((femaleTier as { animation?: unknown } | undefined)?.animation),
+    video: hasRef(assets.video) || Boolean((maleTier as { video?: unknown } | undefined)?.video) || Boolean((femaleTier as { video?: unknown } | undefined)?.video),
+  };
+}
+
+async function readMetadata(ex: (typeof EXERCISES)[number]) {
+  const folder = folderOf(ex.id);
+  const metaPath = join(LIB_DIR, folder, "metadata.json");
+  if (!existsSync(metaPath)) return { folder, metaPath, meta: null };
+  return {
+    folder,
+    metaPath,
+    meta: JSON.parse(await readFile(metaPath, "utf8")) as Record<string, unknown>,
+  };
+}
 
 /** Import one gender tier from a set of providers into <folder>/<gender>/. */
 async function importTier(
@@ -270,8 +318,97 @@ export const ASSET_MANIFEST_GENERATED_AT = ${JSON.stringify(new Date().toISOStri
   console.log(`Manifest: ${Object.keys(manifest).length} exercises with assets.`);
 }
 
+async function diagnoseImports() {
+  const report = [];
+  const femaleProviders = PROVIDERS.filter((p) => p.id === "ironhex-exercise-db");
+
+  for (const ex of EXERCISES) {
+    const { folder, metaPath, meta } = await readMetadata(ex);
+    const cov = metadataCoverage(meta);
+    const providerReports = [];
+
+    for (const provider of femaleProviders) {
+      const diagnostics = provider.diagnose
+        ? await provider.diagnose(
+            { id: ex.id, name: ex.name, primaryMuscles: ex.primaryMuscles as string[] },
+            "female",
+          )
+        : [];
+      const best = diagnostics[0];
+      const available = diagnostics.find((d) => d.status === "available");
+      providerReports.push({
+        provider: provider.id,
+        searched: true,
+        status: cov.female
+          ? "already-imported"
+          : available
+          ? "available-not-imported"
+          : best
+          ? best.status
+          : "no-match",
+        bestCandidate: best
+          ? {
+              label: best.label,
+              externalId: best.externalId,
+              confidence: Number(best.confidence.toFixed(3)),
+              firstUrlExists: best.firstUrlExists ?? null,
+              remoteUrlCount: best.remoteUrls.length,
+              status: best.status,
+            }
+          : null,
+        availableCandidate: available
+          ? {
+              label: available.label,
+              externalId: available.externalId,
+              confidence: Number(available.confidence.toFixed(3)),
+              remoteUrlCount: available.remoteUrls.length,
+            }
+          : null,
+      });
+    }
+
+    report.push({
+      exerciseId: ex.id,
+      exerciseName: ex.name,
+      folder,
+      metadataPath: existsSync(metaPath) ? metaPath : null,
+      imported: {
+        male: cov.male,
+        female: cov.female,
+        thumbnail: cov.thumbnail,
+        hero: cov.hero,
+        animation: cov.animation,
+        video: cov.video,
+      },
+      missing: Object.entries(cov)
+        .filter(([, ok]) => !ok)
+        .map(([name]) => name),
+      femalePipeline: providerReports,
+    });
+  }
+
+  const summary = {
+    generatedAt: new Date().toISOString(),
+    totalExercises: report.length,
+    exercisesWithMaleAssets: report.filter((r) => r.imported.male).length,
+    exercisesWithFemaleAssets: report.filter((r) => r.imported.female).length,
+    exercisesWithNoMedia: report.filter((r) => !r.imported.male && !r.imported.female).length,
+  };
+
+  const payload = { summary, exercises: report };
+  await writeFile(REPORT_PATH, JSON.stringify(payload, null, 2) + "\n");
+  console.log(`Diagnostic report: ${REPORT_PATH}`);
+  console.log(
+    `Summary: ${summary.totalExercises} exercises · male ${summary.exercisesWithMaleAssets} · female ${summary.exercisesWithFemaleAssets} · no media ${summary.exercisesWithNoMedia}`,
+  );
+}
+
 async function main() {
   console.log(`Providers: ${PROVIDERS.map((p) => p.id).join(", ")}`);
+  if (DIAGNOSE) {
+    await diagnoseImports();
+    return;
+  }
   if (!flag("generate")) {
     const list = ONLY_EX ? EXERCISES.filter((e) => e.id === ONLY_EX) : EXERCISES;
     console.log(`Importing ${list.length} exercise(s)…`);
