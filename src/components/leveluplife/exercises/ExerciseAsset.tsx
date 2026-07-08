@@ -9,8 +9,7 @@ import { ImageOff } from "lucide-react";
  * the shared `useExerciseMedia` provider (single source of truth).
  *
  * Fallback is silent and guaranteed: female→male media falls back automatically
- * with NO note/overlay/badge, and when nothing is imported at all a branded
- * "coming soon" card shows. The user never sees a broken image.
+ * with NO note/overlay/badge. The user never sees a broken image.
  */
 export function ExerciseAsset({
   id,
@@ -37,23 +36,26 @@ export function ExerciseAsset({
           className="h-full w-full object-cover"
         />
       ) : (
-        <ComingSoon />
+        <UnavailableMedia />
       )}
     </div>
   );
 }
 
 
-/** Branded placeholder shown when no demonstration media exists yet. */
-export function ComingSoon({ compact = false }: { compact?: boolean }) {
+/** Neutral branded fallback shown only when no real demonstration media exists. */
+export function UnavailableMedia({ compact = false }: { compact?: boolean }) {
   return (
     <div className="flex h-full w-full flex-col items-center justify-center gap-2 bg-gradient-to-br from-white/5 to-white/0 text-center text-[var(--cyan-glow)]">
       <ImageOff className={compact ? "h-5 w-5 opacity-70" : "h-8 w-8 opacity-70"} aria-hidden />
       {!compact && (
         <p className="px-3 text-[11px] font-medium uppercase tracking-[0.16em] text-muted-foreground">
-          Illustration coming soon
+          Demonstration unavailable
         </p>
       )}
     </div>
   );
 }
+
+/** Back-compat export for older imports; render text remains neutral. */
+export const ComingSoon = UnavailableMedia;

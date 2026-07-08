@@ -9,7 +9,7 @@
  * set are simply left empty.
  * ──────────────────────────────────────────────────────────────────── */
 
-import type { AssetProvider, ProviderMatch, ProviderQuery } from "./types";
+import type { AssetProvider, ProviderDiagnosticMatch, ProviderMatch, ProviderQuery } from "./types";
 
 const DATA_URL =
   "https://raw.githubusercontent.com/StudioAppsTeam/ironhex-exercise-db/main/dist/exercises.json";
@@ -67,46 +67,77 @@ async function exists(url: string): Promise<boolean> {
   }
 }
 
+async function rankedFemaleMatches(query: ProviderQuery, limit = 8): Promise<ProviderDiagnosticMatch[]> {
+  const data = await loadDataset();
+  const queryTokens = tokens([query.name, ...(query.aliases ?? [])].join(" "));
+
+  const ranked = data
+    .filter((e) => e.images && e.images.length > 0)
+    .map((e) => {
+      let confidence = overlap(queryTokens, tokens(e.name));
+      if (query.primaryMuscles?.length && e.primaryMuscles?.length) {
+        const m = overlap(new Set(query.primaryMuscles), new Set(e.primaryMuscles));
+        confidence = confidence * 0.8 + m * 0.2;
+      }
+      return { e, confidence };
+    })
+    .sort((a, b) => b.confidence - a.confidence)
+    .slice(0, limit);
+
+  const diagnostics: ProviderDiagnosticMatch[] = [];
+  for (const { e, confidence } of ranked) {
+    const femaleUrls = e.images!.slice(0, 4).map(femaleUrl);
+    const firstUrlExists = femaleUrls.length > 0 ? await exists(femaleUrls[0]) : false;
+    diagnostics.push({
+      externalId: e.id,
+      label: e.name,
+      kind: "thumbnail",
+      format: "jpg",
+      remoteUrls: femaleUrls,
+      confidence,
+      license: "Unlicense",
+      gender: "female",
+      firstUrlExists,
+      status:
+        femaleUrls.length === 0
+          ? "no-remote-urls"
+          : confidence < 0.34
+          ? "below-threshold"
+          : firstUrlExists
+          ? "available"
+          : "missing-female-url",
+    });
+  }
+  return diagnostics;
+}
+
 export const ironhexExerciseDbProvider: AssetProvider = {
   id: "ironhex-exercise-db",
   label: "IronHex Exercise DB (female media)",
   license: "Unlicense",
 
   async search(query: ProviderQuery): Promise<ProviderMatch[]> {
-    const data = await loadDataset();
-    const queryTokens = tokens([query.name, ...(query.aliases ?? [])].join(" "));
-
-    const ranked = data
-      .filter((e) => e.images && e.images.length > 0)
-      .map((e) => {
-        let confidence = overlap(queryTokens, tokens(e.name));
-        if (query.primaryMuscles?.length && e.primaryMuscles?.length) {
-          const m = overlap(new Set(query.primaryMuscles), new Set(e.primaryMuscles));
-          confidence = confidence * 0.8 + m * 0.2;
-        }
-        return { e, confidence };
-      })
-      .filter((m) => m.confidence >= 0.34)
-      .sort((a, b) => b.confidence - a.confidence)
-      .slice(0, 3);
-
+    const diagnostics = await rankedFemaleMatches(query, 3);
     const matches: ProviderMatch[] = [];
-    for (const { e, confidence } of ranked) {
-      const femaleUrls = e.images!.slice(0, 4).map(femaleUrl);
+    for (const candidate of diagnostics) {
       // Only surface a female match when the first female frame actually exists.
-      if (!(await exists(femaleUrls[0]))) continue;
+      if (candidate.status !== "available") continue;
       matches.push({
-        externalId: e.id,
-        label: e.name,
+        externalId: candidate.externalId,
+        label: candidate.label,
         kind: "thumbnail",
         format: "jpg",
-        remoteUrls: femaleUrls,
-        confidence,
+        remoteUrls: candidate.remoteUrls,
+        confidence: candidate.confidence,
         license: "Unlicense",
         gender: "female",
       });
     }
     return matches;
+  },
+
+  async diagnose(query: ProviderQuery): Promise<ProviderDiagnosticMatch[]> {
+    return rankedFemaleMatches(query);
   },
 
   async fetchAsset(_match: ProviderMatch, url: string): Promise<Uint8Array> {

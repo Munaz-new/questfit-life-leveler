@@ -1,9 +1,10 @@
 import { useEffect, useState } from "react";
-import { assetUrl, resolveMedia } from "@/lib/leveluplife/assets/assetManager";
+import { assetUrl } from "@/lib/leveluplife/assets/assetManager";
 import { useDemoGender } from "@/lib/leveluplife/assets/gender";
+import { useExerciseMedia } from "@/lib/leveluplife/assets/useExerciseMedia";
 import { useApp } from "@/lib/leveluplife/store";
 import type { Gender } from "@/lib/leveluplife/assets/types";
-import { ComingSoon } from "./ExerciseAsset";
+import { UnavailableMedia } from "./ExerciseAsset";
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { ZoomIn, Info, Check, X } from "lucide-react";
 import { toast } from "sonner";
@@ -61,7 +62,7 @@ export function ExerciseDemo({
     setPrompt(true);
   }
 
-  const media = resolveMedia(id, gender);
+  const media = useExerciseMedia(id, gender);
   const images = media.images;
   // Clamp active step if the gallery length changes (e.g. gender switch).
   const step = Math.min(active, Math.max(0, images.length - 1));
@@ -165,7 +166,7 @@ export function ExerciseDemo({
             </div>
           </>
         ) : (
-          <ComingSoon />
+          <UnavailableMedia />
         )}
       </div>
 
@@ -199,7 +200,7 @@ export function ExerciseDemo({
         </div>
       )}
 
-      {/* Neutral form reassurance — never a "coming soon" note. */}
+      {/* Neutral form reassurance — never a fallback/provenance note. */}
       {images.length > 0 && (
         <p className="mt-2 flex items-start gap-1.5 text-[11px] text-muted-foreground">
           <Info className="mt-0.5 h-3 w-3 shrink-0" aria-hidden />

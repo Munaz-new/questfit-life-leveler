@@ -1,55 +1,199 @@
-# Dual-Gender Exercise Media System
+## Diagnostic findings so far
 
-Turn the demonstration pipeline into a scalable, per-gender, multi-format system. Male shows silently when female is missing — no "coming soon" anywhere in normal use. Add a female import provider, nested `male/`|`female/` folders for new imports, and an admin-only coverage dashboard.
+### Step 1: Asset coverage audit
 
-## Decisions (confirmed)
-- **Female source:** wire a real provider. Candidate: `StudioAppsTeam/ironhex-exercise-db` (Unlicense fork of free-exercise-db, advertises gender-specific media). Legal gate: only import if per-asset license is redistributable; otherwise female stays empty. No fake data.
-- **Folder layout:** nested `exercise-library/<folder>/male|female/…` for new imports; existing flat files keep working via the manifest.
-- **Fallback:** silent male fallback everywhere. Remove all user-facing notes/overlays/badges.
+Current exercise library contains **42 exercises**.
 
-## 1. Data model (single source of truth)
-Extend `assets/types.ts`:
-- Add `AssetTier` = per-gender bundle: `{ thumbnail?, hero?, gallery?: DemoImage[], animation?, video? }` where each slot is an `AssetRef` (keeps existing `AssetFormat`: webp/png/jpg/gif/mp4/lottie/glb — already future-ready).
-- `ExerciseDemoAssets` gains structured `male?: AssetTier` and `female?: AssetTier`. Keep the current `shared`/`male[]`/`female[]`/`thumbnail` shape readable for back-compat: the manifest loader normalizes legacy `shared` → `male` tier and legacy gallery arrays → `tier.gallery`.
-- `resolveMedia` return keeps `images`/`servedGender` but `isFallback`/`note` become internal-only (UI ignores them).
+Summary from metadata and generated manifest:
 
-## 2. Resolver + hook (silent fallback)
-`assetManager.ts`:
-- `resolveMedia(id, gender)`: female → female tier if it has media, else male tier; male → male tier (which absorbs legacy `shared`). Always returns the best available; never empties when any tier exists.
-- Drop the `note` text from all return paths used by UI. Keep `hasGenderedAsset`, `qualityScore`, `imageCount`, plus new `coverage(id)` → `{ male: boolean, female: boolean }`.
-- `useExerciseMedia.ts`: unchanged surface, but `isFallback`/`note` no longer consumed by components.
+- **Total exercises:** 42
+- **Exercises with male/shared assets:** 35
+- **Exercises with true female assets:** 1
+- **Exercises with thumbnails:** 35
+- **Exercises with hero assets:** 0
+- **Exercises with animation assets:** 0
+- **Exercises with video assets:** 0
+- **Exercises with no imported media at all:** 7
+- **Average field coverage:** about 28%
 
-## 3. Remove all "coming soon" / fallback notes
-- `ExerciseAsset.tsx`: delete the `showFallbackNote` badge block and prop usage. Keep `ComingSoon` **only** for the true-empty case (no media at all for any gender).
-- `ExerciseDemo.tsx`: remove the `isFallback`/`note` provenance line ("Female demonstration coming soon" and the "showing the available demonstration" text). Keep the neutral "Demonstration always shows correct form." line.
-- `ExerciseArt.tsx`, `MissionPlayer.tsx`, `ExerciseCard.tsx`: drop `showFallbackNote` pass-through.
+Key coverage table:
 
-## 4. Every screen reads the global preference
-Audit and confirm all consumers go through `useExerciseMedia` (already the case for Library, Detail, Mission/Workout Player). Verify and wire the remaining surfaces named in the request that currently render exercise imagery: Daily Quests, Recommendations (`RecommendationCard.tsx`), Search/Favorites (in `exercises.index.tsx`), Progress, and any adaptive/AI preview cards. Any direct `assetUrl`/manifest access is replaced with `useExerciseMedia`.
+```text
+Exercise                         Male  Female  Thumb  Hero  Anim  Video  Coverage
+Chair Squat                      Yes   Yes     Yes    No    No    No     50%
+Assisted Squat                   Yes   No      Yes    No    No    No     33%
+Bodyweight Squat                 Yes   No      Yes    No    No    No     33%
+Goblet Squat                     Yes   No      Yes    No    No    No     33%
+Split Squat                      Yes   No      Yes    No    No    No     33%
+Assisted Pistol Squat            Yes   No      Yes    No    No    No     33%
+Wall Push-Up                     Yes   No      Yes    No    No    No     33%
+Incline Push-Up                  Yes   No      Yes    No    No    No     33%
+Push-Up                          Yes   No      Yes    No    No    No     33%
+Decline Push-Up                  Yes   No      Yes    No    No    No     33%
+Band Row                         Yes   No      Yes    No    No    No     33%
+Towel Row (Door)                 No    No      No     No    No    No     0%
+Dumbbell Row                     Yes   No      Yes    No    No    No     33%
+Scapular Pulls                   Yes   No      Yes    No    No    No     33%
+Pull-Up                          Yes   No      Yes    No    No    No     33%
+Glute Bridge                     Yes   No      Yes    No    No    No     33%
+Hip Hinge Drill                  Yes   No      Yes    No    No    No     33%
+Romanian Deadlift                Yes   No      Yes    No    No    No     33%
+Single-Leg RDL                   Yes   No      Yes    No    No    No     33%
+Dead Bug                         Yes   No      Yes    No    No    No     33%
+Bird Dog                         No    No      No     No    No    No     0%
+Plank                            Yes   No      Yes    No    No    No     33%
+Side Plank                       Yes   No      Yes    No    No    No     33%
+Neck CARs                        Yes   No      Yes    No    No    No     33%
+Wrist Circles + Stretch          Yes   No      Yes    No    No    No     33%
+Thoracic Opener                  No    No      No     No    No    No     0%
+Shoulder Dislocates              Yes   No      Yes    No    No    No     33%
+Hip Flexor Stretch               Yes   No      Yes    No    No    No     33%
+Ankle Rocks                      Yes   No      Yes    No    No    No     33%
+Hamstring Floss                  Yes   No      Yes    No    No    No     33%
+Cat-Cow                          Yes   No      Yes    No    No    No     33%
+Marching In Place                No    No      No     No    No    No     0%
+Brisk Walk                       Yes   No      Yes    No    No    No     33%
+Wall Angels                      No    No      No     No    No    No     0%
+Chin Tucks                       Yes   No      Yes    No    No    No     33%
+Doorway Pec Stretch              Yes   No      Yes    No    No    No     33%
+Book Opener Rotation             No    No      No     No    No    No     0%
+Child's Pose                     Yes   No      Yes    No    No    No     33%
+Figure-4 Glute Stretch           Yes   No      Yes    No    No    No     33%
+Box Breathing                    Yes   No      Yes    No    No    No     33%
+20-20-20 Eye Reset               No    No      No     No    No    No     0%
+Glute Squeeze Pulse              Yes   No      Yes    No    No    No     33%
+```
 
-## 5. Female import pipeline
-`scripts/import-exercise-assets.ts` + new provider `providers/ironhexExerciseDb.ts`:
-- Provider returns matches with `gender: "male" | "female"` when the source distinguishes; importer writes into `exercise-library/<folder>/<gender>/{thumbnail,hero,step-N}.webp`.
-- Importer flow per exercise: import male (existing free-exercise-db path, now also gender-aware), then attempt female via the female-capable provider. If found and license is redistributable → attach female tier. If not → leave female empty (no placeholder).
-- `metadata.json` schema extended to nested tiers; `generateManifest()` reads both flat-legacy and nested-tier metadata and emits the normalized `ExerciseDemoAssets`.
-- Register the provider in `providers/index.ts`. Importer stays dev-time only (never bundled/edge).
+### Step 2: Import pipeline audit
 
-## 6. Admin dashboard
-Rework `routes/dev.asset-dashboard.tsx` (unlinked dev route, not in user nav):
-- Columns per exercise: Male ✓/�— , Female ✓/�— , formats present, import status, per-exercise coverage.
-- Header aggregate: overall coverage %, male coverage %, female coverage %, count missing female, count missing male. Filters: all / missing-female / missing-male.
+Observed pipeline behavior:
 
-## 7. Performance
-- Keep `loading="lazy"` / `decoding="async"` on all imagery.
-- Detail player already preloads the next step; add workout-start preloading: in the Mission/Workout Player, prefetch the first frame (and thumbnail) of every exercise in the queue on mount via `new Image()`.
-- Bundled webp imports are already content-hashed and CDN/browser-cached.
+- Female provider exists: `ironhex-exercise-db`.
+- Female import is real-only: importer only accepts provider matches with `gender === "female"`.
+- Female images are downloaded into the new folder layout: `exercise-library/<folder>/female/...`.
+- Existing male assets are preserved in the legacy flat shape under `assets.shared` + `assets.thumbnail`.
+- Female-only import stores new female media under `tiers.female`.
+- Manifest generation normalizes `tiers.female.gallery` into runtime `female` and `femaleTier`.
 
-## Technical notes
-- No database/schema change — all media resolved from the generated manifest; new media types (gif/mp4/lottie/glb) already expressible via `AssetFormat` + tier slots, so future additions need no UI change.
-- Back-compat: existing 36 flat-folder exercises continue rendering as the male tier with zero migration.
-- Legal: female import guarded by redistributable-license check; skip otherwise.
+Root-cause candidates from the importer:
 
-## Verification
-- Typecheck (`tsgo`) and `bun run build`.
-- Toggle demonstrator in Settings → confirm Library, Detail, Mission Player, Quests, Recommendations all switch together and never show a "coming soon" note when male media exists.
-- Load the dev dashboard → confirm male/female columns and coverage math.
+1. **Only one real female match currently exists**: Chair Squat. The other exercises did not receive female media because the provider search either found no high-confidence match or the verified `-female` files did not exist.
+2. **The importer does not produce fake female assets**, which is correct.
+3. **Seven exercises have no metadata at all**, so even male fallback cannot display a downloaded demonstration for those exercises.
+4. Import logging is console-only. There is no durable import report showing which exercise was skipped, rejected, unmatched, or imported.
+
+### Step 3: Media provider/call-site audit
+
+Current source-of-truth status:
+
+- Exercise Library uses `ExerciseCard` → `ExerciseArt` → `ExerciseAsset` → `useExerciseMedia` → `resolveMedia`.
+- Mission Player uses `ExerciseArt` → `ExerciseAsset` → `useExerciseMedia` → `resolveMedia`.
+- Workout Player route renders `MissionPlayer`, so it follows the same path during active workouts.
+- Exercise Detail uses `ExerciseDemo` → direct `resolveMedia(id, gender)`. This uses the same resolver, but bypasses the React `useExerciseMedia` hook/provider layer.
+- Daily Quests currently render icons, not exercise media previews.
+- Dev dashboard directly uses `getDemo` for coverage/status and `ExerciseAsset` for preview.
+
+Important issue:
+
+- There is not a true shared React `ExerciseMediaProvider` component. The app has a shared hook + resolver, but Exercise Detail still calls `resolveMedia` directly.
+- The exact user-facing text `Female Demonstration Coming Soon` is not present in the current visible source, which means the message is likely coming from one of these:
+  - stale bundled code / previous preview state,
+  - a non-current file path not yet fully traced,
+  - or a placeholder component variant shown when `images.length === 0`.
+- Current fallback comments and placeholders still mention "coming soon" in generic terms, and `ComingSoon` renders `Illustration coming soon` when there is no media at all.
+
+## Root cause to fix
+
+The production-ready failure is likely two-part:
+
+1. **Data coverage reality:** most exercises do not have true female media. The system must silently serve male/shared media for female selection.
+2. **Renderer hardening gap:** any exercise with no female media and no male/shared media can still fall through to the generic placeholder path. Also, Exercise Detail bypasses the shared `useExerciseMedia` hook, so it is easier for behavior to drift.
+
+## Fix plan
+
+### 1. Make fallback absolute and centralized
+
+Update the media resolver so the fallback chain is explicit and cannot produce a female-specific placeholder:
+
+```text
+requested female
+  → female gallery
+  → female thumbnail
+  → male gallery
+  → shared gallery
+  → male thumbnail/shared thumbnail
+  → empty only if no real asset exists for any demonstrator
+```
+
+For male:
+
+```text
+requested male
+  → male gallery
+  → shared gallery
+  → male thumbnail/shared thumbnail
+  → female gallery only as last-resort if it is the only real media
+  → empty only if no real asset exists
+```
+
+No notes, overlays, badges, or warnings will be returned for normal UI.
+
+### 2. Promote `useExerciseMedia` as the app-wide provider surface
+
+Refactor Exercise Detail’s `ExerciseDemo` to use the shared hook/resolution path instead of directly calling `resolveMedia` in component code.
+
+Keep the same UI and controls, but ensure all exercise screens consume the same media surface:
+
+- Library cards
+- Exercise detail hero/gallery
+- Workout/Mission player
+- Exercise previews
+- Dev dashboard preview
+
+### 3. Remove normal-use placeholder text for gender fallback
+
+Keep a fallback only for truly missing media, but remove any female-specific or “coming soon” messaging from normal exercise rendering.
+
+For exercises with no real media at all, display a neutral non-gendered empty state only where unavoidable, or replace with a deterministic non-placeholder app illustration if one already exists in the codebase. No fake assets will be created.
+
+### 4. Add a durable importer diagnostic report
+
+Enhance the importer in diagnostic mode so it reports, per exercise:
+
+- provider searched
+- best candidate label
+- confidence
+- female URL verified or missing
+- imported / skipped / rejected / no match
+- output paths written
+
+This will make future female coverage debugging reproducible instead of relying on console text from one run.
+
+### 5. Fix coverage math and dashboard schema awareness
+
+Update coverage utilities so `assets`, `tiers`, `maleTier`, and `femaleTier` are all counted consistently.
+
+This prevents false negatives like “Female: missing” when female media exists under the new tier schema.
+
+### 6. Verify in runtime
+
+After implementation:
+
+- Select Female Demonstrator.
+- Open Chair Squat: should show true female media.
+- Open exercises without female media but with male/shared media: should silently show male/shared demonstration with no note or placeholder.
+- Open the 7 exercises with no imported media: confirm they do not show female-specific placeholder text.
+- Search the app bundle/source for `Female Demonstration Coming Soon`, `Female demonstration coming soon`, and user-facing `coming soon` strings.
+
+## Final report after implementation
+
+I will produce a final report containing:
+
+- Total Exercises
+- Exercises with Male Assets
+- Exercises with Female Assets
+- Overall Coverage %
+- Importer Status
+- Media Provider Status
+- Remaining exercises with no real media
+- Confirmation that no normal user path displays `Female Demonstration Coming Soon`

@@ -49,6 +49,12 @@ export interface ProviderMatch {
   gender?: "male" | "female";
 }
 
+/** Read-only importer diagnostics for explaining why media was or wasn't imported. */
+export interface ProviderDiagnosticMatch extends ProviderMatch {
+  firstUrlExists?: boolean;
+  status: "available" | "below-threshold" | "missing-female-url" | "no-remote-urls";
+}
+
 export interface AssetProvider {
   /** Stable id, stored as `source` on imported assets. */
   id: string;
@@ -58,6 +64,8 @@ export interface AssetProvider {
   license: string;
   /** Find candidate assets for an exercise (best first). */
   search(query: ProviderQuery): Promise<ProviderMatch[]>;
+  /** Optional non-mutating diagnostic scan used by the dev importer report. */
+  diagnose?(query: ProviderQuery, gender?: "male" | "female"): Promise<ProviderDiagnosticMatch[]>;
   /** Download the raw bytes for one URL of a chosen match. */
   fetchAsset(match: ProviderMatch, url: string): Promise<Uint8Array>;
 }
