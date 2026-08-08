@@ -1292,8 +1292,78 @@ export const ASSET_MANIFEST: Record<string, ExerciseAssets> = {
         "stepLabel": "End Position"
       }
     ]
+  },
+  "pull-towel-row": {
+    "male": [
+      {
+        "url": "pull_towel_row/male/step-0.webp",
+        "format": "webp",
+        "source": "free-exercise-db",
+        "license": "Unlicense",
+        "version": "1",
+        "updatedAt": "2026-08-08T11:14:40.705Z",
+        "bytes": 33924,
+        "step": "start",
+        "stepLabel": "Start Position"
+      },
+      {
+        "url": "pull_towel_row/male/step-1.webp",
+        "format": "webp",
+        "source": "free-exercise-db",
+        "license": "Unlicense",
+        "version": "1",
+        "updatedAt": "2026-08-08T11:14:40.705Z",
+        "bytes": 36056,
+        "step": "end",
+        "stepLabel": "End Position"
+      }
+    ],
+    "maleTier": {
+      "thumbnail": {
+        "url": "pull_towel_row/male/thumbnail.webp",
+        "format": "webp",
+        "source": "free-exercise-db",
+        "license": "Unlicense",
+        "version": "1",
+        "updatedAt": "2026-08-08T11:14:40.705Z",
+        "bytes": 9172
+      },
+      "gallery": [
+        {
+          "url": "pull_towel_row/male/step-0.webp",
+          "format": "webp",
+          "source": "free-exercise-db",
+          "license": "Unlicense",
+          "version": "1",
+          "updatedAt": "2026-08-08T11:14:40.705Z",
+          "bytes": 33924,
+          "step": "start",
+          "stepLabel": "Start Position"
+        },
+        {
+          "url": "pull_towel_row/male/step-1.webp",
+          "format": "webp",
+          "source": "free-exercise-db",
+          "license": "Unlicense",
+          "version": "1",
+          "updatedAt": "2026-08-08T11:14:40.705Z",
+          "bytes": 36056,
+          "step": "end",
+          "stepLabel": "End Position"
+        }
+      ]
+    },
+    "thumbnail": {
+      "url": "pull_towel_row/male/thumbnail.webp",
+      "format": "webp",
+      "source": "free-exercise-db",
+      "license": "Unlicense",
+      "version": "1",
+      "updatedAt": "2026-08-08T11:14:40.705Z",
+      "bytes": 9172
+    }
   }
 };
 
 /** When the manifest was last regenerated (ISO). */
-export const ASSET_MANIFEST_GENERATED_AT = "2026-08-08T11:13:48.648Z";
+export const ASSET_MANIFEST_GENERATED_AT = "2026-08-08T11:14:41.463Z";

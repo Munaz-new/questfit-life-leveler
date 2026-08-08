@@ -1,0 +1,41 @@
+{
+  "exerciseId": "pull-towel-row",
+  "folder": "pull_towel_row",
+  "tiers": {
+    "male": {
+      "thumbnail": {
+        "url": "pull_towel_row/male/thumbnail.webp",
+        "format": "webp",
+        "source": "free-exercise-db",
+        "license": "Unlicense",
+        "version": "1",
+        "updatedAt": "2026-08-08T11:14:40.705Z",
+        "bytes": 9172
+      },
+      "gallery": [
+        {
+          "url": "pull_towel_row/male/step-0.webp",
+          "format": "webp",
+          "source": "free-exercise-db",
+          "license": "Unlicense",
+          "version": "1",
+          "updatedAt": "2026-08-08T11:14:40.705Z",
+          "bytes": 33924,
+          "step": "start",
+          "stepLabel": "Start Position"
+        },
+        {
+          "url": "pull_towel_row/male/step-1.webp",
+          "format": "webp",
+          "source": "free-exercise-db",
+          "license": "Unlicense",
+          "version": "1",
+          "updatedAt": "2026-08-08T11:14:40.705Z",
+          "bytes": 36056,
+          "step": "end",
+          "stepLabel": "End Position"
+        }
+      ]
+    }
+  }
+}
