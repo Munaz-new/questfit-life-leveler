@@ -10,7 +10,7 @@
  * through the same `AssetFormat` / `assetUrl` layer, so UI code never changes.
  * ──────────────────────────────────────────────────────────────────── */
 
-import { resolveMedia } from "./assetManager";
+import { resolveCoverCandidates, resolveMedia } from "./assetManager";
 import { useDemoGender } from "./gender";
 import type { DemoImage, Gender } from "./types";
 
@@ -27,6 +27,8 @@ export interface ExerciseMedia {
   note?: string;
   /** True only when no real imported media exists for any demonstrator. */
   isEmpty: boolean;
+  /** Ordered real assets a renderer may try if the preferred image fails. */
+  fallbackCovers: DemoImage[];
 }
 
 export function useExerciseMedia(id: string, overrideGender?: Gender): ExerciseMedia {
@@ -40,5 +42,6 @@ export function useExerciseMedia(id: string, overrideGender?: Gender): ExerciseM
     isFallback: media.isFallback,
     note: media.note,
     isEmpty: media.images.length === 0,
+    fallbackCovers: resolveCoverCandidates(id, gender),
   };
 }

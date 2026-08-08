@@ -1,6 +1,7 @@
 import { assetUrl } from "@/lib/leveluplife/assets/assetManager";
 import { useExerciseMedia } from "@/lib/leveluplife/assets/useExerciseMedia";
 import { ImageOff } from "lucide-react";
+import { useEffect, useState } from "react";
 
 /**
  * ExerciseAsset — the compact, non-interactive demonstration renderer used in
@@ -22,17 +23,25 @@ export function ExerciseAsset({
   alt?: string;
 }) {
   const media = useExerciseMedia(id);
+  const [failedUrls, setFailedUrls] = useState<Set<string>>(() => new Set());
+
+  useEffect(() => {
+    setFailedUrls(new Set());
+  }, [id, media.gender]);
+
+  const cover = media.fallbackCovers.find((candidate) => !failedUrls.has(candidate.url));
 
   return (
     <div
       className={`relative flex h-full w-full items-center justify-center overflow-hidden ${className ?? ""}`}
     >
-      {media.cover ? (
+      {cover ? (
         <img
-          src={assetUrl(media.cover)}
+          src={assetUrl(cover)}
           alt={alt ?? "Exercise demonstration"}
           loading="lazy"
           decoding="async"
+          onError={() => setFailedUrls((failed) => new Set(failed).add(cover.url))}
           className="h-full w-full object-cover"
         />
       ) : (

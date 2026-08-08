@@ -69,12 +69,12 @@ async function exists(url: string): Promise<boolean> {
 
 async function rankedFemaleMatches(query: ProviderQuery, limit = 8): Promise<ProviderDiagnosticMatch[]> {
   const data = await loadDataset();
-  const queryTokens = tokens([query.name, ...(query.aliases ?? [])].join(" "));
+  const queryTokenSets = [query.name, ...(query.aliases ?? [])].map(tokens);
 
   const ranked = data
     .filter((e) => e.images && e.images.length > 0)
     .map((e) => {
-      let confidence = overlap(queryTokens, tokens(e.name));
+      let confidence = Math.max(...queryTokenSets.map((queryTokens) => overlap(queryTokens, tokens(e.name))));
       if (query.primaryMuscles?.length && e.primaryMuscles?.length) {
         const m = overlap(new Set(query.primaryMuscles), new Set(e.primaryMuscles));
         confidence = confidence * 0.8 + m * 0.2;

@@ -56,12 +56,12 @@ export const freeExerciseDbProvider: AssetProvider = {
 
   async search(query: ProviderQuery): Promise<ProviderMatch[]> {
     const data = await loadDataset();
-    const queryTokens = tokens([query.name, ...(query.aliases ?? [])].join(" "));
+    const queryTokenSets = [query.name, ...(query.aliases ?? [])].map(tokens);
 
     return data
       .filter((e) => e.images && e.images.length > 0)
       .map((e) => {
-        let confidence = overlap(queryTokens, tokens(e.name));
+        let confidence = Math.max(...queryTokenSets.map((queryTokens) => overlap(queryTokens, tokens(e.name))));
         if (query.primaryMuscles?.length && e.primaryMuscles?.length) {
           const m = overlap(new Set(query.primaryMuscles), new Set(e.primaryMuscles));
           confidence = confidence * 0.8 + m * 0.2;
