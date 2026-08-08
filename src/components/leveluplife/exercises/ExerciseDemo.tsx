@@ -153,6 +153,12 @@ export function ExerciseDemo({
                 alt={`${name} — ${images[step].stepLabel}`}
                 loading="lazy"
                 decoding="async"
+                onError={(event) => {
+                  const current = images[step].url;
+                  const fallback = media.fallbackCovers.find((candidate) => candidate.url !== current);
+                  if (fallback) event.currentTarget.src = assetUrl(fallback);
+                  else event.currentTarget.hidden = true;
+                }}
                 className="h-full w-full animate-float-up object-cover"
               />
               <span className="absolute right-3 top-3 flex h-9 w-9 items-center justify-center rounded-full bg-black/40 text-white backdrop-blur transition group-hover:bg-black/60">
@@ -216,6 +222,12 @@ export function ExerciseDemo({
             <img
               src={assetUrl(images[step])}
               alt={`${name} — ${images[step].stepLabel}`}
+                onError={(event) => {
+                  const current = images[step].url;
+                  const fallback = media.fallbackCovers.find((candidate) => candidate.url !== current);
+                  if (fallback) event.currentTarget.src = assetUrl(fallback);
+                  else event.currentTarget.hidden = true;
+                }}
               className="max-h-[80dvh] w-full rounded-lg object-contain"
             />
           )}

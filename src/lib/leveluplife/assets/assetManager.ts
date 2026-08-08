@@ -112,6 +112,28 @@ export function resolveMedia(id: string, requestedGender: Gender): ResolvedMedia
   return { images: [], requestedGender, servedGender: "male", isFallback: false };
 }
 
+/**
+ * Ordered real-image fallbacks for render-time failures. The primary resolved
+ * cover comes first, followed by every distinct imported frame/thumbnail from
+ * the requested tier and then the alternate tier. This lets renderers recover
+ * from a corrupt CDN/browser response without inventing media.
+ */
+export function resolveCoverCandidates(id: string, requestedGender: Gender): DemoImage[] {
+  const demo = getDemo(id);
+  const primary = resolveMedia(id, requestedGender).images;
+  const female = galleryFrom(demo.femaleTier?.gallery, demo.female) ?? thumbnailGallery(demo.femaleTier?.thumbnail) ?? [];
+  const male = galleryFrom(demo.maleTier?.gallery, demo.male, demo.shared) ?? thumbnailGallery(demo.maleTier?.thumbnail ?? demo.thumbnail) ?? [];
+  const ordered = requestedGender === "female"
+    ? [...primary, ...female, ...male]
+    : [...primary, ...male, ...female];
+  const seen = new Set<string>();
+  return ordered.filter((image) => {
+    if (seen.has(image.url)) return false;
+    seen.add(image.url);
+    return true;
+  });
+}
+
 /** Which gender tiers have real demonstration media for an exercise. */
 export function coverage(id: string): { male: boolean; female: boolean } {
   const d = getDemo(id);
