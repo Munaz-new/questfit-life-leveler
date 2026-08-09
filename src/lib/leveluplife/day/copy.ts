@@ -60,11 +60,10 @@ const VOICES: Record<MotivationStyle, DayVoice> = {
         : "Your workload has been calibrated from recent activity.",
     mainLabel: "Primary block",
     checkinTitle: "Daily inputs",
-    recalibaterCtaPlaceholder: undefined as never,
     recalibrateCta: "Recalculate plan",
     recoveryBanner: "Recovery protocol active — training load reduced.",
     restartLine: "Detraining is minimal. Re-entry volume set low.",
-  } as DayVoice,
+  },
   story: {
     boardTitle: "Your Day",
     calibrated: (r) =>
