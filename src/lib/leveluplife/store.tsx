@@ -232,7 +232,47 @@ export function AppProvider({ children }: { children: ReactNode }) {
           return { ...s, quests: newQuests, xp, level };
         }),
       setCheckin: (c) => setState((s) => ({ ...s, checkin: { ...c, date: today() } })),
-      logSitting: (h) =>
+      submitDailyReport: (partial) =>
+        setState((s) => {
+          if (!s.profile) return s;
+          const input: AdaptiveInput = { ...partial, date: today() };
+          const history = buildHistory(s, daysBetween(s.lastSessionDate, today()));
+          return { ...s, adaptiveInput: input, dailyPlan: generateDay(s.profile, input, history) };
+        }),
+      recalibrateToday: (partial) =>
+        setState((s) => {
+          if (!s.profile) return s;
+          const base = partial ?? s.adaptiveInput;
+          if (!base) return s;
+          const input: AdaptiveInput = { ...base, date: today() };
+          const history = buildHistory(s, daysBetween(s.lastSessionDate, today()));
+          const plan = s.dailyPlan
+            ? recalibrateDay(s.profile, s.dailyPlan, input, history)
+            : generateDay(s.profile, input, history);
+          return { ...s, adaptiveInput: input, dailyPlan: plan };
+        }),
+      completeMission: (id) =>
+        setState((s) => {
+          const plan = s.dailyPlan;
+          const mission = plan?.missions.find((m) => m.id === id);
+          if (!plan || !mission || mission.done) return s;
+          const missions = plan.missions.map((m) => (m.id === id ? { ...m, done: true } : m));
+          return { ...s, dailyPlan: { ...plan, missions }, ...rewardFor(s, mission) };
+        }),
+      logWater: () =>
+        setState((s) => {
+          const plan = s.dailyPlan;
+          const mission = plan?.missions.find((m) => m.kind === "hydration");
+          if (!plan || !mission || mission.done) return s;
+          const target = mission.target ?? 6;
+          const progress = Math.min(target, (mission.progress ?? 0) + 1);
+          const done = progress >= target;
+          const missions = plan.missions.map((m) =>
+            m.id === mission.id ? { ...m, progress, done } : m,
+          );
+          const next = { ...s, dailyPlan: { ...plan, missions } };
+          return done ? { ...next, ...rewardFor(s, mission) } : next;
+        }),
         setState((s) => ({ ...s, sittingHoursToday: Math.max(0, Math.min(16, h)) })),
       startMission: (session, opts) =>
         setState((s) => {
