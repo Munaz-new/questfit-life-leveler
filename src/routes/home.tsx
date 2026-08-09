@@ -1,8 +1,10 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { MobileFrame, GlassCard, SectionTitle } from "@/components/leveluplife/Shell";
 import { XPBar } from "@/components/leveluplife/XPBar";
 import { RecommendationCard } from "@/components/leveluplife/RecommendationCard";
+import { DailyReport } from "@/components/leveluplife/day/DailyReport";
+import { YourDay } from "@/components/leveluplife/day/YourDay";
 import { useApp } from "@/lib/leveluplife/store";
 import { modeFor } from "@/lib/leveluplife/modes";
 import { recommendationMessage } from "@/lib/leveluplife/engine/messages";
@@ -10,13 +12,42 @@ import { Flame, Check, ChevronRight, Armchair } from "lucide-react";
 import * as Icons from "lucide-react";
 
 export const Route = createFileRoute("/home")({
-  head: () => ({ meta: [{ title: "Home — LevelUp Life" }] }),
+  head: () => ({
+    meta: [
+      { title: "Your Day — LevelUp Life" },
+      {
+        name: "description",
+        content:
+          "A daily plan that adapts to your energy, time and recovery — guided workouts, mobility, hydration and focus missions.",
+      },
+      { property: "og:title", content: "Your Day — LevelUp Life" },
+      {
+        property: "og:description",
+        content: "An adaptive daily plan built from how you actually feel today.",
+      },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
+    ],
+  }),
   component: Home,
 });
 
 function Home() {
   const navigate = useNavigate();
-  const { state, progressPct, xpForNextLevel, completeQuest, daysSinceLastWorkout, logSitting } = useApp();
+  const {
+    state,
+    progressPct,
+    xpForNextLevel,
+    completeQuest,
+    daysSinceLastWorkout,
+    logSitting,
+    submitDailyReport,
+    recalibrateToday,
+  } = useApp();
+  const [recalibrating, setRecalibrating] = useState(false);
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => setMounted(true), []);
 
   useEffect(() => {
     if (!state.onboarded) navigate({ to: "/auth" });
@@ -25,14 +56,15 @@ function Home() {
   const mode = modeFor(state.profile);
   const lex = mode.lexicon;
   const name = state.profile?.displayName ?? "you";
-  const hour = new Date().getHours();
   const doneCount = state.quests.filter((q) => q.done).length;
+  const plan = state.dailyPlan;
 
   const card = recommendationMessage(state.profile, {
     sittingHoursToday: state.sittingHoursToday,
     daysSinceLastWorkout,
     streak: state.streak,
   });
+
 
   return (
     <MobileFrame withNav>
