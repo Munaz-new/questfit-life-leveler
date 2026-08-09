@@ -273,6 +273,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
           const next = { ...s, dailyPlan: { ...plan, missions } };
           return done ? { ...next, ...rewardFor(s, mission) } : next;
         }),
+      logSitting: (h) =>
         setState((s) => ({ ...s, sittingHoursToday: Math.max(0, Math.min(16, h)) })),
       startMission: (session, opts) =>
         setState((s) => {
