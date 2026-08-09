@@ -11,12 +11,17 @@ import type {
   AppState,
   Checkin,
   Quest,
+  SkillState,
+  Stats,
   SummaryState,
   UserProfile,
 } from "./types";
 import { defaultQuestsFor, defaultSkills, defaultStats } from "./data";
 import type { Session } from "./engine/builder";
 import { estimateCalories, parseTarget, xpForMove } from "./engine/xp";
+import { generateDay, recalibrateDay } from "./day/engine";
+import { buildHistory } from "./day/history";
+import type { AdaptiveInput, DailyMission, DailyPlan, DayRecord } from "./day/types";
 
 const STORAGE_KEY = "leveluplife.v1";
 
@@ -37,6 +42,9 @@ const initialState: AppState = {
   lastSummary: null,
   adaptiveBoost: 0,
   recentCompletion: [],
+  dailyPlan: null,
+  adaptiveInput: null,
+  dayRecords: [],
 };
 
 function today(): string {
