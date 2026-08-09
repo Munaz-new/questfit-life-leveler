@@ -103,15 +103,43 @@ function Home() {
         <XPBar pct={progressPct} className="mt-4" />
       </GlassCard>
 
-      <RecommendationCard
-        card={card}
-        onCta={() =>
-          navigate({
-            to: "/workout",
-            search: card.tone === "recovery" ? { protocol: "posture_reset" } : {},
-          })
-        }
-      />
+      {/* ── Your Day: check-in first, then the adaptive board. ────────── */}
+      {!plan || recalibrating ? (
+        <DailyReport
+          motivation={state.profile?.motivation}
+          initial={state.adaptiveInput ?? undefined}
+          submitLabel={recalibrating ? "Recalibrate my day" : "Build my day"}
+          onCancel={recalibrating ? () => setRecalibrating(false) : undefined}
+          onSubmit={(v) => {
+            if (recalibrating) {
+              recalibrateToday(v);
+              setRecalibrating(false);
+            } else {
+              submitDailyReport(v);
+            }
+          }}
+        />
+      ) : (
+        <div className="mb-5">
+          <YourDay
+            plan={plan}
+            motivation={state.profile?.motivation}
+            onRecalibrate={() => setRecalibrating(true)}
+          />
+        </div>
+      )}
+
+      {!plan && (
+        <RecommendationCard
+          card={card}
+          onCta={() =>
+            navigate({
+              to: "/workout",
+              search: card.tone === "recovery" ? { protocol: "posture_reset" } : {},
+            })
+          }
+        />
+      )}
 
       {/* Quick sitting log — feeds the engine. */}
       <GlassCard className="mb-5">
