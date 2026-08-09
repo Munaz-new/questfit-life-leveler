@@ -66,6 +66,50 @@ function flattenSession(s: Session): string[] {
   return [...s.warmup, ...s.main, ...s.cooldown].map((m) => m.id);
 }
 
+function addXp(xp: number, level: number, gain: number): { xp: number; level: number } {
+  let x = xp + gain;
+  let l = level;
+  let cap = xpCurve(l);
+  while (x >= cap) {
+    x -= cap;
+    l += 1;
+    cap = xpCurve(l);
+  }
+  return { xp: x, level: l };
+}
+
+/** RPG payout for a finished mission: XP, one stat point, optional skill XP. */
+function rewardFor(
+  s: AppState,
+  mission: DailyMission,
+): Pick<AppState, "xp" | "level" | "stats" | "skills"> {
+  const { xp, level } = addXp(s.xp, s.level, mission.xp);
+  const stats: Stats = { ...s.stats, [mission.stat]: (s.stats[mission.stat] ?? 0) + 1 };
+  const skills: SkillState[] = mission.skillId
+    ? s.skills.map((sk) => {
+        if (sk.id !== mission.skillId) return sk;
+        const nextXp = sk.xp + Math.round(mission.xp / 2);
+        const cap = 50 + sk.level * 25;
+        return nextXp >= cap
+          ? { ...sk, level: sk.level + 1, xp: nextXp - cap }
+          : { ...sk, xp: nextXp };
+      })
+    : s.skills;
+  return { xp, level, stats, skills };
+}
+
+function recordFor(plan: DailyPlan): DayRecord {
+  const done = plan.missions.filter((m) => m.done);
+  return {
+    date: plan.date,
+    completed: done.length,
+    total: plan.missions.length,
+    stats: done.map((m) => m.stat),
+    workout: done.some((m) => m.kind === "workout"),
+    recoveryMode: plan.recoveryMode,
+  };
+}
+
 interface Ctx {
   state: AppState;
   setProfile: (p: UserProfile) => void;
@@ -74,6 +118,12 @@ interface Ctx {
   completeQuest: (id: string) => void;
   setCheckin: (c: Checkin) => void;
   logSitting: (h: number) => void;
+  /** Daily check-in → generates today's adaptive plan. */
+  submitDailyReport: (input: Omit<AdaptiveInput, "date">) => void;
+  /** Re-run the engine for the still-open missions only. */
+  recalibrateToday: (input?: Omit<AdaptiveInput, "date">) => void;
+  completeMission: (id: string) => void;
+  logWater: () => void;
   startMission: (s: Session, opts?: { forceProtocol?: string }) => void;
   clearActiveSession: () => void;
   completeCurrentMove: () => void;
