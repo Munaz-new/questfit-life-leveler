@@ -74,7 +74,7 @@ function Home() {
             <span className="mode-pill mr-2">{mode.emoji} {mode.shortTag}</span>
           </p>
           <h1 className="mt-2 text-2xl font-bold leading-snug">
-            {lex.greeting(hour, name)}
+            {mounted ? lex.greeting(new Date().getHours(), name) : `Hello, ${name}`}
           </h1>
           <p className="mt-1 text-xs italic text-muted-foreground">"{mode.identity}"</p>
         </div>
