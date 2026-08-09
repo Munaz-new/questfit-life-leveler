@@ -170,6 +170,19 @@ export function AppProvider({ children }: { children: ReactNode }) {
     }
   }, [hydrated, state.checkin]);
 
+  // Day rollover: archive yesterday's plan into history, then clear it.
+  useEffect(() => {
+    if (!hydrated) return;
+    const t = today();
+    if (state.dailyPlan && state.dailyPlan.date !== t) {
+      setState((s) => {
+        if (!s.dailyPlan || s.dailyPlan.date === t) return s;
+        const records = [...s.dayRecords.filter((r) => r.date !== s.dailyPlan!.date), recordFor(s.dailyPlan)].slice(-14);
+        return { ...s, dayRecords: records, dailyPlan: null, adaptiveInput: null };
+      });
+    }
+  }, [hydrated, state.dailyPlan]);
+
   const value = useMemo<Ctx>(() => {
     const xpForNextLevel = xpCurve(state.level);
     const daysSinceLastWorkout = daysBetween(state.lastSessionDate, today());
