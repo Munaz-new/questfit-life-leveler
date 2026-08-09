@@ -396,6 +396,23 @@ export function AppProvider({ children }: { children: ReactNode }) {
           else if (recent.slice(-2).every((p) => p <= 0.5)) boost = -1;
           else if (recent.length >= 2 && recent.slice(-2).every((p) => p >= 0.7)) boost = 0;
 
+          // The Your Day workout mission is credited by the player itself.
+          // XP already came from the session, so only the stat/skill lands here.
+          const workoutMission = s.dailyPlan?.missions.find((m) => m.kind === "workout");
+          const creditWorkout = Boolean(s.dailyPlan && workoutMission && !workoutMission.done && !partial);
+          const stats: Stats = creditWorkout && workoutMission
+            ? { ...s.stats, [workoutMission.stat]: (s.stats[workoutMission.stat] ?? 0) + 1 }
+            : s.stats;
+          const dailyPlan: DailyPlan | null =
+            creditWorkout && s.dailyPlan
+              ? {
+                  ...s.dailyPlan,
+                  missions: s.dailyPlan.missions.map((m) =>
+                    m.kind === "workout" ? { ...m, done: true } : m,
+                  ),
+                }
+              : s.dailyPlan;
+
           return {
             ...s,
             xp,
@@ -404,6 +421,8 @@ export function AppProvider({ children }: { children: ReactNode }) {
             lastSessionDate,
             lastMoves: a.order,
             quests,
+            stats,
+            dailyPlan,
             adaptiveBoost: boost,
             recentCompletion: recent,
             activeSession: null,
