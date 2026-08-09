@@ -12,7 +12,7 @@ export function buildHistory(state: AppState, daysSinceLastWorkout: number): Day
   const recentPatterns = Array.from(
     new Set(
       state.lastMoves
-        .map((id) => exerciseById(id)?.pattern)
+        .map((id) => exerciseById(id)?.pattern as string | undefined)
         .filter((p): p is string => Boolean(p)),
     ),
   );
