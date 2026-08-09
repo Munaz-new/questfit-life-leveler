@@ -1,8 +1,10 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { MobileFrame, GlassCard, SectionTitle } from "@/components/leveluplife/Shell";
 import { XPBar } from "@/components/leveluplife/XPBar";
 import { RecommendationCard } from "@/components/leveluplife/RecommendationCard";
+import { DailyReport } from "@/components/leveluplife/day/DailyReport";
+import { YourDay } from "@/components/leveluplife/day/YourDay";
 import { useApp } from "@/lib/leveluplife/store";
 import { modeFor } from "@/lib/leveluplife/modes";
 import { recommendationMessage } from "@/lib/leveluplife/engine/messages";
@@ -10,13 +12,42 @@ import { Flame, Check, ChevronRight, Armchair } from "lucide-react";
 import * as Icons from "lucide-react";
 
 export const Route = createFileRoute("/home")({
-  head: () => ({ meta: [{ title: "Home — LevelUp Life" }] }),
+  head: () => ({
+    meta: [
+      { title: "Your Day — LevelUp Life" },
+      {
+        name: "description",
+        content:
+          "A daily plan that adapts to your energy, time and recovery — guided workouts, mobility, hydration and focus missions.",
+      },
+      { property: "og:title", content: "Your Day — LevelUp Life" },
+      {
+        property: "og:description",
+        content: "An adaptive daily plan built from how you actually feel today.",
+      },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
+    ],
+  }),
   component: Home,
 });
 
 function Home() {
   const navigate = useNavigate();
-  const { state, progressPct, xpForNextLevel, completeQuest, daysSinceLastWorkout, logSitting } = useApp();
+  const {
+    state,
+    progressPct,
+    xpForNextLevel,
+    completeQuest,
+    daysSinceLastWorkout,
+    logSitting,
+    submitDailyReport,
+    recalibrateToday,
+  } = useApp();
+  const [recalibrating, setRecalibrating] = useState(false);
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => setMounted(true), []);
 
   useEffect(() => {
     if (!state.onboarded) navigate({ to: "/auth" });
@@ -25,14 +56,15 @@ function Home() {
   const mode = modeFor(state.profile);
   const lex = mode.lexicon;
   const name = state.profile?.displayName ?? "you";
-  const hour = new Date().getHours();
   const doneCount = state.quests.filter((q) => q.done).length;
+  const plan = state.dailyPlan;
 
   const card = recommendationMessage(state.profile, {
     sittingHoursToday: state.sittingHoursToday,
     daysSinceLastWorkout,
     streak: state.streak,
   });
+
 
   return (
     <MobileFrame withNav>
@@ -42,7 +74,7 @@ function Home() {
             <span className="mode-pill mr-2">{mode.emoji} {mode.shortTag}</span>
           </p>
           <h1 className="mt-2 text-2xl font-bold leading-snug">
-            {lex.greeting(hour, name)}
+            {mounted ? lex.greeting(new Date().getHours(), name) : `Hello, ${name}`}
           </h1>
           <p className="mt-1 text-xs italic text-muted-foreground">"{mode.identity}"</p>
         </div>
@@ -71,15 +103,43 @@ function Home() {
         <XPBar pct={progressPct} className="mt-4" />
       </GlassCard>
 
-      <RecommendationCard
-        card={card}
-        onCta={() =>
-          navigate({
-            to: "/workout",
-            search: card.tone === "recovery" ? { protocol: "posture_reset" } : {},
-          })
-        }
-      />
+      {/* ── Your Day: check-in first, then the adaptive board. ────────── */}
+      {!plan || recalibrating ? (
+        <DailyReport
+          motivation={state.profile?.motivation}
+          initial={state.adaptiveInput ?? undefined}
+          submitLabel={recalibrating ? "Recalibrate my day" : "Build my day"}
+          onCancel={recalibrating ? () => setRecalibrating(false) : undefined}
+          onSubmit={(v) => {
+            if (recalibrating) {
+              recalibrateToday(v);
+              setRecalibrating(false);
+            } else {
+              submitDailyReport(v);
+            }
+          }}
+        />
+      ) : (
+        <div className="mb-5">
+          <YourDay
+            plan={plan}
+            motivation={state.profile?.motivation}
+            onRecalibrate={() => setRecalibrating(true)}
+          />
+        </div>
+      )}
+
+      {!plan && (
+        <RecommendationCard
+          card={card}
+          onCta={() =>
+            navigate({
+              to: "/workout",
+              search: card.tone === "recovery" ? { protocol: "posture_reset" } : {},
+            })
+          }
+        />
+      )}
 
       {/* Quick sitting log — feeds the engine. */}
       <GlassCard className="mb-5">

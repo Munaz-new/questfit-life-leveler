@@ -11,12 +11,17 @@ import type {
   AppState,
   Checkin,
   Quest,
+  SkillState,
+  Stats,
   SummaryState,
   UserProfile,
 } from "./types";
 import { defaultQuestsFor, defaultSkills, defaultStats } from "./data";
 import type { Session } from "./engine/builder";
 import { estimateCalories, parseTarget, xpForMove } from "./engine/xp";
+import { generateDay, recalibrateDay } from "./day/engine";
+import { buildHistory } from "./day/history";
+import type { AdaptiveInput, DailyMission, DailyPlan, DayRecord } from "./day/types";
 
 const STORAGE_KEY = "leveluplife.v1";
 
@@ -37,6 +42,9 @@ const initialState: AppState = {
   lastSummary: null,
   adaptiveBoost: 0,
   recentCompletion: [],
+  dailyPlan: null,
+  adaptiveInput: null,
+  dayRecords: [],
 };
 
 function today(): string {
@@ -58,6 +66,50 @@ function flattenSession(s: Session): string[] {
   return [...s.warmup, ...s.main, ...s.cooldown].map((m) => m.id);
 }
 
+function addXp(xp: number, level: number, gain: number): { xp: number; level: number } {
+  let x = xp + gain;
+  let l = level;
+  let cap = xpCurve(l);
+  while (x >= cap) {
+    x -= cap;
+    l += 1;
+    cap = xpCurve(l);
+  }
+  return { xp: x, level: l };
+}
+
+/** RPG payout for a finished mission: XP, one stat point, optional skill XP. */
+function rewardFor(
+  s: AppState,
+  mission: DailyMission,
+): Pick<AppState, "xp" | "level" | "stats" | "skills"> {
+  const { xp, level } = addXp(s.xp, s.level, mission.xp);
+  const stats: Stats = { ...s.stats, [mission.stat]: (s.stats[mission.stat] ?? 0) + 1 };
+  const skills: SkillState[] = mission.skillId
+    ? s.skills.map((sk) => {
+        if (sk.id !== mission.skillId) return sk;
+        const nextXp = sk.xp + Math.round(mission.xp / 2);
+        const cap = 50 + sk.level * 25;
+        return nextXp >= cap
+          ? { ...sk, level: sk.level + 1, xp: nextXp - cap }
+          : { ...sk, xp: nextXp };
+      })
+    : s.skills;
+  return { xp, level, stats, skills };
+}
+
+function recordFor(plan: DailyPlan): DayRecord {
+  const done = plan.missions.filter((m) => m.done);
+  return {
+    date: plan.date,
+    completed: done.length,
+    total: plan.missions.length,
+    stats: done.map((m) => m.stat),
+    workout: done.some((m) => m.kind === "workout"),
+    recoveryMode: plan.recoveryMode,
+  };
+}
+
 interface Ctx {
   state: AppState;
   setProfile: (p: UserProfile) => void;
@@ -66,6 +118,12 @@ interface Ctx {
   completeQuest: (id: string) => void;
   setCheckin: (c: Checkin) => void;
   logSitting: (h: number) => void;
+  /** Daily check-in → generates today's adaptive plan. */
+  submitDailyReport: (input: Omit<AdaptiveInput, "date">) => void;
+  /** Re-run the engine for the still-open missions only. */
+  recalibrateToday: (input?: Omit<AdaptiveInput, "date">) => void;
+  completeMission: (id: string) => void;
+  logWater: () => void;
   startMission: (s: Session, opts?: { forceProtocol?: string }) => void;
   clearActiveSession: () => void;
   completeCurrentMove: () => void;
@@ -111,6 +169,19 @@ export function AppProvider({ children }: { children: ReactNode }) {
       setState((s) => ({ ...s, checkin: null, sittingHoursToday: 0 }));
     }
   }, [hydrated, state.checkin]);
+
+  // Day rollover: archive yesterday's plan into history, then clear it.
+  useEffect(() => {
+    if (!hydrated) return;
+    const t = today();
+    if (state.dailyPlan && state.dailyPlan.date !== t) {
+      setState((s) => {
+        if (!s.dailyPlan || s.dailyPlan.date === t) return s;
+        const records = [...s.dayRecords.filter((r) => r.date !== s.dailyPlan!.date), recordFor(s.dailyPlan)].slice(-14);
+        return { ...s, dayRecords: records, dailyPlan: null, adaptiveInput: null };
+      });
+    }
+  }, [hydrated, state.dailyPlan]);
 
   const value = useMemo<Ctx>(() => {
     const xpForNextLevel = xpCurve(state.level);
@@ -161,6 +232,47 @@ export function AppProvider({ children }: { children: ReactNode }) {
           return { ...s, quests: newQuests, xp, level };
         }),
       setCheckin: (c) => setState((s) => ({ ...s, checkin: { ...c, date: today() } })),
+      submitDailyReport: (partial) =>
+        setState((s) => {
+          if (!s.profile) return s;
+          const input: AdaptiveInput = { ...partial, date: today() };
+          const history = buildHistory(s, daysBetween(s.lastSessionDate, today()));
+          return { ...s, adaptiveInput: input, dailyPlan: generateDay(s.profile, input, history) };
+        }),
+      recalibrateToday: (partial) =>
+        setState((s) => {
+          if (!s.profile) return s;
+          const base = partial ?? s.adaptiveInput;
+          if (!base) return s;
+          const input: AdaptiveInput = { ...base, date: today() };
+          const history = buildHistory(s, daysBetween(s.lastSessionDate, today()));
+          const plan = s.dailyPlan
+            ? recalibrateDay(s.profile, s.dailyPlan, input, history)
+            : generateDay(s.profile, input, history);
+          return { ...s, adaptiveInput: input, dailyPlan: plan };
+        }),
+      completeMission: (id) =>
+        setState((s) => {
+          const plan = s.dailyPlan;
+          const mission = plan?.missions.find((m) => m.id === id);
+          if (!plan || !mission || mission.done) return s;
+          const missions = plan.missions.map((m) => (m.id === id ? { ...m, done: true } : m));
+          return { ...s, dailyPlan: { ...plan, missions }, ...rewardFor(s, mission) };
+        }),
+      logWater: () =>
+        setState((s) => {
+          const plan = s.dailyPlan;
+          const mission = plan?.missions.find((m) => m.kind === "hydration");
+          if (!plan || !mission || mission.done) return s;
+          const target = mission.target ?? 6;
+          const progress = Math.min(target, (mission.progress ?? 0) + 1);
+          const done = progress >= target;
+          const missions = plan.missions.map((m) =>
+            m.id === mission.id ? { ...m, progress, done } : m,
+          );
+          const next = { ...s, dailyPlan: { ...plan, missions } };
+          return done ? { ...next, ...rewardFor(s, mission) } : next;
+        }),
       logSitting: (h) =>
         setState((s) => ({ ...s, sittingHoursToday: Math.max(0, Math.min(16, h)) })),
       startMission: (session, opts) =>
@@ -284,6 +396,23 @@ export function AppProvider({ children }: { children: ReactNode }) {
           else if (recent.slice(-2).every((p) => p <= 0.5)) boost = -1;
           else if (recent.length >= 2 && recent.slice(-2).every((p) => p >= 0.7)) boost = 0;
 
+          // The Your Day workout mission is credited by the player itself.
+          // XP already came from the session, so only the stat/skill lands here.
+          const workoutMission = s.dailyPlan?.missions.find((m) => m.kind === "workout");
+          const creditWorkout = Boolean(s.dailyPlan && workoutMission && !workoutMission.done && !partial);
+          const stats: Stats = creditWorkout && workoutMission
+            ? { ...s.stats, [workoutMission.stat]: (s.stats[workoutMission.stat] ?? 0) + 1 }
+            : s.stats;
+          const dailyPlan: DailyPlan | null =
+            creditWorkout && s.dailyPlan
+              ? {
+                  ...s.dailyPlan,
+                  missions: s.dailyPlan.missions.map((m) =>
+                    m.kind === "workout" ? { ...m, done: true } : m,
+                  ),
+                }
+              : s.dailyPlan;
+
           return {
             ...s,
             xp,
@@ -292,6 +421,8 @@ export function AppProvider({ children }: { children: ReactNode }) {
             lastSessionDate,
             lastMoves: a.order,
             quests,
+            stats,
+            dailyPlan,
             adaptiveBoost: boost,
             recentCompletion: recent,
             activeSession: null,

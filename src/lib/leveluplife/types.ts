@@ -144,4 +144,10 @@ export interface AppState {
   adaptiveBoost: -1 | 0 | 1;
   /** Recent completion percentages, used to drive adaptiveBoost. */
   recentCompletion: number[];
+  /** Today's adaptive plan, null until the daily check-in is done. */
+  dailyPlan: import("./day/types").DailyPlan | null;
+  /** The self-report that produced `dailyPlan`. */
+  adaptiveInput: import("./day/types").AdaptiveInput | null;
+  /** Trailing day-by-day mission history (kept to 14 days). */
+  dayRecords: import("./day/types").DayRecord[];
 }
