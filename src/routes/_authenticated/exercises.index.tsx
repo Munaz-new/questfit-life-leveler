@@ -31,7 +31,7 @@ const GROUPS: { id: CategoryGroup | "all"; label: string }[] = [
 
 function Library() {
   const navigate = useNavigate();
-  const search = useSearch({ from: "/exercises/" });
+  const search = useSearch({ from: "/_authenticated/exercises/" });
   const { state } = useApp();
 
   useEffect(() => {

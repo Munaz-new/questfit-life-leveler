@@ -25,7 +25,7 @@ export const Route = createFileRoute("/_authenticated/workout/")({
 
 function Briefing() {
   const navigate = useNavigate();
-  const search = useSearch({ from: "/workout/" });
+  const search = useSearch({ from: "/_authenticated/workout/" });
   const {
     state,
     setCheckin,
