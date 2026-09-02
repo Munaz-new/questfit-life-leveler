@@ -9,57 +9,22 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
-import { Route as WorkoutRouteImport } from './routes/workout'
-import { Route as QuestsRouteImport } from './routes/quests'
-import { Route as ProgressMirrorRouteImport } from './routes/progress-mirror'
-import { Route as ProgressRouteImport } from './routes/progress'
-import { Route as ProfileRouteImport } from './routes/profile'
-import { Route as OnboardingRouteImport } from './routes/onboarding'
-import { Route as HomeRouteImport } from './routes/home'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as IndexRouteImport } from './routes/index'
-import { Route as WorkoutIndexRouteImport } from './routes/workout.index'
-import { Route as ExercisesIndexRouteImport } from './routes/exercises.index'
-import { Route as WorkoutSummaryRouteImport } from './routes/workout.summary'
-import { Route as WorkoutPlayRouteImport } from './routes/workout.play'
-import { Route as ExercisesIdRouteImport } from './routes/exercises.$id'
 import { Route as DevAssetDashboardRouteImport } from './routes/dev.asset-dashboard'
+import { Route as AuthenticatedWorkoutRouteImport } from './routes/_authenticated/workout'
+import { Route as AuthenticatedQuestsRouteImport } from './routes/_authenticated/quests'
+import { Route as AuthenticatedProgressMirrorRouteImport } from './routes/_authenticated/progress-mirror'
+import { Route as AuthenticatedProgressRouteImport } from './routes/_authenticated/progress'
+import { Route as AuthenticatedProfileRouteImport } from './routes/_authenticated/profile'
+import { Route as AuthenticatedOnboardingRouteImport } from './routes/_authenticated/onboarding'
+import { Route as AuthenticatedHomeRouteImport } from './routes/_authenticated/home'
+import { Route as AuthenticatedWorkoutIndexRouteImport } from './routes/_authenticated/workout.index'
+import { Route as AuthenticatedExercisesIndexRouteImport } from './routes/_authenticated/exercises.index'
+import { Route as AuthenticatedWorkoutSummaryRouteImport } from './routes/_authenticated/workout.summary'
+import { Route as AuthenticatedWorkoutPlayRouteImport } from './routes/_authenticated/workout.play'
+import { Route as AuthenticatedExercisesIdRouteImport } from './routes/_authenticated/exercises.$id'
 
-const WorkoutRoute = WorkoutRouteImport.update({
-  id: '/workout',
-  path: '/workout',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const QuestsRoute = QuestsRouteImport.update({
-  id: '/quests',
-  path: '/quests',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ProgressMirrorRoute = ProgressMirrorRouteImport.update({
-  id: '/progress-mirror',
-  path: '/progress-mirror',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ProgressRoute = ProgressRouteImport.update({
-  id: '/progress',
-  path: '/progress',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ProfileRoute = ProfileRouteImport.update({
-  id: '/profile',
-  path: '/profile',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const OnboardingRoute = OnboardingRouteImport.update({
-  id: '/onboarding',
-  path: '/onboarding',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const HomeRoute = HomeRouteImport.update({
-  id: '/home',
-  path: '/home',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const AuthRoute = AuthRouteImport.update({
   id: '/auth',
   path: '/auth',
@@ -70,87 +35,128 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
-const WorkoutIndexRoute = WorkoutIndexRouteImport.update({
-  id: '/',
-  path: '/',
-  getParentRoute: () => WorkoutRoute,
-} as any)
-const ExercisesIndexRoute = ExercisesIndexRouteImport.update({
-  id: '/exercises/',
-  path: '/exercises/',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const WorkoutSummaryRoute = WorkoutSummaryRouteImport.update({
-  id: '/summary',
-  path: '/summary',
-  getParentRoute: () => WorkoutRoute,
-} as any)
-const WorkoutPlayRoute = WorkoutPlayRouteImport.update({
-  id: '/play',
-  path: '/play',
-  getParentRoute: () => WorkoutRoute,
-} as any)
-const ExercisesIdRoute = ExercisesIdRouteImport.update({
-  id: '/exercises/$id',
-  path: '/exercises/$id',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const DevAssetDashboardRoute = DevAssetDashboardRouteImport.update({
   id: '/dev/asset-dashboard',
   path: '/dev/asset-dashboard',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AuthenticatedWorkoutRoute = AuthenticatedWorkoutRouteImport.update({
+  id: '/_authenticated/workout',
+  path: '/workout',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthenticatedQuestsRoute = AuthenticatedQuestsRouteImport.update({
+  id: '/_authenticated/quests',
+  path: '/quests',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthenticatedProgressMirrorRoute =
+  AuthenticatedProgressMirrorRouteImport.update({
+    id: '/_authenticated/progress-mirror',
+    path: '/progress-mirror',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const AuthenticatedProgressRoute = AuthenticatedProgressRouteImport.update({
+  id: '/_authenticated/progress',
+  path: '/progress',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthenticatedProfileRoute = AuthenticatedProfileRouteImport.update({
+  id: '/_authenticated/profile',
+  path: '/profile',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthenticatedOnboardingRoute = AuthenticatedOnboardingRouteImport.update({
+  id: '/_authenticated/onboarding',
+  path: '/onboarding',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthenticatedHomeRoute = AuthenticatedHomeRouteImport.update({
+  id: '/_authenticated/home',
+  path: '/home',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthenticatedWorkoutIndexRoute =
+  AuthenticatedWorkoutIndexRouteImport.update({
+    id: '/',
+    path: '/',
+    getParentRoute: () => AuthenticatedWorkoutRoute,
+  } as any)
+const AuthenticatedExercisesIndexRoute =
+  AuthenticatedExercisesIndexRouteImport.update({
+    id: '/_authenticated/exercises/',
+    path: '/exercises/',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const AuthenticatedWorkoutSummaryRoute =
+  AuthenticatedWorkoutSummaryRouteImport.update({
+    id: '/summary',
+    path: '/summary',
+    getParentRoute: () => AuthenticatedWorkoutRoute,
+  } as any)
+const AuthenticatedWorkoutPlayRoute =
+  AuthenticatedWorkoutPlayRouteImport.update({
+    id: '/play',
+    path: '/play',
+    getParentRoute: () => AuthenticatedWorkoutRoute,
+  } as any)
+const AuthenticatedExercisesIdRoute =
+  AuthenticatedExercisesIdRouteImport.update({
+    id: '/_authenticated/exercises/$id',
+    path: '/exercises/$id',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
-  '/home': typeof HomeRoute
-  '/onboarding': typeof OnboardingRoute
-  '/profile': typeof ProfileRoute
-  '/progress': typeof ProgressRoute
-  '/progress-mirror': typeof ProgressMirrorRoute
-  '/quests': typeof QuestsRoute
-  '/workout': typeof WorkoutRouteWithChildren
+  '/home': typeof AuthenticatedHomeRoute
+  '/onboarding': typeof AuthenticatedOnboardingRoute
+  '/profile': typeof AuthenticatedProfileRoute
+  '/progress': typeof AuthenticatedProgressRoute
+  '/progress-mirror': typeof AuthenticatedProgressMirrorRoute
+  '/quests': typeof AuthenticatedQuestsRoute
+  '/workout': typeof AuthenticatedWorkoutRouteWithChildren
   '/dev/asset-dashboard': typeof DevAssetDashboardRoute
-  '/exercises/$id': typeof ExercisesIdRoute
-  '/workout/play': typeof WorkoutPlayRoute
-  '/workout/summary': typeof WorkoutSummaryRoute
-  '/exercises/': typeof ExercisesIndexRoute
-  '/workout/': typeof WorkoutIndexRoute
+  '/exercises/$id': typeof AuthenticatedExercisesIdRoute
+  '/workout/play': typeof AuthenticatedWorkoutPlayRoute
+  '/workout/summary': typeof AuthenticatedWorkoutSummaryRoute
+  '/exercises/': typeof AuthenticatedExercisesIndexRoute
+  '/workout/': typeof AuthenticatedWorkoutIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
-  '/home': typeof HomeRoute
-  '/onboarding': typeof OnboardingRoute
-  '/profile': typeof ProfileRoute
-  '/progress': typeof ProgressRoute
-  '/progress-mirror': typeof ProgressMirrorRoute
-  '/quests': typeof QuestsRoute
+  '/home': typeof AuthenticatedHomeRoute
+  '/onboarding': typeof AuthenticatedOnboardingRoute
+  '/profile': typeof AuthenticatedProfileRoute
+  '/progress': typeof AuthenticatedProgressRoute
+  '/progress-mirror': typeof AuthenticatedProgressMirrorRoute
+  '/quests': typeof AuthenticatedQuestsRoute
   '/dev/asset-dashboard': typeof DevAssetDashboardRoute
-  '/exercises/$id': typeof ExercisesIdRoute
-  '/workout/play': typeof WorkoutPlayRoute
-  '/workout/summary': typeof WorkoutSummaryRoute
-  '/exercises': typeof ExercisesIndexRoute
-  '/workout': typeof WorkoutIndexRoute
+  '/exercises/$id': typeof AuthenticatedExercisesIdRoute
+  '/workout/play': typeof AuthenticatedWorkoutPlayRoute
+  '/workout/summary': typeof AuthenticatedWorkoutSummaryRoute
+  '/exercises': typeof AuthenticatedExercisesIndexRoute
+  '/workout': typeof AuthenticatedWorkoutIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
-  '/home': typeof HomeRoute
-  '/onboarding': typeof OnboardingRoute
-  '/profile': typeof ProfileRoute
-  '/progress': typeof ProgressRoute
-  '/progress-mirror': typeof ProgressMirrorRoute
-  '/quests': typeof QuestsRoute
-  '/workout': typeof WorkoutRouteWithChildren
+  '/_authenticated/home': typeof AuthenticatedHomeRoute
+  '/_authenticated/onboarding': typeof AuthenticatedOnboardingRoute
+  '/_authenticated/profile': typeof AuthenticatedProfileRoute
+  '/_authenticated/progress': typeof AuthenticatedProgressRoute
+  '/_authenticated/progress-mirror': typeof AuthenticatedProgressMirrorRoute
+  '/_authenticated/quests': typeof AuthenticatedQuestsRoute
+  '/_authenticated/workout': typeof AuthenticatedWorkoutRouteWithChildren
   '/dev/asset-dashboard': typeof DevAssetDashboardRoute
-  '/exercises/$id': typeof ExercisesIdRoute
-  '/workout/play': typeof WorkoutPlayRoute
-  '/workout/summary': typeof WorkoutSummaryRoute
-  '/exercises/': typeof ExercisesIndexRoute
-  '/workout/': typeof WorkoutIndexRoute
+  '/_authenticated/exercises/$id': typeof AuthenticatedExercisesIdRoute
+  '/_authenticated/workout/play': typeof AuthenticatedWorkoutPlayRoute
+  '/_authenticated/workout/summary': typeof AuthenticatedWorkoutSummaryRoute
+  '/_authenticated/exercises/': typeof AuthenticatedExercisesIndexRoute
+  '/_authenticated/workout/': typeof AuthenticatedWorkoutIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -190,87 +196,38 @@ export interface FileRouteTypes {
     | '__root__'
     | '/'
     | '/auth'
-    | '/home'
-    | '/onboarding'
-    | '/profile'
-    | '/progress'
-    | '/progress-mirror'
-    | '/quests'
-    | '/workout'
+    | '/_authenticated/home'
+    | '/_authenticated/onboarding'
+    | '/_authenticated/profile'
+    | '/_authenticated/progress'
+    | '/_authenticated/progress-mirror'
+    | '/_authenticated/quests'
+    | '/_authenticated/workout'
     | '/dev/asset-dashboard'
-    | '/exercises/$id'
-    | '/workout/play'
-    | '/workout/summary'
-    | '/exercises/'
-    | '/workout/'
+    | '/_authenticated/exercises/$id'
+    | '/_authenticated/workout/play'
+    | '/_authenticated/workout/summary'
+    | '/_authenticated/exercises/'
+    | '/_authenticated/workout/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AuthRoute: typeof AuthRoute
-  HomeRoute: typeof HomeRoute
-  OnboardingRoute: typeof OnboardingRoute
-  ProfileRoute: typeof ProfileRoute
-  ProgressRoute: typeof ProgressRoute
-  ProgressMirrorRoute: typeof ProgressMirrorRoute
-  QuestsRoute: typeof QuestsRoute
-  WorkoutRoute: typeof WorkoutRouteWithChildren
+  AuthenticatedHomeRoute: typeof AuthenticatedHomeRoute
+  AuthenticatedOnboardingRoute: typeof AuthenticatedOnboardingRoute
+  AuthenticatedProfileRoute: typeof AuthenticatedProfileRoute
+  AuthenticatedProgressRoute: typeof AuthenticatedProgressRoute
+  AuthenticatedProgressMirrorRoute: typeof AuthenticatedProgressMirrorRoute
+  AuthenticatedQuestsRoute: typeof AuthenticatedQuestsRoute
+  AuthenticatedWorkoutRoute: typeof AuthenticatedWorkoutRouteWithChildren
   DevAssetDashboardRoute: typeof DevAssetDashboardRoute
-  ExercisesIdRoute: typeof ExercisesIdRoute
-  ExercisesIndexRoute: typeof ExercisesIndexRoute
+  AuthenticatedExercisesIdRoute: typeof AuthenticatedExercisesIdRoute
+  AuthenticatedExercisesIndexRoute: typeof AuthenticatedExercisesIndexRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/workout': {
-      id: '/workout'
-      path: '/workout'
-      fullPath: '/workout'
-      preLoaderRoute: typeof WorkoutRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/quests': {
-      id: '/quests'
-      path: '/quests'
-      fullPath: '/quests'
-      preLoaderRoute: typeof QuestsRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/progress-mirror': {
-      id: '/progress-mirror'
-      path: '/progress-mirror'
-      fullPath: '/progress-mirror'
-      preLoaderRoute: typeof ProgressMirrorRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/progress': {
-      id: '/progress'
-      path: '/progress'
-      fullPath: '/progress'
-      preLoaderRoute: typeof ProgressRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/profile': {
-      id: '/profile'
-      path: '/profile'
-      fullPath: '/profile'
-      preLoaderRoute: typeof ProfileRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/onboarding': {
-      id: '/onboarding'
-      path: '/onboarding'
-      fullPath: '/onboarding'
-      preLoaderRoute: typeof OnboardingRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/home': {
-      id: '/home'
-      path: '/home'
-      fullPath: '/home'
-      preLoaderRoute: typeof HomeRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/auth': {
       id: '/auth'
       path: '/auth'
@@ -285,41 +242,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/workout/': {
-      id: '/workout/'
-      path: '/'
-      fullPath: '/workout/'
-      preLoaderRoute: typeof WorkoutIndexRouteImport
-      parentRoute: typeof WorkoutRoute
-    }
-    '/exercises/': {
-      id: '/exercises/'
-      path: '/exercises'
-      fullPath: '/exercises/'
-      preLoaderRoute: typeof ExercisesIndexRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/workout/summary': {
-      id: '/workout/summary'
-      path: '/summary'
-      fullPath: '/workout/summary'
-      preLoaderRoute: typeof WorkoutSummaryRouteImport
-      parentRoute: typeof WorkoutRoute
-    }
-    '/workout/play': {
-      id: '/workout/play'
-      path: '/play'
-      fullPath: '/workout/play'
-      preLoaderRoute: typeof WorkoutPlayRouteImport
-      parentRoute: typeof WorkoutRoute
-    }
-    '/exercises/$id': {
-      id: '/exercises/$id'
-      path: '/exercises/$id'
-      fullPath: '/exercises/$id'
-      preLoaderRoute: typeof ExercisesIdRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/dev/asset-dashboard': {
       id: '/dev/asset-dashboard'
       path: '/dev/asset-dashboard'
@@ -327,37 +249,121 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DevAssetDashboardRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/_authenticated/workout': {
+      id: '/_authenticated/workout'
+      path: '/workout'
+      fullPath: '/workout'
+      preLoaderRoute: typeof AuthenticatedWorkoutRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/_authenticated/quests': {
+      id: '/_authenticated/quests'
+      path: '/quests'
+      fullPath: '/quests'
+      preLoaderRoute: typeof AuthenticatedQuestsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/_authenticated/progress-mirror': {
+      id: '/_authenticated/progress-mirror'
+      path: '/progress-mirror'
+      fullPath: '/progress-mirror'
+      preLoaderRoute: typeof AuthenticatedProgressMirrorRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/_authenticated/progress': {
+      id: '/_authenticated/progress'
+      path: '/progress'
+      fullPath: '/progress'
+      preLoaderRoute: typeof AuthenticatedProgressRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/_authenticated/profile': {
+      id: '/_authenticated/profile'
+      path: '/profile'
+      fullPath: '/profile'
+      preLoaderRoute: typeof AuthenticatedProfileRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/_authenticated/onboarding': {
+      id: '/_authenticated/onboarding'
+      path: '/onboarding'
+      fullPath: '/onboarding'
+      preLoaderRoute: typeof AuthenticatedOnboardingRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/_authenticated/home': {
+      id: '/_authenticated/home'
+      path: '/home'
+      fullPath: '/home'
+      preLoaderRoute: typeof AuthenticatedHomeRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/_authenticated/workout/': {
+      id: '/_authenticated/workout/'
+      path: '/'
+      fullPath: '/workout/'
+      preLoaderRoute: typeof AuthenticatedWorkoutIndexRouteImport
+      parentRoute: typeof AuthenticatedWorkoutRoute
+    }
+    '/_authenticated/exercises/': {
+      id: '/_authenticated/exercises/'
+      path: '/exercises'
+      fullPath: '/exercises/'
+      preLoaderRoute: typeof AuthenticatedExercisesIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/_authenticated/workout/summary': {
+      id: '/_authenticated/workout/summary'
+      path: '/summary'
+      fullPath: '/workout/summary'
+      preLoaderRoute: typeof AuthenticatedWorkoutSummaryRouteImport
+      parentRoute: typeof AuthenticatedWorkoutRoute
+    }
+    '/_authenticated/workout/play': {
+      id: '/_authenticated/workout/play'
+      path: '/play'
+      fullPath: '/workout/play'
+      preLoaderRoute: typeof AuthenticatedWorkoutPlayRouteImport
+      parentRoute: typeof AuthenticatedWorkoutRoute
+    }
+    '/_authenticated/exercises/$id': {
+      id: '/_authenticated/exercises/$id'
+      path: '/exercises/$id'
+      fullPath: '/exercises/$id'
+      preLoaderRoute: typeof AuthenticatedExercisesIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
-interface WorkoutRouteChildren {
-  WorkoutPlayRoute: typeof WorkoutPlayRoute
-  WorkoutSummaryRoute: typeof WorkoutSummaryRoute
-  WorkoutIndexRoute: typeof WorkoutIndexRoute
+interface AuthenticatedWorkoutRouteChildren {
+  AuthenticatedWorkoutPlayRoute: typeof AuthenticatedWorkoutPlayRoute
+  AuthenticatedWorkoutSummaryRoute: typeof AuthenticatedWorkoutSummaryRoute
+  AuthenticatedWorkoutIndexRoute: typeof AuthenticatedWorkoutIndexRoute
 }
 
-const WorkoutRouteChildren: WorkoutRouteChildren = {
-  WorkoutPlayRoute: WorkoutPlayRoute,
-  WorkoutSummaryRoute: WorkoutSummaryRoute,
-  WorkoutIndexRoute: WorkoutIndexRoute,
+const AuthenticatedWorkoutRouteChildren: AuthenticatedWorkoutRouteChildren = {
+  AuthenticatedWorkoutPlayRoute: AuthenticatedWorkoutPlayRoute,
+  AuthenticatedWorkoutSummaryRoute: AuthenticatedWorkoutSummaryRoute,
+  AuthenticatedWorkoutIndexRoute: AuthenticatedWorkoutIndexRoute,
 }
 
-const WorkoutRouteWithChildren =
-  WorkoutRoute._addFileChildren(WorkoutRouteChildren)
+const AuthenticatedWorkoutRouteWithChildren =
+  AuthenticatedWorkoutRoute._addFileChildren(AuthenticatedWorkoutRouteChildren)
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthRoute: AuthRoute,
-  HomeRoute: HomeRoute,
-  OnboardingRoute: OnboardingRoute,
-  ProfileRoute: ProfileRoute,
-  ProgressRoute: ProgressRoute,
-  ProgressMirrorRoute: ProgressMirrorRoute,
-  QuestsRoute: QuestsRoute,
-  WorkoutRoute: WorkoutRouteWithChildren,
+  AuthenticatedHomeRoute: AuthenticatedHomeRoute,
+  AuthenticatedOnboardingRoute: AuthenticatedOnboardingRoute,
+  AuthenticatedProfileRoute: AuthenticatedProfileRoute,
+  AuthenticatedProgressRoute: AuthenticatedProgressRoute,
+  AuthenticatedProgressMirrorRoute: AuthenticatedProgressMirrorRoute,
+  AuthenticatedQuestsRoute: AuthenticatedQuestsRoute,
+  AuthenticatedWorkoutRoute: AuthenticatedWorkoutRouteWithChildren,
   DevAssetDashboardRoute: DevAssetDashboardRoute,
-  ExercisesIdRoute: ExercisesIdRoute,
-  ExercisesIndexRoute: ExercisesIndexRoute,
+  AuthenticatedExercisesIdRoute: AuthenticatedExercisesIdRoute,
+  AuthenticatedExercisesIndexRoute: AuthenticatedExercisesIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
