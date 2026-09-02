@@ -11,7 +11,7 @@ interface Search$ {
   group?: CategoryGroup;
 }
 
-export const Route = createFileRoute("/exercises/")({
+export const Route = createFileRoute("/_authenticated/exercises/")({
   head: () => ({ meta: [{ title: "Exercise Library — LevelUp Life" }] }),
   validateSearch: (s: Record<string, unknown>): Search$ => ({
     group: (["strength", "mobility", "recovery", "cardio"] as const).includes(s.group as CategoryGroup)

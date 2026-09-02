@@ -23,7 +23,7 @@ import {
 
 } from "lucide-react";
 
-export const Route = createFileRoute("/exercises/$id")({
+export const Route = createFileRoute("/_authenticated/exercises/$id")({
   head: () => ({ meta: [{ title: "Exercise — LevelUp Life" }] }),
   component: Detail,
 });

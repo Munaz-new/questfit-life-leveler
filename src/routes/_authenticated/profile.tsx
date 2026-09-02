@@ -17,7 +17,7 @@ import {
 import { toast } from "sonner";
 import { useDemoGender } from "@/lib/leveluplife/assets/gender";
 
-export const Route = createFileRoute("/profile")({
+export const Route = createFileRoute("/_authenticated/profile")({
   head: () => ({ meta: [{ title: "Profile — LevelUp Life" }] }),
   component: Profile,
 });

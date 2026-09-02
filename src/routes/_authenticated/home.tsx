@@ -11,7 +11,7 @@ import { recommendationMessage } from "@/lib/leveluplife/engine/messages";
 import { Flame, Check, ChevronRight, Armchair } from "lucide-react";
 import * as Icons from "lucide-react";
 
-export const Route = createFileRoute("/home")({
+export const Route = createFileRoute("/_authenticated/home")({
   head: () => ({
     meta: [
       { title: "Your Day — LevelUp Life" },

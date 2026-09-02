@@ -35,7 +35,7 @@ import {
   type ProgressPhoto,
 } from "@/lib/leveluplife/progressMirror";
 
-export const Route = createFileRoute("/progress-mirror")({
+export const Route = createFileRoute("/_authenticated/progress-mirror")({
   head: () => ({ meta: [{ title: "Progress Mirror — LevelUp Life" }] }),
   component: ProgressMirror,
 });

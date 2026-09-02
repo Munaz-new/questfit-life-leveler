@@ -7,7 +7,7 @@ import { missionCopyFor } from "@/lib/leveluplife/missionCopy";
 import { Button } from "@/components/ui/button";
 import { Home, Flame, Zap, Trophy, Activity } from "lucide-react";
 
-export const Route = createFileRoute("/workout/summary")({
+export const Route = createFileRoute("/_authenticated/workout/summary")({
   head: () => ({ meta: [{ title: "Mission Complete — LevelUp Life" }] }),
   component: Summary,
 });

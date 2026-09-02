@@ -14,7 +14,7 @@ import { MODE_LIST, getMode } from "@/lib/leveluplife/modes";
 import { setOnboardingOptIn } from "@/lib/leveluplife/progressMirror";
 import type { UserProfile } from "@/lib/leveluplife/types";
 
-export const Route = createFileRoute("/onboarding")({
+export const Route = createFileRoute("/_authenticated/onboarding")({
   head: () => ({ meta: [{ title: "Onboarding — LevelUp Life" }] }),
   component: Onboarding,
 });

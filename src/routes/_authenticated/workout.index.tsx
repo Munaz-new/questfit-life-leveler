@@ -15,7 +15,7 @@ interface Search {
   protocol?: ProtocolId;
 }
 
-export const Route = createFileRoute("/workout/")({
+export const Route = createFileRoute("/_authenticated/workout/")({
   head: () => ({ meta: [{ title: "Mission Briefing — LevelUp Life" }] }),
   validateSearch: (s: Record<string, unknown>): Search => ({
     protocol: typeof s.protocol === "string" ? (s.protocol as ProtocolId) : undefined,
