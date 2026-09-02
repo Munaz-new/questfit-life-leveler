@@ -7,7 +7,7 @@ import { modeFor } from "@/lib/leveluplife/modes";
 import * as Icons from "lucide-react";
 import { Dumbbell, HeartPulse, Moon, Target, Sparkles, Wind, Brain, Camera, ChevronRight } from "lucide-react";
 
-export const Route = createFileRoute("/progress")({
+export const Route = createFileRoute("/_authenticated/progress")({
   head: () => ({ meta: [{ title: "Progress — LevelUp Life" }] }),
   component: ProgressPage,
 });

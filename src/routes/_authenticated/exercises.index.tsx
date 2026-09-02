@@ -11,7 +11,7 @@ interface Search$ {
   group?: CategoryGroup;
 }
 
-export const Route = createFileRoute("/exercises/")({
+export const Route = createFileRoute("/_authenticated/exercises/")({
   head: () => ({ meta: [{ title: "Exercise Library — LevelUp Life" }] }),
   validateSearch: (s: Record<string, unknown>): Search$ => ({
     group: (["strength", "mobility", "recovery", "cardio"] as const).includes(s.group as CategoryGroup)
@@ -31,7 +31,7 @@ const GROUPS: { id: CategoryGroup | "all"; label: string }[] = [
 
 function Library() {
   const navigate = useNavigate();
-  const search = useSearch({ from: "/exercises/" });
+  const search = useSearch({ from: "/_authenticated/exercises/" });
   const { state } = useApp();
 
   useEffect(() => {

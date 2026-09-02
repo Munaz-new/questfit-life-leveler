@@ -6,7 +6,7 @@ import { modeFor } from "@/lib/leveluplife/modes";
 import { Check, Heart } from "lucide-react";
 import * as Icons from "lucide-react";
 
-export const Route = createFileRoute("/quests")({
+export const Route = createFileRoute("/_authenticated/quests")({
   head: () => ({ meta: [{ title: "Quests — LevelUp Life" }] }),
   component: Quests,
 });

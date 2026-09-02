@@ -7,6 +7,7 @@ export type LifestyleType =
   | "creator"
   | "nightshift"
   | "freelancer"
+  | "parent"
   | "custom";
 
 export type MotivationStyle =
@@ -29,6 +30,18 @@ export type Goal =
   | "discipline"
   | "confidence";
 
+export type PrimaryGoal =
+  | "build_strength"
+  | "lose_fat"
+  | "improve_endurance"
+  | "improve_mobility"
+  | "general_fitness"
+  | "build_consistency";
+
+export type WorkSchedule = "daytime" | "evening" | "night" | "rotating" | "flexible";
+
+export type RoomSize = "tiny" | "small" | "medium" | "large";
+
 export type FitnessLevel = "beginner" | "intermediate" | "advanced";
 
 export interface UserProfile {
@@ -40,6 +53,12 @@ export interface UserProfile {
   height: string;
   weight: string;
   lifestyle: LifestyleType;
+  /** Work / study schedule shape — used later by the Life Adaptation Engine. */
+  schedule: WorkSchedule;
+  /** Available workout space. */
+  roomSize: RoomSize;
+  /** Single headline goal chosen during onboarding. */
+  primaryGoal: PrimaryGoal;
   wakeTime: string;
   sleepTime: string;
   sittingHours: number;

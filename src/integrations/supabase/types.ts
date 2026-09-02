@@ -71,6 +71,51 @@ export type Database = {
         }
         Relationships: []
       }
+      profiles: {
+        Row: {
+          age_range: string
+          created_at: string
+          display_name: string
+          fitness_level: string
+          gender: string | null
+          goals: string[]
+          height: string
+          onboarded: boolean
+          primary_goal: string
+          updated_at: string
+          user_id: string
+          weight: string
+        }
+        Insert: {
+          age_range?: string
+          created_at?: string
+          display_name?: string
+          fitness_level?: string
+          gender?: string | null
+          goals?: string[]
+          height?: string
+          onboarded?: boolean
+          primary_goal?: string
+          updated_at?: string
+          user_id: string
+          weight?: string
+        }
+        Update: {
+          age_range?: string
+          created_at?: string
+          display_name?: string
+          fitness_level?: string
+          gender?: string | null
+          goals?: string[]
+          height?: string
+          onboarded?: boolean
+          primary_goal?: string
+          updated_at?: string
+          user_id?: string
+          weight?: string
+        }
+        Relationships: []
+      }
       progress_achievements: {
         Row: {
           achievement_key: string
@@ -159,6 +204,75 @@ export type Database = {
           created_at?: string
           enabled?: boolean
           id?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      user_lifestyle: {
+        Row: {
+          created_at: string
+          energy: number
+          equipment: string[]
+          lifestyle: string
+          room_size: string
+          schedule: string
+          sitting_hours: number
+          sleep_time: string
+          stress: number
+          updated_at: string
+          user_id: string
+          wake_time: string
+        }
+        Insert: {
+          created_at?: string
+          energy?: number
+          equipment?: string[]
+          lifestyle?: string
+          room_size?: string
+          schedule?: string
+          sitting_hours?: number
+          sleep_time?: string
+          stress?: number
+          updated_at?: string
+          user_id: string
+          wake_time?: string
+        }
+        Update: {
+          created_at?: string
+          energy?: number
+          equipment?: string[]
+          lifestyle?: string
+          room_size?: string
+          schedule?: string
+          sitting_hours?: number
+          sleep_time?: string
+          stress?: number
+          updated_at?: string
+          user_id?: string
+          wake_time?: string
+        }
+        Relationships: []
+      }
+      user_preferences: {
+        Row: {
+          created_at: string
+          demonstration_preference: string
+          motivation_mode: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          demonstration_preference?: string
+          motivation_mode?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          demonstration_preference?: string
+          motivation_mode?: string
           updated_at?: string
           user_id?: string
         }

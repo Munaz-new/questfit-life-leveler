@@ -63,6 +63,32 @@ export const lifestyleOptions: { id: UserProfile["lifestyle"]; label: string; em
   { id: "creator",     label: "Creator",        emoji: "🎨" },
   { id: "nightshift",  label: "Night shift",    emoji: "🌙" },
   { id: "freelancer",  label: "Freelancer",     emoji: "💻" },
+  { id: "parent",      label: "Parent",         emoji: "🧸" },
+  { id: "custom",      label: "Something else", emoji: "✨" },
+];
+
+export const primaryGoalOptions: { id: UserProfile["primaryGoal"]; label: string }[] = [
+  { id: "build_strength",     label: "Build Strength" },
+  { id: "lose_fat",           label: "Lose Fat" },
+  { id: "improve_endurance",  label: "Improve Endurance" },
+  { id: "improve_mobility",   label: "Improve Mobility" },
+  { id: "general_fitness",    label: "General Fitness" },
+  { id: "build_consistency",  label: "Build Consistency" },
+];
+
+export const scheduleOptions: { id: UserProfile["schedule"]; label: string }[] = [
+  { id: "daytime",  label: "Daytime" },
+  { id: "evening",  label: "Evenings" },
+  { id: "night",    label: "Nights" },
+  { id: "rotating", label: "Rotating shifts" },
+  { id: "flexible", label: "Flexible" },
+];
+
+export const roomSizeOptions: { id: UserProfile["roomSize"]; label: string; hint: string }[] = [
+  { id: "tiny",   label: "Tiny",   hint: "Standing space only" },
+  { id: "small",  label: "Small",  hint: "Room for a mat" },
+  { id: "medium", label: "Medium", hint: "Mat + a step around it" },
+  { id: "large",  label: "Large",  hint: "Full range of movement" },
 ];
 
 export const motivationStyles: { id: UserProfile["motivation"]; label: string; tag: string; desc: string }[] = [
