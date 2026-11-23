@@ -1,667 +1,147 @@
-# 4
+# LevelUp Life
 
-Build a production-quality mobile-first application called:
+**Turn your real life into character progression.**
 
-LEVELUP LIFE
+LevelUp Life is a mobile-first fitness web app that combines adaptive home workouts, daily quests, and RPG-style progression. Plans respond to a user's lifestyle, available time, equipment, energy, and recent activity.
 
-Tagline:
+## Features
 
-Turn Your Real Life Into Character Progression
+- **Lifestyle onboarding** — collect fitness goals, routine, equipment, and motivation preferences.
+- **Adaptive daily plans** — generate and adjust missions using local rules and activity history.
+- **Guided workouts** — follow warmups, exercise sets, rest timers, and cooldowns.
+- **Character progression** — earn XP, gain levels, develop skills, and track streaks.
+- **Exercise library** — browse exercise details and demonstrations from supported media providers.
+- **Progress Mirror** — record progress photos, body measurements, and achievements through Supabase.
+- **Authentication** — sign in with email/password or Google through Supabase.
+- **Responsive interface** — mobile navigation, visual themes, and a web app manifest.
 
-IMPORTANT:
+The adaptation engine is rule-based and runs locally. It does not require an external AI API key.
 
-This is NOT a generic workout app.
+## Technology
 
-Do NOT build a boring fitness tracker.
+- **Application:** React 19, TypeScript, TanStack Start, and TanStack Router
+- **UI:** Tailwind CSS 4, Radix UI, Lucide icons, and Recharts
+- **Data and authentication:** Supabase and TanStack Query
+- **Build and server:** Vite 8 and Nitro
+- **Package management:** npm with a committed lockfile
 
-Do NOT build a childish anime clone.
+This repository contains a web application, not a React Native or Expo application.
 
-This must feel like:
+## Getting started
 
-Premium fitness app + RPG progression + AI lifestyle adaptation
+### 1. Install prerequisites
 
-Think:
+Use Node.js **22.12 or newer** and npm. A Supabase project is required for authentication and backend features.
 
-Duolingo retention
-
-Premium fitness apps
-
-RPG progression systems
-
-Subtle Solo Leveling motivation
-
-Clean futuristic UI
-
-The app should feel premium, modern, immersive, and addictive in a healthy way.
-
-CORE IDEA
-
-LEVELUP LIFE is an adaptive home fitness platform that personalizes workouts based on a user's:
-
-lifestyle
-
-schedule
-
-energy
-
-fitness level
-
-motivation type
-
-environment
-
-consistency
-
-real-life routine
-
-Instead of:
-
-“One workout plan for everyone”
-
-The app creates:
-
-“A personalized real-life fitness system.”
-
-The user should feel:
-
-“I’m leveling up in real life.”
-
-TARGET USERS
-
-Students
-
-Gamers / Coders / Developers
-
-Office workers
-
-Busy people
-
-Fitness beginners
-
-Examples:
-
-Student:
-
-quick workouts
-
-exam stress mode
-
-posture fixes
-
-Coder/Gamer:
-
-neck pain fixes
-
-wrist care
-
-sitting compensation
-
-posture recovery
-
-Busy person:
-
-5–15 min workouts
-
-low friction
-
-Beginner:
-
-safe progression
-
-encouragement
-
-simple routines
-
-FITNESS PHILOSOPHY
-
-Balance:
-
-70% practical real-life fitness
-20% game mechanics
-10% anime inspiration
-
-No cringe.
-
-No fantasy workouts.
-
-Must be evidence-based.
-
-APP FLOW
-
-Screen 1: Splash Screen
-
-Premium animated logo.
-
-Dark futuristic background.
-
-Subtle glowing animation.
-
-Brand feel:
-
-Premium startup quality.
-
-Screen 2: Welcome / Login
-
-Options:
-
-Continue as Guest
-
-Google Sign In
-
-Create Account
-
-Clean premium layout.
-
-Modern glassmorphism.
-
-Subtle gradients.
-
-Screen 3: Lifestyle Onboarding
-
-Make onboarding immersive.
-
-Step-by-step flow.
-
-Ask:
-
-Basic Info
-
-age range
-
-height
-
-weight
-
-Lifestyle Type
-
-student
-
-office worker
-
-gamer
-
-developer
-
-business owner
-
-creator
-
-night shift worker
-
-freelancer
-
-custom
-
-Daily Routine
-
-wake time
-
-sleep time
-
-sitting hours
-
-energy level
-
-stress level
-
-Equipment
-
-none
-
-resistance bands
-
-dumbbells
-
-chair
-
-pull-up bar
-
-Goals
-
-weight loss
-
-muscle gain
-
-posture
-
-stamina
-
-consistency
-
-mobility
-
-discipline
-
-confidence
-
-Fitness Level
-
-beginner
-
-intermediate
-
-advanced
-
-Motivation Style
-
-(Hunter Mode / Hero Mode / Zen Mode / Scientist Mode / Story Mode)
-
-After onboarding:
-
-Generate:
-
-“Your Personal System”
-
-MAIN NAVIGATION
-
-Bottom navigation with premium icons.
-
-Tabs:
-
-Home
-
-Quests
-
-Workout
-
-Progress
-
-Profile
-
-Animated transitions.
-
-Modern micro-interactions.
-
-HOME SCREEN
-
-This is the emotional hook.
-
-Must feel:
-
-“Today I become stronger.”
-
-Include:
-
-Greeting Header
-
-Example:
-
-“Good Evening, Munaz ⚔️”
-
-Daily Mission Card
-
-Today’s quests:
-
-✅ Drink Water
-✅ Stretch 5 min
-⬜ Workout
-⬜ Walk 10 min
-
-XP rewards shown.
-
-Beautiful progress state.
-
-Adaptive AI Recommendation
-
-Example:
-
-“You studied for long hours today. Try a 5-minute posture reset.”
-
-Streak + XP Widget
-
-Show:
-
-Level
-XP progress
-streak count
-
-Premium visuals.
-
-QUEST SCREEN
-
-Daily adaptive quests.
-
-Generated based on:
-
-lifestyle
-
-energy
-
-schedule
-
-consistency
-
-Examples:
-
-hydration
-
-stretch
-
-mobility
-
-walk
-
-workout
-
-recovery
-
-Rewards:
-
-XP + progression
-
-No punishment.
-
-If user misses streak:
-
-Show:
-
-“Recovery mission activated.”
-
-Never guilt users.
-
-WORKOUT SCREEN
-
-Adaptive workout engine.
-
-Generate home workouts.
-
-Support:
-
-no equipment
-
-small room
-
-chair exercises
-
-resistance bands
-
-dumbbells
-
-Workout UI:
-
-timer
-
-sets
-
-reps
-
-rest timer
-
-animations
-
-clean cards
-
-Modern premium feel.
-
-PROGRESS SCREEN
-
-Must feel like a game profile.
-
-Not ugly or cluttered.
-
-Premium redesign required.
-
-Show:
-
-Character Progress
-
-Large XP progress card
-
-Level display
-
-Progress animation
-
-Real Life Stats
-
-Strength
-Stamina
-Recovery
-Discipline
-Vitality
-Flexibility
-Focus
-
-Use beautiful rounded premium cards.
-
-Not cramped.
-
-Balanced spacing.
-
-Skill Evolution
-
-Example skills:
-
-Posture Guardian
-
-Lv.1
-
-Endurance Core
-
-Lv.1
-
-Discipline Passive
-
-Lv.1
-
-Flex Master
-
-Lv.1
-
-Skill cards should feel premium.
-
-RPG-inspired.
-
-Subtle glow.
-
-Not cartoonish.
-
-PROFILE SCREEN
-
-Profile details.
-
-Lifestyle summary.
-
-Goals.
-
-Theme selection.
-
-Motivation style.
-
-Settings.
-
-DESIGN SYSTEM
-
-Very important:
-
-Current fitness apps are generic.
-
-This app must feel startup-premium.
-
-Visual Direction:
-
-Dark futuristic aesthetic.
-
-Inspired by:
-
-premium fitness apps
-
-RPG interfaces
-
-subtle holographic UI
-
-premium mobile products
-
-Avoid:
-
-❌ cluttered screens
-❌ childish anime UI
-❌ generic template look
-❌ ugly spacing
-
-Must feel:
-
-✅ premium
-✅ immersive
-✅ modern
-✅ minimal
-✅ motivating
-
-COLOR SYSTEM
-
-Background: #070B14
-
-Card: #111827
-
-Primary Accent: cyan → electric blue gradient
-
-Accent Colors: #00D4FF #3B82F6 #7C3AED
-
-Text Primary: #F3F4F6
-
-Text Secondary: #94A3B8
-
-Success: #10B981
-
-Warning: #F59E0B
-
-UI REQUIREMENTS
-
-Smooth animations
-
-Glassmorphism
-
-Rounded premium cards
-
-Beautiful shadows
-
-Soft glow effects
-
-Strong typography hierarchy
-
-Better spacing
-
-Responsive Android UI
-
-Polished onboarding
-
-Premium bottom nav
-
-Premium progress bars
-
-AI FITNESS ENGINE
-
-Create a basic adaptive system.
-
-Example logic:
-
-IF:
-
-user = student
-energy = low
-stress = high
-
-THEN:
-
-Generate:
-
-10 minute recovery workout
-
-posture focus
-
-low intensity
-
-IF:
-
-user = gamer/developer
-sitting > 6 hours
-
-THEN:
-
-Auto suggest:
-
-neck mobility
-
-wrist recovery
-
-posture correction
-
-IF:
-
-consistency > 14 days
-
-THEN:
-
-increase challenge safely.
-
-SAFETY RULES
-
-Always include:
-
-warmups
-
-cooldowns
-
-beginner-safe plans
-
-realistic progression
-
-recovery logic
-
-Never generate dangerous workouts.
-
-TECH STACK
-
-Frontend: React Native + Expo + TypeScript
-
-Backend: Supabase
-
-Database: PostgreSQL
-
-Auth: Google + Email
-
-State: Modern scalable architecture
-
-MVP PRIORITY
-
-Build first:
-
-Lifestyle onboarding
-
-Home dashboard
-
-Adaptive quests
-
-Workout generator
-
-XP + Leveling
-
-Progress screen
-
-Profile
-
-Focus on quality over quantity.
-
-Make it feel like a real startup-quality app.
-
-The UI must look significantly better than a generic AI-generated prototype.
-
-## Development
-
-Prefer working locally? You need Node.js and npm — [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating).
+### 2. Clone and install
 
 ```sh
-git clone <this-repository-url>
-cd <repository-name>
-npm i
+git clone https://github.com/Munaz-new/questfit-life-leveler.git
+cd questfit-life-leveler
+npm ci
+```
+
+### 3. Configure the environment
+
+```sh
+cp .env.example .env
+```
+
+Fill in the following values from your Supabase project:
+
+```dotenv
+VITE_SUPABASE_URL=https://your-project.supabase.co
+VITE_SUPABASE_PUBLISHABLE_KEY=your-publishable-key
+SUPABASE_URL=https://your-project.supabase.co
+SUPABASE_PUBLISHABLE_KEY=your-publishable-key
+```
+
+The `VITE_` values are public configuration included in the browser build. The corresponding `SUPABASE_` values configure server-side access. Use a publishable key, never a service-role or secret key, in these fields. Local `.env` files are excluded from Git.
+
+### 4. Prepare Supabase
+
+1. Apply the SQL files in [`supabase/migrations`](./supabase/migrations) to your project in timestamp order, using the Supabase CLI or SQL Editor.
+2. Configure email authentication and the project's Site URL.
+3. For Google sign-in, enable the Google provider and supply your Google OAuth credentials.
+4. Register the callback URL shown by Supabase in your Google OAuth configuration.
+5. Add your application's `/auth` URL to the allowed Supabase redirect URLs, including the local development URL when needed.
+
+A new database needs its own migrations and configuration. Existing users, files, and application data are not transferred automatically.
+
+### 5. Start development
+
+```sh
 npm run dev
 ```
 
-## Standalone service setup
+Open the local URL printed by Vite. Use that origin when configuring development authentication redirects.
 
-Copy `.env.example` to `.env` and configure a Supabase project you control. Use the public URL and publishable key for the `VITE_` variables, and set the corresponding `SUPABASE_` variables in the server environment. Apply `supabase/migrations` to a new database; migrate existing data separately if needed.
+## Development commands
 
-Enable Google authentication in Supabase, provide your Google OAuth credentials, register Supabase's callback URL with Google, and allow your application's `/auth` URL in Supabase redirect settings. Email authentication also uses Supabase directly.
+```sh
+npm run dev        # Start the development server
+npm run build      # Create the production build
+npm run build:dev  # Build using development mode
+npm run preview    # Preview the built application locally
+npm run lint       # Run ESLint
+npm run format     # Format the repository with Prettier
+npx tsc --noEmit   # Check TypeScript types
+```
 
-Build with `npm run build` and deploy the Nitro output to your own hosting provider. The fitness adaptation engine runs locally and requires no AI service key.
+## Project structure
 
-Repository changes do not revoke external GitHub App access or stop editor synchronization. Disconnect the repository in the editor's Git settings and revoke the application's access in GitHub settings separately.
+```text
+public/                    App icons and web app manifest
+src/
+  components/              Application and shared UI components
+  integrations/supabase/   Supabase clients, auth middleware, and types
+  lib/leveluplife/
+    assets/                Exercise media providers and asset handling
+    day/                   Adaptive daily plans and history
+    engine/                Workout generation and XP calculations
+    exercises/             Exercise library and recommendations
+    store.tsx              Application state and browser persistence
+    progressMirror.ts      Progress photos and measurement data access
+  routes/                  File-based pages, layouts, and navigation
+  server.ts                Server entry point
+supabase/migrations/       Database and storage setup
+vite.config.ts             Vite, TanStack Start, and Nitro configuration
+```
+
+## Data and current limitations
+
+- Core application state, including XP, quests, and workout progress, is persisted in browser local storage. Do not assume all progress is synchronized between devices.
+- Supabase supplies authentication and backend features such as Progress Mirror.
+- The sign-in screen includes a guest button, but the current application route guard requires a signed-in user for the main screens. A complete guest flow is not implemented.
+- Some exercise media comes from external providers and requires an internet connection.
+- A web app manifest is included; full offline operation is not implemented.
+
+## Deployment
+
+Build the application:
+
+```sh
+npm ci
+npm run build
+```
+
+The build creates Nitro output in `.output/`. Deploy that output to a compatible server host. For the default Node server output:
+
+```sh
+node .output/server/index.mjs
+```
+
+Set the public `VITE_SUPABASE_*` variables before building and the `SUPABASE_*` variables in the server environment. Update Supabase's Site URL and allowed redirects to match your production domain.
+
+This application uses server functionality and should not be deployed as only a static folder. `npm run preview` is intended for local verification.
+
+## Contributing
+
+1. Create a branch for your change.
+2. Keep changes focused and describe the resulting behavior.
+3. Run TypeScript checks, lint, and a production build.
+4. Open a pull request with a summary and verification details.
+
+## License
+
+No project license file has been added yet. Third-party packages and exercise assets have their own licenses.
