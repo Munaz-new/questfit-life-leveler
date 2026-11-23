@@ -645,16 +645,6 @@ Make it feel like a real startup-quality app.
 
 The UI must look significantly better than a generic AI-generated prototype.
 
-This project was built with [Lovable](https://lovable.dev).
-
-## Build with Lovable
-
-Continue developing this project in the [Lovable editor](https://lovable.dev/projects/d12f5fae-cd6b-4996-819d-393f0960e992).
-
-- **Ship faster**: describe what you want to build and Lovable handles the code.
-- **Stay in sync**: every change made in Lovable is committed straight to this repository.
-- **Full ownership**: this code is yours. Push to `main` on GitHub and your changes sync back into Lovable, ready for your next prompt.
-
 ## Development
 
 Prefer working locally? You need Node.js and npm — [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating).
@@ -665,3 +655,13 @@ cd <repository-name>
 npm i
 npm run dev
 ```
+
+## Standalone service setup
+
+Copy `.env.example` to `.env` and configure a Supabase project you control. Use the public URL and publishable key for the `VITE_` variables, and set the corresponding `SUPABASE_` variables in the server environment. Apply `supabase/migrations` to a new database; migrate existing data separately if needed.
+
+Enable Google authentication in Supabase, provide your Google OAuth credentials, register Supabase's callback URL with Google, and allow your application's `/auth` URL in Supabase redirect settings. Email authentication also uses Supabase directly.
+
+Build with `npm run build` and deploy the Nitro output to your own hosting provider. The fitness adaptation engine runs locally and requires no AI service key.
+
+Repository changes do not revoke external GitHub App access or stop editor synchronization. Disconnect the repository in the editor's Git settings and revoke the application's access in GitHub settings separately.

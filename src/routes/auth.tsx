@@ -1,10 +1,9 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Logo } from "@/components/leveluplife/Logo";
 import { MobileFrame } from "@/components/leveluplife/Shell";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { lovable } from "@/integrations/lovable/index";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { useApp } from "@/lib/leveluplife/store";
@@ -25,12 +24,27 @@ function Auth() {
 
   const next = () => navigate({ to: state.onboarded ? "/home" : "/onboarding" });
 
+  useEffect(() => {
+    // Guest mode stays available before a backend is configured.
+    if (!import.meta.env.VITE_SUPABASE_URL || !import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY) return;
+    let active = true;
+    const destination = state.onboarded ? "/home" : "/onboarding";
+    supabase.auth.getSession().then(({ data }) => {
+      if (active && data.session) navigate({ to: destination, replace: true });
+    }).catch(() => toast.error("Could not restore your session"));
+    const { data } = supabase.auth.onAuthStateChange((event, session) => {
+      if (event === "SIGNED_IN" && session) navigate({ to: destination, replace: true });
+    });
+    return () => { active = false; data.subscription.unsubscribe(); };
+  }, [navigate, state.onboarded]);
+
   async function google() {
     setLoading(true);
     try {
-      const r = await lovable.auth.signInWithOAuth("google", { redirect_uri: window.location.origin });
+      const r = await supabase.auth.signInWithOAuth({ provider: "google", options: { redirectTo: `${window.location.origin}/auth` } });
       if (r.error) toast.error("Google sign-in failed");
-      else if (!r.redirected) next();
+    } catch {
+      toast.error("Google sign-in failed");
     } finally {
       setLoading(false);
     }
