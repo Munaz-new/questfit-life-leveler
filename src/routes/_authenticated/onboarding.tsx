@@ -19,16 +19,16 @@ export const Route = createFileRoute("/_authenticated/onboarding")({
   component: Onboarding,
 });
 
-const TOTAL = 10;
-
 function Onboarding() {
   const navigate = useNavigate();
+  const { user } = Route.useRouteContext();
+  const total = user ? 9 : 8;
   const { setProfile } = useApp();
   const [step, setStep] = useState(0);
   const [mirror, setMirror] = useState<boolean | null>(null);
   const [p, setP] = useState<UserProfile>({
     displayName: "Hunter",
-    isGuest: true,
+    isGuest: !user,
     gender: "male",
     ageRange: "25-34",
     height: "175",
@@ -61,12 +61,12 @@ function Onboarding() {
   }
 
   function finish() {
-    setOnboardingOptIn(mirror ?? false);
+    if (user) setOnboardingOptIn(mirror ?? false);
     setProfile(p);
     navigate({ to: "/home" });
   }
 
-  const pct = ((step + 1) / TOTAL) * 100;
+  const pct = ((step + 1) / total) * 100;
 
   return (
     <MobileFrame>
@@ -84,7 +84,7 @@ function Onboarding() {
               <div className="h-full bg-gradient-primary transition-[width] duration-500" style={{ width: `${pct}%` }} />
             </div>
             <div className="mt-1 text-[10px] uppercase tracking-[0.2em] text-muted-foreground">
-              Step {step + 1} / {TOTAL}
+              Step {step + 1} / {total}
             </div>
           </div>
         </div>
@@ -119,30 +119,6 @@ function Onboarding() {
           )}
 
           {step === 2 && (
-            <Step
-              title="Exercise Demonstration Preference"
-              sub="Which exercise demonstrator would you like to follow?"
-            >
-              <Grid cols={1}>
-                {(
-                  [
-                    { id: "male", label: "Male Demonstrator" },
-                    { id: "female", label: "Female Demonstrator" },
-                  ] as const
-                ).map((o) => (
-                  <Chip key={o.id} active={p.gender === o.id} onClick={() => update("gender", o.id)}>
-                    <span>{o.label}</span>
-                  </Chip>
-                ))}
-              </Grid>
-              <p className="mt-1.5 text-[11px] text-muted-foreground">
-                This only changes the instructor shown in exercise guides. Your workout plan stays
-                exactly the same.
-              </p>
-            </Step>
-          )}
-
-          {step === 3 && (
             <Step title="What's your lifestyle?" sub="Workouts adapt to how you actually live.">
               <Grid>
                 {lifestyleOptions.map((o) => (
@@ -155,7 +131,7 @@ function Onboarding() {
             </Step>
           )}
 
-          {step === 4 && (
+          {step === 3 && (
             <Step title="Daily routine" sub="When the day starts, and how taxing it feels.">
               <Row>
                 <Field label="Wake">
@@ -171,7 +147,7 @@ function Onboarding() {
             </Step>
           )}
 
-          {step === 5 && (
+          {step === 4 && (
             <Step title="Equipment" sub="Multi-select. We adapt the moves to what you own.">
               <Grid>
                 {equipmentOptions.map((o) => (
@@ -183,7 +159,7 @@ function Onboarding() {
             </Step>
           )}
 
-          {step === 6 && (
+          {step === 5 && (
             <Step title="Goals" sub="Pick a few. Quests bias toward these.">
               <Grid>
                 {goalOptions.map((o) => (
@@ -195,7 +171,7 @@ function Onboarding() {
             </Step>
           )}
 
-          {step === 7 && (
+          {step === 6 && (
             <Step title="Fitness level" sub="We start where you are and ramp safely.">
               <Grid cols={1}>
                 {(["beginner","intermediate","advanced"] as const).map((lvl) => (
@@ -207,7 +183,7 @@ function Onboarding() {
             </Step>
           )}
 
-          {step === 8 && (
+          {step === 7 && (
             <Step title="Pick your motivation mode" sub="Same workouts — radically different feel. Preview each before committing.">
               <ModePreview motivation={p.motivation} />
               <div className="grid grid-cols-2 gap-2.5">
@@ -250,7 +226,7 @@ function Onboarding() {
             </Step>
           )}
 
-          {step === 9 && (
+          {user && step === 8 && (
             <Step title="Enable Progress Mirror?" sub="Privately track your visual transformation over weeks and months.">
               <div className="mb-4 flex items-start gap-2 rounded-xl border border-white/10 bg-white/5 px-3 py-2.5 text-[11px] text-muted-foreground">
                 <ShieldCheck className="mt-0.5 h-4 w-4 shrink-0 text-[var(--cyan-glow)]" />
@@ -273,7 +249,7 @@ function Onboarding() {
 
 
         <div className="pt-4">
-          {step < TOTAL - 1 ? (
+          {step < total - 1 ? (
             <Button onClick={() => setStep(step + 1)} className="h-12 w-full rounded-2xl bg-gradient-primary text-base font-semibold text-[var(--primary-foreground)] shadow-glow">
               Continue <ChevronRight className="ml-1 h-4 w-4" />
             </Button>

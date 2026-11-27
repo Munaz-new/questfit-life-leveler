@@ -71,12 +71,6 @@ export const ACHIEVEMENTS: AchievementDef[] = [
   { key: "100_day_journey", title: "100-Day Journey", description: "100 days of documented transformation", emoji: "🚀" },
 ];
 
-// ---------- Auth ----------
-export async function getCurrentUserId(): Promise<string | null> {
-  const { data } = await supabase.auth.getUser();
-  return data.user?.id ?? null;
-}
-
 // ---------- Onboarding opt-in (local, pre-auth) ----------
 const OPTIN_KEY = "leveluplife.mirror.optin";
 export function setOnboardingOptIn(v: boolean) {

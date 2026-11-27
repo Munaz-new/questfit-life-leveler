@@ -12,9 +12,11 @@ import { modeFor } from "@/lib/leveluplife/modes";
 export function MobileFrame({
   children,
   withNav = false,
+  gym = false,
 }: {
   children: ReactNode;
   withNav?: boolean;
+  gym?: boolean;
 }) {
   const { state } = useApp();
   const mode = modeFor(state.profile);
@@ -26,12 +28,12 @@ export function MobileFrame({
       data-aesthetic={mode.aesthetic}
       style={{
         ...styleVars,
-        backgroundImage: "var(--gradient-bg)",
+        backgroundImage: gym ? undefined : "var(--gradient-bg)",
       }}
-      className="mode-root relative mx-auto flex min-h-screen w-full max-w-[480px] flex-col overflow-hidden transition-[background-image,color] duration-500"
+      className={`mode-root relative mx-auto flex min-h-screen w-full max-w-[480px] flex-col overflow-hidden ${gym ? "gym-surface" : "transition-[background-image,color] duration-500"}`}
     >
       {/* Per-mode ambient layer. Aesthetic data-attr drives motion / shape. */}
-      <ModeAmbient />
+      {!gym && <ModeAmbient />}
       <main
         className={`relative flex-1 px-5 pt-6 ${withNav ? "pb-28" : "pb-6"}`}
       >

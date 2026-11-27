@@ -1,4 +1,4 @@
-import { createFileRoute, useNavigate, useSearch } from "@tanstack/react-router";
+import { createFileRoute, Link, useNavigate, useSearch } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
 import { MobileFrame, GlassCard, SectionTitle } from "@/components/leveluplife/Shell";
 import { CheckinSheet } from "@/components/leveluplife/CheckinSheet";
@@ -48,6 +48,7 @@ function Briefing() {
   if (active) {
     return (
       <MobileFrame withNav>
+        <GymLink />
         <header className="mb-5">
           <p className="text-xs uppercase tracking-[0.18em] text-muted-foreground">{copy.briefingTag}</p>
           <h1 className="mt-1 text-2xl font-bold">Mission in progress</h1>
@@ -84,6 +85,7 @@ function Briefing() {
   if (!state.checkin) {
     return (
       <MobileFrame withNav>
+        <GymLink />
         <CheckinSheet
           initialSitting={state.sittingHoursToday}
           onSubmit={(c, sit) => {
@@ -103,6 +105,21 @@ function Briefing() {
         navigate({ to: "/workout/play" });
       }}
     />
+  );
+}
+
+function GymLink() {
+  return (
+    <Link
+      to="/workout/routines"
+      className="glass mb-4 flex items-center justify-between rounded-2xl px-4 py-3 text-sm font-semibold"
+    >
+      <span className="flex items-center gap-2">
+        <img src="/gymmane/stopwatch.webp" alt="" className="h-6 w-6 rounded-md" />
+        Gym routines &amp; tools
+      </span>
+      <ChevronRight className="h-4 w-4" />
+    </Link>
   );
 }
 
@@ -152,6 +169,7 @@ function BriefingScreen({
 
   return (
     <MobileFrame withNav>
+      <GymLink />
       <header className="mb-4">
         <p className="text-xs uppercase tracking-[0.18em] text-muted-foreground">{copy.briefingTag}</p>
         <h1 className="mt-1 font-display text-3xl font-bold leading-tight">{session.protocolName}</h1>

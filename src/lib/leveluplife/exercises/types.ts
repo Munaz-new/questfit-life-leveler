@@ -93,6 +93,15 @@ export interface Exercise {
 
   /** Registry key into illustrations index. Defaults to id. */
   illustration?: string;
+  gymMane?: {
+    id: string;
+    equipment: string;
+    muscle: string;
+    aliases: string[];
+    art: string;
+    icon?: string;
+    loggingMode: string;
+  };
   /** Reserved: Lottie/Rive URL to drop in later without refactor. */
   animationUrl?: string;
 

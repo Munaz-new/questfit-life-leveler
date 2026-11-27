@@ -315,3 +315,36 @@ html { color-scheme: dark; }
 @keyframes mode-fade-in { from { opacity: 0.0; transform: scale(0.985); } to { opacity: 1; transform: scale(1); } }
 .mode-root { animation: mode-fade-in 0.45s ease-out; }
 
+
+@font-face {
+  font-family: Gym Nunito;
+  src: url("/gymmane/Nunito-Regular.ttf") format("truetype");
+  font-display: swap;
+}
+@font-face {
+  font-family: Gym Nunito;
+  src: url("/gymmane/Nunito-Bold.ttf") format("truetype");
+  font-weight: 700 900;
+  font-display: swap;
+}
+.gym-surface {
+  font-family: Gym Nunito, system-ui, sans-serif;
+  color: #fafafa;
+  background-color: #0c0c0c;
+  background-image: radial-gradient(circle, #242424 1px, transparent 1.5px);
+  background-size: 28px 28px;
+}
+.gym-panel {
+  background: #1c1c1c;
+  border-radius: 24px;
+}
+.gym-pill {
+  min-height: 42px;
+  border-radius: 999px;
+  background: #292929;
+  padding: 8px 14px;
+}
+.gym-pill[aria-pressed="true"], .gym-primary {
+  background: #fff;
+  color: #111;
+}

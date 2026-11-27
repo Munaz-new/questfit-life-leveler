@@ -10,11 +10,14 @@ import type {
   ActiveSessionState,
   AppState,
   Checkin,
+  GymSchedule,
   Quest,
   SkillState,
   Stats,
+  SetPerformance,
   SummaryState,
   UserProfile,
+  WorkoutRoutine,
 } from "./types";
 import { defaultQuestsFor, defaultSkills, defaultStats } from "./data";
 import type { Session } from "./engine/builder";
@@ -40,6 +43,11 @@ const initialState: AppState = {
   lastMoves: [],
   activeSession: null,
   lastSummary: null,
+  workoutHistory: [],
+  routines: [],
+  favoriteExerciseIds: [],
+  gymSchedule: { mode: "fixed", week: Array<string>(7).fill(""), rotation: [] },
+  journalNotes: {},
   adaptiveBoost: 0,
   recentCompletion: [],
   dailyPlan: null,
@@ -111,6 +119,7 @@ function recordFor(plan: DailyPlan): DayRecord {
 }
 
 interface Ctx {
+  hydrated: boolean;
   state: AppState;
   setProfile: (p: UserProfile) => void;
   setMotivation: (m: UserProfile["motivation"]) => void;
@@ -126,13 +135,18 @@ interface Ctx {
   logWater: () => void;
   startMission: (s: Session, opts?: { forceProtocol?: string }) => void;
   clearActiveSession: () => void;
-  completeCurrentMove: () => void;
+  completeCurrentMove: (performance?: SetPerformance) => void;
   skipCurrentMove: () => void;
-  bumpSet: () => void;
+  bumpSet: (performance?: SetPerformance) => void;
   enterRest: () => void;
   exitRest: () => void;
   finishMission: () => SummaryState;
   daysSinceLastWorkout: number;
+  saveRoutine: (routine: WorkoutRoutine) => void;
+  deleteRoutine: (id: string) => void;
+  toggleFavoriteExercise: (id: string) => void;
+  setGymSchedule: (schedule: GymSchedule) => void;
+  saveJournalNote: (date: string, text: string) => void;
   resetAll: () => void;
   xpForNextLevel: number;
   progressPct: number;
@@ -149,7 +163,11 @@ export function AppProvider({ children }: { children: ReactNode }) {
       const raw = localStorage.getItem(STORAGE_KEY);
       if (raw) {
         const parsed = JSON.parse(raw) as Partial<AppState>;
-        setState({ ...initialState, ...parsed });
+        setState({
+          ...initialState,
+          ...parsed,
+          workoutHistory: parsed.workoutHistory ?? (parsed.lastSummary ? [parsed.lastSummary] : []),
+        });
       }
     } catch {}
     setHydrated(true);
@@ -187,6 +205,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
     const xpForNextLevel = xpCurve(state.level);
     const daysSinceLastWorkout = daysBetween(state.lastSessionDate, today());
     return {
+      hydrated,
       state,
       xpForNextLevel,
       progressPct: Math.min(100, Math.round((state.xp / xpForNextLevel) * 100)),
@@ -310,19 +329,21 @@ export function AppProvider({ children }: { children: ReactNode }) {
             },
           };
         }),
-      bumpSet: () =>
-        setState((s) =>
-          s.activeSession
-            ? { ...s, activeSession: { ...s.activeSession, currentSet: s.activeSession.currentSet + 1 } }
-            : s,
-        ),
-      completeCurrentMove: () =>
+      bumpSet: (performance) =>
         setState((s) => {
-          if (!s.activeSession) return s;
           const a = s.activeSession;
+          if (!a || a.inRest) return s;
+          const loggedSets = [...(a.loggedSets ?? []), { exerciseId: a.order[a.cursor], ...performance }];
+          return { ...s, activeSession: { ...a, loggedSets, currentSet: a.currentSet + 1 } };
+        }),
+      completeCurrentMove: (performance) =>
+        setState((s) => {
+          const a = s.activeSession;
+          if (!a || a.inRest) return s;
           const id = a.order[a.cursor];
           if (a.completed.includes(id)) return s;
-          return { ...s, activeSession: { ...a, completed: [...a.completed, id], currentSet: 1 } };
+          const loggedSets = [...(a.loggedSets ?? []), { exerciseId: id, ...performance }];
+          return { ...s, activeSession: { ...a, loggedSets, completed: [...a.completed, id], currentSet: 1 } };
         }),
       skipCurrentMove: () =>
         setState((s) => {
@@ -351,6 +372,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
 
           summary = {
             date: today(),
+            loggedSets: a.loggedSets ?? [],
             protocolId: a.session.protocolId,
             protocolName: a.session.protocolName,
             durationSec,
@@ -427,10 +449,43 @@ export function AppProvider({ children }: { children: ReactNode }) {
             recentCompletion: recent,
             activeSession: null,
             lastSummary: summary,
+            workoutHistory: [summary, ...s.workoutHistory],
           };
         });
         return summary;
       },
+      saveRoutine: (routine) =>
+        setState((s) => ({
+          ...s,
+          routines: s.routines.some(({ id }) => id === routine.id)
+            ? s.routines.map((saved) => (saved.id === routine.id ? routine : saved))
+            : [...s.routines, routine],
+        })),
+      deleteRoutine: (id) =>
+        setState((s) => ({
+          ...s,
+          routines: s.routines.filter((routine) => routine.id !== id),
+          gymSchedule: {
+            ...s.gymSchedule,
+            week: s.gymSchedule.week.map((value) => (value === id ? "" : value)),
+            rotation: s.gymSchedule.rotation.filter((value) => value !== id),
+          },
+        })),
+      toggleFavoriteExercise: (id) =>
+        setState((s) => ({
+          ...s,
+          favoriteExerciseIds: s.favoriteExerciseIds.includes(id)
+            ? s.favoriteExerciseIds.filter((favorite) => favorite !== id)
+            : [...s.favoriteExerciseIds, id],
+        })),
+      setGymSchedule: (gymSchedule) => setState((s) => ({ ...s, gymSchedule })),
+      saveJournalNote: (date, text) =>
+        setState((s) => {
+          const journalNotes = { ...s.journalNotes };
+          if (text.trim()) journalNotes[date] = text.trim();
+          else delete journalNotes[date];
+          return { ...s, journalNotes };
+        }),
       resetAll: () => {
         try {
           localStorage.removeItem(STORAGE_KEY);
@@ -438,7 +493,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
         setState(initialState);
       },
     };
-  }, [state]);
+  }, [state, hydrated]);
 
   return <AppCtx.Provider value={value}>{children}</AppCtx.Provider>;
 }

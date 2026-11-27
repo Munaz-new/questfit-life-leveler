@@ -23,7 +23,6 @@ import {
   deleteMeasurement,
   deletePhoto,
   ensureMirrorSettings,
-  getCurrentUserId,
   listAchievements,
   listMeasurements,
   listPhotos,
@@ -57,7 +56,8 @@ const PrivacyLine = () => (
 
 function ProgressMirror() {
   const navigate = useNavigate();
-  const [userId, setUserId] = useState<string | null | undefined>(undefined);
+  const { user } = Route.useRouteContext();
+  const userId = user?.id;
   const [tab, setTab] = useState<Tab>("timeline");
   const [photos, setPhotos] = useState<ProgressPhoto[]>([]);
   const [measurements, setMeasurements] = useState<BodyMeasurement[]>([]);
@@ -83,24 +83,21 @@ function ProgressMirror() {
   }, []);
 
   useEffect(() => {
+    if (!userId) return;
     let active = true;
     (async () => {
-      const uid = await getCurrentUserId();
+      await ensureMirrorSettings(userId);
       if (!active) return;
-      setUserId(uid);
-      if (uid) {
-        await ensureMirrorSettings(uid);
-        await refresh(uid);
-      }
+      await refresh(userId);
       if (active) setLoading(false);
     })();
     return () => {
       active = false;
     };
-  }, [refresh]);
+  }, [refresh, userId]);
 
   // ----- Not signed in: nudge -----
-  if (userId === null) {
+  if (!userId) {
     return (
       <MobileFrame withNav>
         <Header onBack={() => navigate({ to: "/progress" })} />
@@ -124,7 +121,7 @@ function ProgressMirror() {
     );
   }
 
-  if (userId === undefined || loading) {
+  if (loading) {
     return (
       <MobileFrame withNav>
         <Header onBack={() => navigate({ to: "/progress" })} />

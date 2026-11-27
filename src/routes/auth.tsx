@@ -7,6 +7,7 @@ import { Input } from "@/components/ui/input";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { useApp } from "@/lib/leveluplife/store";
+import { accountSignInAvailable, setGuestMode } from "@/lib/leveluplife/guest";
 import { ArrowRight, Mail } from "lucide-react";
 
 export const Route = createFileRoute("/auth")({
@@ -25,17 +26,28 @@ function Auth() {
   const next = () => navigate({ to: state.onboarded ? "/home" : "/onboarding" });
 
   useEffect(() => {
-    // Guest mode stays available before a backend is configured.
-    if (!import.meta.env.VITE_SUPABASE_URL || !import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY) return;
+    if (!accountSignInAvailable) return;
     let active = true;
     const destination = state.onboarded ? "/home" : "/onboarding";
-    supabase.auth.getSession().then(({ data }) => {
-      if (active && data.session) navigate({ to: destination, replace: true });
-    }).catch(() => toast.error("Could not restore your session"));
+    supabase.auth
+      .getSession()
+      .then(({ data }) => {
+        if (active && data.session) {
+          setGuestMode(false);
+          navigate({ to: destination, replace: true });
+        }
+      })
+      .catch(() => toast.error("Could not restore your session"));
     const { data } = supabase.auth.onAuthStateChange((event, session) => {
-      if (event === "SIGNED_IN" && session) navigate({ to: destination, replace: true });
+      if (event === "SIGNED_IN" && session) {
+        setGuestMode(false);
+        navigate({ to: destination, replace: true });
+      }
     });
-    return () => { active = false; data.subscription.unsubscribe(); };
+    return () => {
+      active = false;
+      data.subscription.unsubscribe();
+    };
   }, [navigate, state.onboarded]);
 
   async function google() {
@@ -53,13 +65,21 @@ function Auth() {
   async function emailSubmit(create: boolean) {
     if (!email || !password) return toast.error("Email + password required");
     setLoading(true);
-    const fn = create
-      ? supabase.auth.signUp({ email, password, options: { emailRedirectTo: window.location.origin } })
-      : supabase.auth.signInWithPassword({ email, password });
-    const { error } = await fn;
-    setLoading(false);
-    if (error) return toast.error(error.message);
-    next();
+    try {
+      const { data, error } = await (create
+        ? supabase.auth.signUp({
+            email,
+            password,
+            options: { emailRedirectTo: new URL("/auth", window.location.origin).href },
+          })
+        : supabase.auth.signInWithPassword({ email, password }));
+      if (error) return toast.error(error.message);
+      if (!data.session) toast.success("Check your email to confirm your account.");
+    } catch {
+      toast.error("Could not complete email sign-in. Try again.");
+    } finally {
+      setLoading(false);
+    }
   }
 
   return (
@@ -70,7 +90,9 @@ function Auth() {
           <div className="animate-float-up">
             <h1 className="text-3xl font-bold">Welcome, hunter.</h1>
             <p className="mt-2 text-sm text-muted-foreground">
-              Sign in to sync your level — or jump in as a guest.
+              {accountSignInAvailable
+                ? "Play as a guest or sign in to unlock Progress Mirror."
+                : "Start training as a guest. Progress is saved on this device."}
             </p>
           </div>
         </div>
@@ -78,26 +100,36 @@ function Auth() {
         <div className="space-y-3 pb-4">
           {mode === "intro" ? (
             <>
+              {accountSignInAvailable && (
+                <>
+                  <Button
+                    onClick={google}
+                    disabled={loading}
+                    className="h-12 w-full rounded-2xl bg-gradient-primary text-base font-semibold text-[var(--primary-foreground)] shadow-glow hover:opacity-95"
+                  >
+                    Continue with Google <ArrowRight className="ml-2 h-4 w-4" />
+                  </Button>
+                  <Button
+                    variant="outline"
+                    disabled={loading}
+                    onClick={() => setMode("email")}
+                    className="glass h-12 w-full rounded-2xl border-white/10 text-base font-medium hover:bg-white/5"
+                  >
+                    <Mail className="mr-2 h-4 w-4" /> Continue with email
+                  </Button>
+                </>
+              )}
               <Button
-                onClick={google}
+                variant={accountSignInAvailable ? "ghost" : "default"}
                 disabled={loading}
-                className="h-12 w-full rounded-2xl bg-gradient-primary text-base font-semibold text-[var(--primary-foreground)] shadow-glow hover:opacity-95"
-              >
-                Continue with Google <ArrowRight className="ml-2 h-4 w-4" />
-              </Button>
-              <Button
-                variant="outline"
-                onClick={() => setMode("email")}
-                className="glass h-12 w-full rounded-2xl border-white/10 text-base font-medium hover:bg-white/5"
-              >
-                <Mail className="mr-2 h-4 w-4" /> Continue with email
-              </Button>
-              <button
-                onClick={next}
-                className="block w-full pt-2 text-sm text-muted-foreground underline-offset-4 hover:text-foreground hover:underline"
+                onClick={() => {
+                  setGuestMode(true);
+                  next();
+                }}
+                className="h-12 w-full rounded-2xl text-base"
               >
                 Continue as guest
-              </button>
+              </Button>
             </>
           ) : (
             <div className="glass space-y-3 rounded-2xl p-4">
