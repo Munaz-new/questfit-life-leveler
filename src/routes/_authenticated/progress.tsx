@@ -1,6 +1,8 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useEffect } from "react";
 import { MobileFrame, GlassCard, SectionTitle } from "@/components/leveluplife/Shell";
+import { GymProgress } from "@/components/leveluplife/GymProgress";
+import { WorkoutHistory } from "@/components/leveluplife/WorkoutHistory";
 import { XPBar } from "@/components/leveluplife/XPBar";
 import { useApp } from "@/lib/leveluplife/store";
 import { modeFor } from "@/lib/leveluplife/modes";
@@ -33,11 +35,9 @@ function ProgressPage() {
   const lex = mode.lexicon;
 
   return (
-    <MobileFrame withNav>
-      <header className="mb-5">
-        <p className="text-xs uppercase tracking-[0.18em] text-muted-foreground">{lex.progress}</p>
-        <h1 className="text-2xl font-bold">{state.profile?.displayName ?? "you"}</h1>
-      </header>
+    <MobileFrame gym withNav>
+      <h1 className="mb-5 text-center text-xl font-bold">Progress</h1>
+      <GymProgress sessions={state.workoutHistory} />
 
       {/* Hero level card */}
       <GlassCard glow className="mb-6 overflow-hidden">
@@ -76,6 +76,8 @@ function ProgressPage() {
       </button>
 
 
+
+      <WorkoutHistory sessions={state.workoutHistory} />
 
       {/* Stats */}
       <SectionTitle hint="real-life stats">Attributes</SectionTitle>

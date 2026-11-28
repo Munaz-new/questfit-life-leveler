@@ -1,27 +1,66 @@
 import { Link } from "@tanstack/react-router";
-import { ExerciseArt } from "./ExerciseArt";
+import { Activity, ChevronRight, Dumbbell, Footprints, Star } from "lucide-react";
+import { gymManeArtUrl } from "@/lib/leveluplife/exercises/gymmaneArt";
 import type { Exercise } from "@/lib/leveluplife/exercises/types";
-import { Clock } from "lucide-react";
 
-export function ExerciseCard({ ex }: { ex: Exercise }) {
+const equipmentLabels = {
+  none: "Bodyweight",
+  bands: "Resistance band",
+  dumbbells: "Dumbbells",
+  chair: "Chair",
+  pullup: "Pull-up bar",
+  barbell: "Barbell",
+  cable: "Cable",
+  machine: "Machine",
+  kettlebell: "Kettlebell",
+  rings: "Rings",
+  weighted: "Weighted",
+  other: "Other",
+};
+
+export function ExerciseCard({
+  ex,
+  favorite,
+  onToggleFavorite,
+}: {
+  ex: Exercise;
+  favorite: boolean;
+  onToggleFavorite: () => void;
+}) {
+  const art = gymManeArtUrl(ex.id, false);
+  const Placeholder =
+    ex.pattern === "cardio" ? Footprints : ex.pattern === "mobility" ? Activity : Dumbbell;
   return (
-    <Link
-      to="/exercises/$id"
-      params={{ id: ex.id }}
-      className="glass group flex flex-col rounded-2xl p-3 transition hover:border-white/20"
-    >
-      <div className="relative mb-2 flex aspect-square w-full items-center justify-center overflow-hidden rounded-xl bg-gradient-to-br from-white/5 to-white/0 text-[var(--cyan-glow)]">
-        <div className="h-3/4 w-3/4">
-          <ExerciseArt id={ex.id} animated />
+    <div className="flex items-center pr-2">
+      <Link
+        to="/exercises/$id"
+        params={{ id: ex.id }}
+        className="flex min-w-0 flex-1 items-center gap-3 px-3 py-2.5 hover:bg-white/5"
+      >
+        <div className="flex size-[52px] shrink-0 items-center justify-center rounded-[15px] bg-white/5 text-[#d9a184]">
+          {art ? (
+            <img src={art} alt="" loading="lazy" className="size-11 object-contain" />
+          ) : (
+            <Placeholder className="size-6" aria-hidden="true" />
+          )}
         </div>
-      </div>
-      <p className="truncate text-sm font-semibold">{ex.name}</p>
-      <p className="truncate text-[10px] uppercase tracking-wider text-muted-foreground">
-        {ex.primaryMuscles[0]?.replace("_", " ") ?? ex.pattern}
-      </p>
-      <p className="mt-1 inline-flex items-center gap-1 text-[10px] text-muted-foreground">
-        <Clock className="h-3 w-3" /> {Math.max(1, Math.round(ex.estDurationSec / 60))} min
-      </p>
-    </Link>
+        <div className="min-w-0 flex-1">
+          <p className="text-sm font-semibold">{ex.name}</p>
+          <p className="text-xs capitalize text-muted-foreground">
+            {ex.gymMane?.equipment ?? equipmentLabels[ex.equipment]} · {ex.difficulty}
+          </p>
+        </div>
+        <ChevronRight className="size-4 shrink-0 text-muted-foreground" aria-hidden="true" />
+      </Link>
+      <button
+        type="button"
+        className="grid size-11 shrink-0 place-items-center rounded-xl text-[#d9a184] hover:bg-white/5"
+        aria-label={`Favorite ${ex.name}`}
+        aria-pressed={favorite}
+        onClick={onToggleFavorite}
+      >
+        <Star className="size-5" fill={favorite ? "currentColor" : "none"} aria-hidden="true" />
+      </button>
+    </div>
   );
 }

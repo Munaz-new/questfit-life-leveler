@@ -9,13 +9,11 @@ import { lifestyleOptions, goalOptions } from "@/lib/leveluplife/data";
 import { MODE_LIST, getMode } from "@/lib/leveluplife/modes";
 import type { MotivationStyle } from "@/lib/leveluplife/types";
 import {
-  getCurrentUserId,
   getMirrorSettings,
   setMirrorEnabled,
   deleteAllMedia,
 } from "@/lib/leveluplife/progressMirror";
 import { toast } from "sonner";
-import { useDemoGender } from "@/lib/leveluplife/assets/gender";
 
 export const Route = createFileRoute("/_authenticated/profile")({
   head: () => ({ meta: [{ title: "Profile — LevelUp Life" }] }),
@@ -24,10 +22,10 @@ export const Route = createFileRoute("/_authenticated/profile")({
 
 function Profile() {
   const navigate = useNavigate();
-  const { state, resetAll, setMotivation, setDemoGenderDefault } = useApp();
+  const { state, resetAll, setMotivation } = useApp();
   const [switching, setSwitching] = useState<MotivationStyle | null>(null);
-  const [demoGender] = useDemoGender();
-  const [mirrorUser, setMirrorUser] = useState<string | null>(null);
+  const { user } = Route.useRouteContext();
+  const mirrorUser = user?.id;
   const [mirrorEnabled, setMirrorEnabledState] = useState<boolean | null>(null);
 
   useEffect(() => {
@@ -37,18 +35,15 @@ function Profile() {
   useEffect(() => {
     let active = true;
     (async () => {
-      const uid = await getCurrentUserId();
-      if (!active) return;
-      setMirrorUser(uid);
-      if (uid) {
-        const s = await getMirrorSettings(uid);
+      if (mirrorUser) {
+        const s = await getMirrorSettings(mirrorUser);
         if (active) setMirrorEnabledState(s?.enabled ?? false);
       }
     })();
     return () => {
       active = false;
     };
-  }, []);
+  }, [mirrorUser]);
 
   async function toggleMirror() {
     if (!mirrorUser) {
@@ -77,7 +72,15 @@ function Profile() {
   const lifestyleLabel = lifestyleOptions.find((x) => x.id === p.lifestyle)?.label ?? p.lifestyle;
 
   async function signOut() {
-    await supabase.auth.signOut();
+    if (!user) {
+      navigate({ to: "/auth" });
+      return;
+    }
+    const { error } = await supabase.auth.signOut();
+    if (error) {
+      toast.error(error.message);
+      return;
+    }
     resetAll();
     navigate({ to: "/auth" });
   }
@@ -116,44 +119,6 @@ function Profile() {
           </div>
         </div>
       </GlassCard>
-
-      <SectionTitle hint="affects demos only">Workout Preferences</SectionTitle>
-      <GlassCard className="mb-5">
-        <div className="flex items-center justify-between gap-3">
-          <div>
-            <p className="text-sm font-medium">Exercise demonstrator</p>
-            <p className="mt-0.5 text-xs text-muted-foreground">
-              Your default instructor. This only changes the demonstrations you see — your workout
-              plan stays exactly the same.
-            </p>
-          </div>
-          <div
-            role="radiogroup"
-            aria-label="Default exercise demonstrator"
-            className="inline-flex shrink-0 rounded-full border border-white/10 bg-white/5 p-1"
-          >
-            {(["male", "female"] as const).map((g) => (
-              <button
-                key={g}
-                role="radio"
-                aria-checked={demoGender === g}
-                onClick={() => {
-                  setDemoGenderDefault(g);
-                  toast.success(`${g[0].toUpperCase()}${g.slice(1)} demonstrator set as default`);
-                }}
-                className={`min-h-9 rounded-full px-4 text-xs font-semibold uppercase tracking-[0.14em] transition ${
-                  demoGender === g
-                    ? "bg-gradient-primary text-[var(--primary-foreground)] shadow-glow"
-                    : "text-muted-foreground hover:text-foreground"
-                }`}
-              >
-                {g}
-              </button>
-            ))}
-          </div>
-        </div>
-      </GlassCard>
-
 
       <SectionTitle hint="switch anytime">Motivation Mode</SectionTitle>
       <div className="mb-5 grid grid-cols-2 gap-2.5">
@@ -269,8 +234,15 @@ function Profile() {
       </GlassCard>
 
       <Button onClick={signOut} variant="outline" className="glass h-12 w-full rounded-2xl border-white/10">
-        <LogOut className="mr-2 h-4 w-4" /> Sign out
+        <LogOut className="mr-2 h-4 w-4" /> {user ? "Sign out" : "Sign in"}
       </Button>
+      <details className="mt-5 text-sm text-muted-foreground">
+        <summary className="cursor-pointer">About &amp; licenses</summary>
+        <p className="mt-2">Based on GymMane by InlitX</p>
+        <a href="/gymmane/CREDITS.md" className="mt-1 inline-block underline">
+          Artwork credits and license terms
+        </a>
+      </details>
     </MobileFrame>
   );
 }

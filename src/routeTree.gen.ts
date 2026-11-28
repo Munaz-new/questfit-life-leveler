@@ -19,10 +19,13 @@ import { Route as AuthenticatedProgressMirrorRouteImport } from './routes/_authe
 import { Route as AuthenticatedProgressRouteImport } from './routes/_authenticated/progress'
 import { Route as AuthenticatedProfileRouteImport } from './routes/_authenticated/profile'
 import { Route as AuthenticatedOnboardingRouteImport } from './routes/_authenticated/onboarding'
+import { Route as AuthenticatedJournalRouteImport } from './routes/_authenticated/journal'
 import { Route as AuthenticatedHomeRouteImport } from './routes/_authenticated/home'
 import { Route as AuthenticatedWorkoutIndexRouteImport } from './routes/_authenticated/workout.index'
 import { Route as AuthenticatedExercisesIndexRouteImport } from './routes/_authenticated/exercises.index'
+import { Route as AuthenticatedWorkoutToolsRouteImport } from './routes/_authenticated/workout.tools'
 import { Route as AuthenticatedWorkoutSummaryRouteImport } from './routes/_authenticated/workout.summary'
+import { Route as AuthenticatedWorkoutRoutinesRouteImport } from './routes/_authenticated/workout.routines'
 import { Route as AuthenticatedWorkoutPlayRouteImport } from './routes/_authenticated/workout.play'
 import { Route as AuthenticatedExercisesIdRouteImport } from './routes/_authenticated/exercises.$id'
 
@@ -76,6 +79,11 @@ const AuthenticatedOnboardingRoute = AuthenticatedOnboardingRouteImport.update({
   path: '/onboarding',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedJournalRoute = AuthenticatedJournalRouteImport.update({
+  id: '/journal',
+  path: '/journal',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
 const AuthenticatedHomeRoute = AuthenticatedHomeRouteImport.update({
   id: '/home',
   path: '/home',
@@ -93,10 +101,22 @@ const AuthenticatedExercisesIndexRoute =
     path: '/exercises/',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
+const AuthenticatedWorkoutToolsRoute =
+  AuthenticatedWorkoutToolsRouteImport.update({
+    id: '/tools',
+    path: '/tools',
+    getParentRoute: () => AuthenticatedWorkoutRoute,
+  } as any)
 const AuthenticatedWorkoutSummaryRoute =
   AuthenticatedWorkoutSummaryRouteImport.update({
     id: '/summary',
     path: '/summary',
+    getParentRoute: () => AuthenticatedWorkoutRoute,
+  } as any)
+const AuthenticatedWorkoutRoutinesRoute =
+  AuthenticatedWorkoutRoutinesRouteImport.update({
+    id: '/routines',
+    path: '/routines',
     getParentRoute: () => AuthenticatedWorkoutRoute,
   } as any)
 const AuthenticatedWorkoutPlayRoute =
@@ -116,6 +136,7 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
   '/home': typeof AuthenticatedHomeRoute
+  '/journal': typeof AuthenticatedJournalRoute
   '/onboarding': typeof AuthenticatedOnboardingRoute
   '/profile': typeof AuthenticatedProfileRoute
   '/progress': typeof AuthenticatedProgressRoute
@@ -125,7 +146,9 @@ export interface FileRoutesByFullPath {
   '/dev/asset-dashboard': typeof DevAssetDashboardRoute
   '/exercises/$id': typeof AuthenticatedExercisesIdRoute
   '/workout/play': typeof AuthenticatedWorkoutPlayRoute
+  '/workout/routines': typeof AuthenticatedWorkoutRoutinesRoute
   '/workout/summary': typeof AuthenticatedWorkoutSummaryRoute
+  '/workout/tools': typeof AuthenticatedWorkoutToolsRoute
   '/exercises/': typeof AuthenticatedExercisesIndexRoute
   '/workout/': typeof AuthenticatedWorkoutIndexRoute
 }
@@ -133,6 +156,7 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
   '/home': typeof AuthenticatedHomeRoute
+  '/journal': typeof AuthenticatedJournalRoute
   '/onboarding': typeof AuthenticatedOnboardingRoute
   '/profile': typeof AuthenticatedProfileRoute
   '/progress': typeof AuthenticatedProgressRoute
@@ -141,7 +165,9 @@ export interface FileRoutesByTo {
   '/dev/asset-dashboard': typeof DevAssetDashboardRoute
   '/exercises/$id': typeof AuthenticatedExercisesIdRoute
   '/workout/play': typeof AuthenticatedWorkoutPlayRoute
+  '/workout/routines': typeof AuthenticatedWorkoutRoutinesRoute
   '/workout/summary': typeof AuthenticatedWorkoutSummaryRoute
+  '/workout/tools': typeof AuthenticatedWorkoutToolsRoute
   '/exercises': typeof AuthenticatedExercisesIndexRoute
   '/workout': typeof AuthenticatedWorkoutIndexRoute
 }
@@ -151,6 +177,7 @@ export interface FileRoutesById {
   '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
   '/auth': typeof AuthRoute
   '/_authenticated/home': typeof AuthenticatedHomeRoute
+  '/_authenticated/journal': typeof AuthenticatedJournalRoute
   '/_authenticated/onboarding': typeof AuthenticatedOnboardingRoute
   '/_authenticated/profile': typeof AuthenticatedProfileRoute
   '/_authenticated/progress': typeof AuthenticatedProgressRoute
@@ -160,7 +187,9 @@ export interface FileRoutesById {
   '/dev/asset-dashboard': typeof DevAssetDashboardRoute
   '/_authenticated/exercises/$id': typeof AuthenticatedExercisesIdRoute
   '/_authenticated/workout/play': typeof AuthenticatedWorkoutPlayRoute
+  '/_authenticated/workout/routines': typeof AuthenticatedWorkoutRoutinesRoute
   '/_authenticated/workout/summary': typeof AuthenticatedWorkoutSummaryRoute
+  '/_authenticated/workout/tools': typeof AuthenticatedWorkoutToolsRoute
   '/_authenticated/exercises/': typeof AuthenticatedExercisesIndexRoute
   '/_authenticated/workout/': typeof AuthenticatedWorkoutIndexRoute
 }
@@ -170,6 +199,7 @@ export interface FileRouteTypes {
     | '/'
     | '/auth'
     | '/home'
+    | '/journal'
     | '/onboarding'
     | '/profile'
     | '/progress'
@@ -179,7 +209,9 @@ export interface FileRouteTypes {
     | '/dev/asset-dashboard'
     | '/exercises/$id'
     | '/workout/play'
+    | '/workout/routines'
     | '/workout/summary'
+    | '/workout/tools'
     | '/exercises/'
     | '/workout/'
   fileRoutesByTo: FileRoutesByTo
@@ -187,6 +219,7 @@ export interface FileRouteTypes {
     | '/'
     | '/auth'
     | '/home'
+    | '/journal'
     | '/onboarding'
     | '/profile'
     | '/progress'
@@ -195,7 +228,9 @@ export interface FileRouteTypes {
     | '/dev/asset-dashboard'
     | '/exercises/$id'
     | '/workout/play'
+    | '/workout/routines'
     | '/workout/summary'
+    | '/workout/tools'
     | '/exercises'
     | '/workout'
   id:
@@ -204,6 +239,7 @@ export interface FileRouteTypes {
     | '/_authenticated'
     | '/auth'
     | '/_authenticated/home'
+    | '/_authenticated/journal'
     | '/_authenticated/onboarding'
     | '/_authenticated/profile'
     | '/_authenticated/progress'
@@ -213,7 +249,9 @@ export interface FileRouteTypes {
     | '/dev/asset-dashboard'
     | '/_authenticated/exercises/$id'
     | '/_authenticated/workout/play'
+    | '/_authenticated/workout/routines'
     | '/_authenticated/workout/summary'
+    | '/_authenticated/workout/tools'
     | '/_authenticated/exercises/'
     | '/_authenticated/workout/'
   fileRoutesById: FileRoutesById
@@ -297,6 +335,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedOnboardingRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/journal': {
+      id: '/_authenticated/journal'
+      path: '/journal'
+      fullPath: '/journal'
+      preLoaderRoute: typeof AuthenticatedJournalRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/home': {
       id: '/_authenticated/home'
       path: '/home'
@@ -318,11 +363,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedExercisesIndexRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/workout/tools': {
+      id: '/_authenticated/workout/tools'
+      path: '/tools'
+      fullPath: '/workout/tools'
+      preLoaderRoute: typeof AuthenticatedWorkoutToolsRouteImport
+      parentRoute: typeof AuthenticatedWorkoutRoute
+    }
     '/_authenticated/workout/summary': {
       id: '/_authenticated/workout/summary'
       path: '/summary'
       fullPath: '/workout/summary'
       preLoaderRoute: typeof AuthenticatedWorkoutSummaryRouteImport
+      parentRoute: typeof AuthenticatedWorkoutRoute
+    }
+    '/_authenticated/workout/routines': {
+      id: '/_authenticated/workout/routines'
+      path: '/routines'
+      fullPath: '/workout/routines'
+      preLoaderRoute: typeof AuthenticatedWorkoutRoutinesRouteImport
       parentRoute: typeof AuthenticatedWorkoutRoute
     }
     '/_authenticated/workout/play': {
@@ -344,13 +403,17 @@ declare module '@tanstack/react-router' {
 
 interface AuthenticatedWorkoutRouteChildren {
   AuthenticatedWorkoutPlayRoute: typeof AuthenticatedWorkoutPlayRoute
+  AuthenticatedWorkoutRoutinesRoute: typeof AuthenticatedWorkoutRoutinesRoute
   AuthenticatedWorkoutSummaryRoute: typeof AuthenticatedWorkoutSummaryRoute
+  AuthenticatedWorkoutToolsRoute: typeof AuthenticatedWorkoutToolsRoute
   AuthenticatedWorkoutIndexRoute: typeof AuthenticatedWorkoutIndexRoute
 }
 
 const AuthenticatedWorkoutRouteChildren: AuthenticatedWorkoutRouteChildren = {
   AuthenticatedWorkoutPlayRoute: AuthenticatedWorkoutPlayRoute,
+  AuthenticatedWorkoutRoutinesRoute: AuthenticatedWorkoutRoutinesRoute,
   AuthenticatedWorkoutSummaryRoute: AuthenticatedWorkoutSummaryRoute,
+  AuthenticatedWorkoutToolsRoute: AuthenticatedWorkoutToolsRoute,
   AuthenticatedWorkoutIndexRoute: AuthenticatedWorkoutIndexRoute,
 }
 
@@ -359,6 +422,7 @@ const AuthenticatedWorkoutRouteWithChildren =
 
 interface AuthenticatedRouteRouteChildren {
   AuthenticatedHomeRoute: typeof AuthenticatedHomeRoute
+  AuthenticatedJournalRoute: typeof AuthenticatedJournalRoute
   AuthenticatedOnboardingRoute: typeof AuthenticatedOnboardingRoute
   AuthenticatedProfileRoute: typeof AuthenticatedProfileRoute
   AuthenticatedProgressRoute: typeof AuthenticatedProgressRoute
@@ -371,6 +435,7 @@ interface AuthenticatedRouteRouteChildren {
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedHomeRoute: AuthenticatedHomeRoute,
+  AuthenticatedJournalRoute: AuthenticatedJournalRoute,
   AuthenticatedOnboardingRoute: AuthenticatedOnboardingRoute,
   AuthenticatedProfileRoute: AuthenticatedProfileRoute,
   AuthenticatedProgressRoute: AuthenticatedProgressRoute,

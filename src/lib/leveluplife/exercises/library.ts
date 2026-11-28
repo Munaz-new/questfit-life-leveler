@@ -4,9 +4,10 @@
  * the /exercises browser, and per-exercise detail screens.
  * ──────────────────────────────────────────────────────────────────── */
 
+import { GYM_EXERCISES } from "./gymmaneCatalog";
 import type { Exercise } from "./types";
 
-export const EXERCISES: Exercise[] = [
+export const HOME_EXERCISES: Exercise[] = [
   /* ───────────────── SQUAT ───────────────── */
   {
     id: "squat-chair", name: "Chair Squat", pattern: "squat", category: "strength_squat",
@@ -328,7 +329,7 @@ export const EXERCISES: Exercise[] = [
     safety: ["Move within a pain-free range."],
     recommendedFor: ["gamer", "developer", "office", "freelancer", "nightshift", "creator"], recommendedGoals: ["posture", "mobility"],
     estDurationSec: 90, metValue: 2.5, defaultReps: "1:30 min", defaultRest: 0,
-    cue: "Quadruped. Reach hand to sky, rotate.", scienceNote: "Unlocks the mid-back stiffened by sitting.",
+    cue: "On hands and knees, place one hand behind your head and rotate your elbow upward.", scienceNote: "Unlocks the mid-back stiffened by sitting.",
   },
   {
     id: "mob-shoulder", name: "Shoulder Dislocates", pattern: "mobility", category: "mobility_shoulder",
@@ -527,6 +528,8 @@ export const EXERCISES: Exercise[] = [
     cue: "Tiny pulse. Big squeeze.",
   },
 ];
+
+export const EXERCISES = [...HOME_EXERCISES, ...GYM_EXERCISES];
 
 /** Convenience map. */
 export const EXERCISES_BY_ID: Record<string, Exercise> = Object.fromEntries(

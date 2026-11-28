@@ -108,7 +108,16 @@ export interface Checkin {
 }
 
 /** A serialized live workout session in progress. */
+export interface WorkoutSet {
+  exerciseId: string;
+  reps?: number;
+  weightKg?: number;
+}
+
+export type SetPerformance = Omit<WorkoutSet, "exerciseId">;
+
 export interface ActiveSessionState {
+  loggedSets?: WorkoutSet[];
   startedAt: number;
   /** Linear list of move ids in order (warmup → main → cooldown). */
   order: string[];
@@ -129,6 +138,7 @@ export interface ActiveSessionState {
 }
 
 export interface SummaryState {
+  loggedSets?: WorkoutSet[];
   date: string;
   protocolId: string;
   protocolName: string;
@@ -140,6 +150,18 @@ export interface SummaryState {
   caloriesEst: number | null;
   patternHits: Partial<Record<string, number>>;
   partial: boolean;
+}
+
+export interface WorkoutRoutine {
+  id: string;
+  name: string;
+  exercises: { id: string; target: string; rest: number }[];
+}
+
+export interface GymSchedule {
+  mode: "fixed" | "rotation";
+  week: string[];
+  rotation: string[];
 }
 
 export interface AppState {
@@ -159,6 +181,11 @@ export interface AppState {
   activeSession: ActiveSessionState | null;
   /** Last finished session summary, shown on the summary route. */
   lastSummary: SummaryState | null;
+  workoutHistory: SummaryState[];
+  routines: WorkoutRoutine[];
+  favoriteExerciseIds: string[];
+  gymSchedule: GymSchedule;
+  journalNotes: Record<string, string>;
   /** Adaptive difficulty offset (−1 reduce / 0 baseline / +1 push). */
   adaptiveBoost: -1 | 0 | 1;
   /** Recent completion percentages, used to drive adaptiveBoost. */

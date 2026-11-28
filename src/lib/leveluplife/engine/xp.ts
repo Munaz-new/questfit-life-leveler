@@ -2,26 +2,25 @@ import type { Move, Pattern } from "./patterns";
 import { exerciseById } from "../exercises/library";
 
 export type Target =
-  | { kind: "time"; seconds: number; perSet?: boolean; sets?: number }
+  | { kind: "time"; seconds: number; perSet?: boolean; sets?: number; perSide?: boolean }
   | { kind: "reps"; sets: number; perSet: string };
 
 /** Turn a Move's free-text `reps` field into a structured target. */
 export function parseTarget(reps: string): Target {
   const r = reps.trim();
-  const colon = r.match(/(\d+):(\d{2})/);
-  if (colon) return { kind: "time", seconds: parseInt(colon[1], 10) * 60 + parseInt(colon[2], 10) };
-  const setsTime = r.match(/(\d+)\s*[×x]\s*(\d+)\s*s/i);
-  if (setsTime)
-    return {
-      kind: "time",
-      seconds: parseInt(setsTime[2], 10),
-      perSet: true,
-      sets: parseInt(setsTime[1], 10),
-    };
-  const sec = r.match(/^(\d+)\s*s\b/);
-  if (sec) return { kind: "time", seconds: parseInt(sec[1], 10) };
-  const mn = r.match(/^(\d+)\s*min/i);
-  if (mn) return { kind: "time", seconds: parseInt(mn[1], 10) * 60 };
+  const perSide = /(?:\/|per\s+)(?:side|leg)\b/i.test(r);
+  const timed = (seconds: number, sets = 1): Target => {
+    if (perSide) return { kind: "time", seconds, perSide, perSet: true, sets: sets * 2 };
+    return sets > 1 ? { kind: "time", seconds, perSet: true, sets } : { kind: "time", seconds };
+  };
+  const clock = r.match(/^(?:(\d+)\s*[×x]\s*)?(\d+):(\d{2})/);
+  if (clock) return timed(Number(clock[2]) * 60 + Number(clock[3]), Number(clock[1] ?? 1));
+  const unit = r.match(/^(?:(\d+)\s*[×x]\s*)?(\d+)\s*(s(?:ec(?:ond)?s?)?\b|min(?:ute)?s?\b)/i);
+  if (unit)
+    return timed(
+      Number(unit[2]) * (unit[3].toLowerCase().startsWith("min") ? 60 : 1),
+      Number(unit[1] ?? 1),
+    );
   const sets = r.match(/(\d+)\s*[×x]\s*(.+)/);
   if (sets) return { kind: "reps", sets: parseInt(sets[1], 10), perSet: sets[2].trim() };
   return { kind: "reps", sets: 1, perSet: r };
@@ -52,7 +51,10 @@ function parseWeightKg(weight: string | undefined): number | null {
 }
 
 /** Estimate kcal using a per-exercise MET when available; fallback to MET 5. */
-export function estimateCaloriesForMoves(moves: Move[], profileWeight: string | undefined): number | null {
+export function estimateCaloriesForMoves(
+  moves: Move[],
+  profileWeight: string | undefined,
+): number | null {
   const kg = parseWeightKg(profileWeight);
   if (!kg) return null;
   let kcal = 0;
@@ -66,7 +68,10 @@ export function estimateCaloriesForMoves(moves: Move[], profileWeight: string | 
 }
 
 /** Legacy fallback used by callers that only know total duration. */
-export function estimateCalories(durationSec: number, profileWeight: string | undefined): number | null {
+export function estimateCalories(
+  durationSec: number,
+  profileWeight: string | undefined,
+): number | null {
   const kg = parseWeightKg(profileWeight);
   if (!kg) return null;
   const met = 5;

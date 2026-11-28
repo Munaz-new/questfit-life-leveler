@@ -112,7 +112,7 @@ vite.config.ts             Vite, TanStack Start, and Nitro configuration
 
 - Core application state, including XP, quests, and workout progress, is persisted in browser local storage. Do not assume all progress is synchronized between devices.
 - Supabase supplies authentication and backend features such as Progress Mirror.
-- The sign-in screen includes a guest button, but the current application route guard requires a signed-in user for the main screens. A complete guest flow is not implemented.
+- Guest mode supports onboarding, quests, workouts, and local progress. Progress Mirror requires a signed-in account.
 - Some exercise media comes from external providers and requires an internet connection.
 - A web app manifest is included; full offline operation is not implemented.
 
@@ -144,4 +144,4 @@ This application uses server functionality and should not be deployed as only a 
 
 ## License
 
-No project license file has been added yet. Third-party packages and exercise assets have their own licenses.
+LevelUp Life is licensed under [GPL-3.0-only](./LICENSE). Based on GymMane by InlitX. See [GymMane's additional terms](./public/gymmane/ADDITIONAL_TERMS.md) and [asset credits](./public/gymmane/CREDITS.md) for the notices that apply to imported material. Third-party dependencies retain their own licenses.

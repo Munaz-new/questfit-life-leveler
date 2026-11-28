@@ -5,7 +5,8 @@
  * single source of truth. Adding a move = adding an Exercise.
  * ──────────────────────────────────────────────────────────────────── */
 
-import { EXERCISES } from "../exercises/library";
+import { GYM_EXERCISES } from "../exercises/gymmaneCatalog";
+import { HOME_EXERCISES } from "../exercises/library";
 import type { Exercise } from "../exercises/types";
 
 export type Pattern =
@@ -18,7 +19,7 @@ export type Pattern =
   | "cardio";
 
 export type Level = "beginner" | "intermediate" | "advanced";
-export type Equip = "none" | "bands" | "dumbbells" | "chair" | "pullup";
+export type Equip = "none" | "bands" | "dumbbells" | "chair" | "pullup" | "barbell" | "cable" | "machine" | "kettlebell" | "rings" | "weighted" | "other";
 
 export interface Move {
   id: string;
@@ -50,7 +51,8 @@ function toMove(e: Exercise): Move {
   };
 }
 
-export const MOVES: Move[] = EXERCISES.map(toMove);
+export const MOVES: Move[] = HOME_EXERCISES.map(toMove);
+export const ROUTINE_MOVES = [...MOVES, ...GYM_EXERCISES.map(toMove)];
 
 /* Hierarchy used when filtering by available equipment. */
 const EQUIP_OK: Record<Equip, Equip[]> = {
@@ -59,6 +61,13 @@ const EQUIP_OK: Record<Equip, Equip[]> = {
   bands:    ["none", "bands"],
   dumbbells:["none", "dumbbells"],
   pullup:   ["none", "pullup"],
+  barbell: ["none", "barbell"],
+  cable: ["none", "cable"],
+  machine: ["none", "machine"],
+  kettlebell: ["none", "kettlebell"],
+  rings: ["none", "rings"],
+  weighted: ["none", "weighted"],
+  other: ["none", "other"],
 };
 
 export function filterMoves(opts: {
