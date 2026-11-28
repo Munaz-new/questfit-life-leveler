@@ -1,6 +1,6 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useState, type CSSProperties } from "react";
-import { MobileFrame, GlassCard } from "@/components/leveluplife/Shell";
+import { MobileFrame } from "@/components/leveluplife/Shell";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { ChevronLeft, ChevronRight, Sparkles, Flame, ShieldCheck, Camera } from "lucide-react";
@@ -15,9 +15,11 @@ import { setOnboardingOptIn } from "@/lib/leveluplife/progressMirror";
 import type { UserProfile } from "@/lib/leveluplife/types";
 
 export const Route = createFileRoute("/_authenticated/onboarding")({
-  head: () => ({ meta: [{ title: "Onboarding — LevelUp Life" }] }),
+  head: () => ({ meta: [{ title: "Training profile — QuestFit" }] }),
   component: Onboarding,
 });
+
+const sections = ["Name", "Basics", "Lifestyle", "Daily routine", "Equipment", "Goals", "Experience", "Training mode", "Progress Mirror"];
 
 function Onboarding() {
   const navigate = useNavigate();
@@ -69,30 +71,28 @@ function Onboarding() {
   const pct = ((step + 1) / total) * 100;
 
   return (
-    <MobileFrame>
-      <div className="flex min-h-[88vh] flex-col">
-        <div className="mb-5 flex items-center gap-3">
-          {step > 0 ? (
-            <button onClick={() => setStep(step - 1)} className="glass flex h-9 w-9 items-center justify-center rounded-xl">
-              <ChevronLeft className="h-4 w-4" />
-            </button>
-          ) : (
-            <div className="h-9 w-9" />
-          )}
-          <div className="flex-1">
-            <div className="h-1.5 w-full overflow-hidden rounded-full bg-white/5">
-              <div className="h-full bg-gradient-primary transition-[width] duration-500" style={{ width: `${pct}%` }} />
-            </div>
-            <div className="mt-1 text-[10px] uppercase tracking-[0.2em] text-muted-foreground">
-              Step {step + 1} / {total}
-            </div>
-          </div>
-        </div>
-
-        <div key={step} className="animate-float-up flex-1">
+    <MobileFrame previewMode={p.motivation}>
+      <div className="setup-layout">
+        <aside className="setup-index" aria-label="Setup progress">
+          <h1>Training <em>profile.</em></h1>
+          <ol>{sections.slice(0, total).map((label, i) => (
+            <li key={label} aria-current={i === step ? "step" : undefined}>
+              <span>{i < step ? "✓" : String(i + 1).padStart(2, "0")}</span>
+              {i < step ? <button onClick={() => setStep(i)} aria-label={`Edit ${label}`}>{label}</button> : label}
+            </li>
+          ))}</ol>
+        </aside>
+        <section className="setup-panel">
+          <header className="setup-progress">
+            <span>Step {step + 1} / {total}</span>
+            {step > 0 && <button onClick={() => setStep(step - 1)}><ChevronLeft size={16} /> Back</button>}
+          </header>
+          <progress aria-label="Profile setup" max={100} value={pct} />
+        <div key={step} className="setup-step">
           {step === 0 && (
-            <Step title="What should we call you?" sub="Your hunter name. Change it anytime.">
+            <Step title="What should we call you?" sub="Choose the name you’ll see during training. You can change it anytime.">
               <Input
+                aria-label="Display name"
                 value={p.displayName}
                 onChange={(e) => update("displayName", e.target.value)}
                 className="h-12 rounded-xl border-white/10 bg-white/5 text-lg"
@@ -192,6 +192,7 @@ function Onboarding() {
                   return (
                     <button
                       key={m.id}
+                      aria-pressed={active}
                       onClick={() => update("motivation", m.id)}
                       style={
                         active
@@ -259,6 +260,7 @@ function Onboarding() {
             </Button>
           )}
         </div>
+        </section>
       </div>
     </MobileFrame>
   );
@@ -291,6 +293,7 @@ function Grid({ children, cols = 2 }: { children: React.ReactNode; cols?: 1 | 2 
 function Chip({ children, active, onClick }: { children: React.ReactNode; active?: boolean; onClick?: () => void }) {
   return (
     <button
+      aria-pressed={active}
       onClick={onClick}
       className={`flex items-center justify-center gap-2 rounded-2xl border px-3 py-3 text-sm font-medium transition ${
         active
