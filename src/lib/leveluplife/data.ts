@@ -54,17 +54,17 @@ export function defaultQuestsFor(p: UserProfile): Quest[] {
   return base;
 }
 
-export const lifestyleOptions: { id: UserProfile["lifestyle"]; label: string; emoji: string }[] = [
-  { id: "student",     label: "Student",        emoji: "🎓" },
-  { id: "office",      label: "Office worker",  emoji: "💼" },
-  { id: "gamer",       label: "Gamer",          emoji: "🎮" },
-  { id: "developer",   label: "Developer",      emoji: "⌨️" },
-  { id: "business",    label: "Business owner", emoji: "📈" },
-  { id: "creator",     label: "Creator",        emoji: "🎨" },
-  { id: "nightshift",  label: "Night shift",    emoji: "🌙" },
-  { id: "freelancer",  label: "Freelancer",     emoji: "💻" },
-  { id: "parent",      label: "Parent",         emoji: "🧸" },
-  { id: "custom",      label: "Something else", emoji: "✨" },
+export const lifestyleOptions: { id: UserProfile["lifestyle"]; label: string }[] = [
+  { id: "student",     label: "Student" },
+  { id: "office",      label: "Office worker" },
+  { id: "gamer",       label: "Gamer" },
+  { id: "developer",   label: "Developer" },
+  { id: "business",    label: "Business owner" },
+  { id: "creator",     label: "Creator" },
+  { id: "nightshift",  label: "Night shift" },
+  { id: "freelancer",  label: "Freelancer" },
+  { id: "parent",      label: "Parent" },
+  { id: "custom",      label: "Something else" },
 ];
 
 export const primaryGoalOptions: { id: UserProfile["primaryGoal"]; label: string }[] = [

@@ -1,3 +1,4 @@
+import { TrainingIcon } from "@/components/leveluplife/TrainingIcon";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { MobileFrame, GlassCard, SectionTitle } from "@/components/leveluplife/Shell";
@@ -71,7 +72,7 @@ function Home() {
       <header className="mb-5 flex items-start justify-between">
         <div className="min-w-0 pr-3">
           <p className="text-xs uppercase tracking-[0.18em] text-muted-foreground">
-            <span className="mode-pill mr-2">{mode.emoji} {mode.shortTag}</span>
+            <span className="mode-pill mr-2"><TrainingIcon name={mode.id} size={14} /> {mode.shortTag}</span>
           </p>
           <h1 className="mt-2 text-2xl font-bold leading-snug">
             {mounted ? lex.greeting(new Date().getHours(), name) : `Hello, ${name}`}

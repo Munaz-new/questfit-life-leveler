@@ -59,16 +59,16 @@ export interface AchievementDef {
   key: string;
   title: string;
   description: string;
-  emoji: string;
+
 }
 
 export const ACHIEVEMENTS: AchievementDef[] = [
-  { key: "transformation_started", title: "Transformation Started", description: "Enabled Progress Mirror", emoji: "🌱" },
-  { key: "first_photo", title: "First Photo", description: "Captured your first progress photo", emoji: "📸" },
-  { key: "visual_progress", title: "Visual Progress", description: "Photos on 2+ different days", emoji: "🔍" },
-  { key: "consistency_champion", title: "Consistency Champion", description: "Photos across 4 distinct weeks", emoji: "🏅" },
-  { key: "30_day_progress", title: "30-Day Progress", description: "30 days between first and latest photo", emoji: "📅" },
-  { key: "100_day_journey", title: "100-Day Journey", description: "100 days of documented transformation", emoji: "🚀" },
+  { key: "transformation_started", title: "Transformation Started", description: "Enabled Progress Mirror" },
+  { key: "first_photo", title: "First Photo", description: "Captured your first progress photo" },
+  { key: "visual_progress", title: "Visual Progress", description: "Photos on 2+ different days" },
+  { key: "consistency_champion", title: "Consistency Champion", description: "Photos across 4 distinct weeks" },
+  { key: "30_day_progress", title: "30-Day Progress", description: "30 days between first and latest photo" },
+  { key: "100_day_journey", title: "100-Day Journey", description: "100 days of documented transformation" },
 ];
 
 // ---------- Onboarding opt-in (local, pre-auth) ----------

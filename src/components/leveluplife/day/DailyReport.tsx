@@ -7,14 +7,14 @@ import type {
   TimeBudget,
 } from "@/lib/leveluplife/day/types";
 import type { MotivationStyle } from "@/lib/leveluplife/types";
-import { BatteryLow, Clock, HeartPulse, Sparkles } from "lucide-react";
+import { BatteryCharging, BatteryFull, BatteryMedium, BatteryWarning, type LucideIcon, BatteryLow, Clock, HeartPulse, Sparkles } from "lucide-react";
 
-const ENERGY: { key: EnergyReport; label: string; emoji: string }[] = [
-  { key: "great", label: "Great", emoji: "⚡" },
-  { key: "good", label: "Good", emoji: "🙂" },
-  { key: "okay", label: "Okay", emoji: "😐" },
-  { key: "low", label: "Low", emoji: "🥱" },
-  { key: "exhausted", label: "Exhausted", emoji: "🫠" },
+const ENERGY: { key: EnergyReport; label: string; Icon: LucideIcon }[] = [
+  { key: "great", label: "Great", Icon: BatteryCharging },
+  { key: "good", label: "Good", Icon: BatteryFull },
+  { key: "okay", label: "Okay", Icon: BatteryMedium },
+  { key: "low", label: "Low", Icon: BatteryLow },
+  { key: "exhausted", label: "Exhausted", Icon: BatteryWarning },
 ];
 
 const TIME: TimeBudget[] = [5, 10, 20, 30];
@@ -69,7 +69,7 @@ export function DailyReport({
         <div className="flex flex-wrap gap-2">
           {ENERGY.map((e) => (
             <Chip key={e.key} active={energy === e.key} onClick={() => setEnergy(e.key)}>
-              <span className="mr-1">{e.emoji}</span>
+              <e.Icon size={16} aria-hidden="true" className="mr-1 inline-block" />
               {e.label}
             </Chip>
           ))}

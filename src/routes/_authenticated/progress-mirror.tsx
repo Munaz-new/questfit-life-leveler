@@ -7,6 +7,7 @@ import { PrivateImage } from "@/components/leveluplife/mirror/PrivateImage";
 import { BeforeAfterSlider } from "@/components/leveluplife/mirror/BeforeAfterSlider";
 import { toast } from "sonner";
 import {
+  Sprout, Camera, ScanEye, Medal, CalendarCheck, Rocket, type LucideIcon,
   ArrowLeft,
   Lock,
   ShieldCheck,
@@ -75,7 +76,7 @@ function ProgressMirror() {
     fresh.forEach((k) => unlockedSet.add(k));
     if (fresh.length) {
       const def = ACHIEVEMENTS.find((a) => a.key === fresh[0]);
-      if (def) toast.success(`Achievement unlocked: ${def.title} ${def.emoji}`);
+      if (def) toast.success(`Achievement unlocked: ${def.title}`);
     }
     setPhotos(ph);
     setMeasurements(ms);
@@ -645,6 +646,11 @@ function MeasurementsTab({
 }
 
 // ---------- Achievements ----------
+const achievementIcons: Record<string, LucideIcon> = {
+  transformation_started: Sprout, first_photo: Camera, visual_progress: ScanEye,
+  consistency_champion: Medal, "30_day_progress": CalendarCheck, "100_day_journey": Rocket,
+};
+
 function AchievementsTab({ unlocked, photos }: { unlocked: Set<string>; photos: ProgressPhoto[] }) {
   return (
     <div className="space-y-3">
@@ -654,6 +660,7 @@ function AchievementsTab({ unlocked, photos }: { unlocked: Set<string>; photos: 
       <div className="grid grid-cols-2 gap-2.5">
         {ACHIEVEMENTS.map((a) => {
           const got = unlocked.has(a.key);
+          const Icon = got ? achievementIcons[a.key] ?? Medal : Lock;
           return (
             <div
               key={a.key}
@@ -661,7 +668,8 @@ function AchievementsTab({ unlocked, photos }: { unlocked: Set<string>; photos: 
                 got ? "border-transparent bg-gradient-primary text-[var(--primary-foreground)] shadow-glow" : "glass border-white/10 opacity-70"
               }`}
             >
-              <div className="text-2xl">{got ? a.emoji : "🔒"}</div>
+              <Icon size={24} aria-hidden="true" />
+              <span className="sr-only">{got ? "Unlocked" : "Locked"}</span>
               <p className="mt-2 text-sm font-bold leading-tight">{a.title}</p>
               <p className={`mt-0.5 text-[10px] leading-snug ${got ? "text-black/70" : "text-muted-foreground"}`}>
                 {a.description}

@@ -52,7 +52,7 @@ export interface ModeLexicon {
 export interface ModeTheme {
   id: MotivationStyle;
   label: string;
-  emoji: string;
+
   shortTag: string;
   identity: string;
   aesthetic: Aesthetic;
@@ -84,7 +84,7 @@ export const MODES: Record<MotivationStyle, ModeTheme> = {
   hunter: {
     id: "hunter",
     label: "Hunter Mode",
-    emoji: "⚔",
+
     shortTag: "Rank up",
     identity: "I must become stronger.",
     aesthetic: "sharp",
@@ -136,7 +136,7 @@ export const MODES: Record<MotivationStyle, ModeTheme> = {
   hero: {
     id: "hero",
     label: "Hero Mode",
-    emoji: "🏆",
+
     shortTag: "Become",
     identity: "I am becoming my best self.",
     aesthetic: "cinematic",
@@ -188,7 +188,7 @@ export const MODES: Record<MotivationStyle, ModeTheme> = {
   zen: {
     id: "zen",
     label: "Zen Mode",
-    emoji: "🌿",
+
     shortTag: "Flow",
     identity: "Consistency without pressure.",
     aesthetic: "soft",
@@ -240,7 +240,7 @@ export const MODES: Record<MotivationStyle, ModeTheme> = {
   scientist: {
     id: "scientist",
     label: "Scientist Mode",
-    emoji: "🧪",
+
     shortTag: "Measure",
     identity: "Measure. Improve.",
     aesthetic: "clinical",
@@ -292,7 +292,7 @@ export const MODES: Record<MotivationStyle, ModeTheme> = {
   story: {
     id: "story",
     label: "Story Mode",
-    emoji: "📖",
+
     shortTag: "Narrate",
     identity: "My life is a story.",
     aesthetic: "narrative",
@@ -344,7 +344,7 @@ export const MODES: Record<MotivationStyle, ModeTheme> = {
   discipline: {
     id: "discipline",
     label: "Discipline Mode",
-    emoji: "🔥",
+
     shortTag: "Execute",
     identity: "No excuses.",
     aesthetic: "brutal",

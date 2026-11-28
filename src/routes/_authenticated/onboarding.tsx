@@ -1,3 +1,4 @@
+import { TrainingIcon } from "@/components/leveluplife/TrainingIcon";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useState, type CSSProperties } from "react";
 import { MobileFrame } from "@/components/leveluplife/Shell";
@@ -123,7 +124,7 @@ function Onboarding() {
               <Grid>
                 {lifestyleOptions.map((o) => (
                   <Chip key={o.id} active={p.lifestyle === o.id} onClick={() => update("lifestyle", o.id)}>
-                    <span className="text-xl">{o.emoji}</span>
+                    <TrainingIcon name={o.id} />
                     <span>{o.label}</span>
                   </Chip>
                 ))}
@@ -142,8 +143,8 @@ function Onboarding() {
                 </Field>
               </Row>
               <Slider label={`Sitting hours: ${p.sittingHours}h`} value={p.sittingHours} min={0} max={14} onChange={(v) => update("sittingHours", v)} />
-              <Slider label={`Energy: ${"⚡".repeat(p.energy)}`} value={p.energy} min={1} max={5} onChange={(v) => update("energy", v)} />
-              <Slider label={`Stress: ${"🔥".repeat(p.stress)}`} value={p.stress} min={1} max={5} onChange={(v) => update("stress", v)} />
+              <Slider label={`Energy: ${p.energy} / 5`} value={p.energy} min={1} max={5} onChange={(v) => update("energy", v)} />
+              <Slider label={`Stress: ${p.stress} / 5`} value={p.stress} min={1} max={5} onChange={(v) => update("stress", v)} />
             </Step>
           )}
 
@@ -209,7 +210,7 @@ function Onboarding() {
                       }`}
                     >
                       <div className="flex items-center justify-between">
-                        <span className="text-xl">{m.emoji}</span>
+                        <TrainingIcon name={m.id} />
                         <div className="flex gap-1">
                           {m.swatch.slice(0, 2).map((c) => (
                             <span key={c} className="h-2.5 w-2.5 rounded-full ring-1 ring-white/20" style={{ backgroundColor: c }} />
@@ -349,7 +350,7 @@ function ModePreview({ motivation }: { motivation: UserProfile["motivation"] }) 
       className="animate-float-up mb-3 rounded-2xl border border-white/10 p-4"
     >
       <div className="flex items-center justify-between">
-        <span className="mode-pill">{m.emoji} {m.shortTag}</span>
+        <span className="mode-pill"><TrainingIcon name={m.id} size={14} /> {m.shortTag}</span>
         <span className="text-[10px] uppercase tracking-wider text-muted-foreground">live preview</span>
       </div>
       <p className="mt-3 font-display text-lg font-bold leading-tight">

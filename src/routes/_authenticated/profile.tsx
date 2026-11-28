@@ -1,3 +1,4 @@
+import { TrainingIcon } from "@/components/leveluplife/TrainingIcon";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState, type CSSProperties } from "react";
 import { MobileFrame, GlassCard, SectionTitle } from "@/components/leveluplife/Shell";
@@ -142,7 +143,7 @@ function Profile() {
               } ${isLoading ? "opacity-70" : ""}`}
             >
               <div className="flex items-center justify-between">
-                <span className="text-xl">{m.emoji}</span>
+                <TrainingIcon name={m.id} />
                 {active ? (
                   <Check className="h-4 w-4 text-black/70" />
                 ) : (
