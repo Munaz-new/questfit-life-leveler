@@ -30,8 +30,9 @@ export function MobileFrame({
         ...styleVars,
         backgroundImage: gym ? undefined : "var(--gradient-bg)",
       }}
-      className={`mode-root relative mx-auto flex min-h-screen w-full max-w-[480px] flex-col overflow-hidden ${gym ? "gym-surface" : "transition-[background-image,color] duration-500"}`}
+      className={`quest-shell mode-root relative mx-auto flex min-h-screen w-full max-w-[480px] flex-col overflow-hidden ${gym ? "gym-surface" : "transition-[background-image,color] duration-500"}`}
     >
+      <header className="quest-mast"><span>QuestFit</span><span>{mode.label}</span></header>
       {/* Per-mode ambient layer. Aesthetic data-attr drives motion / shape. */}
       {!gym && <ModeAmbient />}
       <main

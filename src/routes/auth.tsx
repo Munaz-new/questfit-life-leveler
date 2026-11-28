@@ -1,19 +1,25 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
-import { Logo } from "@/components/leveluplife/Logo";
-import { MobileFrame } from "@/components/leveluplife/Shell";
+
+
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { useApp } from "@/lib/leveluplife/store";
 import { accountSignInAvailable, setGuestMode } from "@/lib/leveluplife/guest";
-import { ArrowRight, Mail } from "lucide-react";
+import { Activity, ArrowRight, ChevronLeft, ChevronRight, Mail } from "lucide-react";
 
 export const Route = createFileRoute("/auth")({
-  head: () => ({ meta: [{ title: "Sign in — LevelUp Life" }] }),
+  head: () => ({ meta: [{ title: "Training studio — QuestFit" }] }),
   component: Auth,
 });
+
+const movements = [
+  { name: "Deadlift", slug: "deadlift", equipment: "Barbell", pattern: "Hip hinge" },
+  { name: "Goblet squat", slug: "goblet-squat", equipment: "Dumbbell", pattern: "Squat" },
+  { name: "Bench press", slug: "bench-press", equipment: "Barbell", pattern: "Horizontal push" },
+];
 
 function Auth() {
   const navigate = useNavigate();
@@ -22,6 +28,9 @@ function Auth() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
+
+  const [index, setIndex] = useState(0);
+  const movement = movements[index];
 
   const next = () => navigate({ to: state.onboarded ? "/home" : "/onboarding" });
 
@@ -83,21 +92,13 @@ function Auth() {
   }
 
   return (
-    <MobileFrame>
-      <div className="flex min-h-[88vh] flex-col">
-        <div className="flex flex-1 flex-col items-center justify-center gap-6 text-center">
-          <Logo size={88} />
-          <div className="animate-float-up">
-            <h1 className="text-3xl font-bold">Welcome, hunter.</h1>
-            <p className="mt-2 text-sm text-muted-foreground">
-              {accountSignInAvailable
-                ? "Play as a guest or sign in to unlock Progress Mirror."
-                : "Start training as a guest. Progress is saved on this device."}
-            </p>
-          </div>
-        </div>
-
-        <div className="space-y-3 pb-4">
+    <main className="studio">
+      <header className="studio-header"><span className="studio-brand"><Activity aria-hidden="true" /> QuestFit</span><span>Training studio</span></header>
+      <div className="studio-layout">
+        <section className="studio-intro">
+          <h1>Your personal<br /><em>training studio.</em></h1>
+          <p>Build a routine, learn each movement, and track your progress with every session.</p>
+          <div className="studio-actions">
           {mode === "intro" ? (
             <>
               {accountSignInAvailable && (
@@ -128,13 +129,13 @@ function Auth() {
                 }}
                 className="h-12 w-full rounded-2xl text-base"
               >
-                Continue as guest
+                Continue as guest <ArrowRight aria-hidden="true" />
               </Button>
             </>
           ) : (
             <div className="glass space-y-3 rounded-2xl p-4">
-              <Input value={email} onChange={(e) => setEmail(e.target.value)} placeholder="you@email.com" type="email" className="h-11 rounded-xl border-white/10 bg-white/5" />
-              <Input value={password} onChange={(e) => setPassword(e.target.value)} placeholder="Password" type="password" className="h-11 rounded-xl border-white/10 bg-white/5" />
+              <Input aria-label="Email address" autoComplete="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="you@email.com" type="email" className="h-11 rounded-xl border-white/10 bg-white/5" />
+              <Input aria-label="Password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="Password" type="password" className="h-11 rounded-xl border-white/10 bg-white/5" />
               <div className="grid grid-cols-2 gap-2">
                 <Button onClick={() => emailSubmit(false)} disabled={loading} className="h-11 rounded-xl bg-gradient-primary font-semibold text-[var(--primary-foreground)]">Sign in</Button>
                 <Button onClick={() => emailSubmit(true)} disabled={loading} variant="outline" className="h-11 rounded-xl border-white/10 bg-white/5">Create</Button>
@@ -142,8 +143,16 @@ function Auth() {
               <button onClick={() => setMode("intro")} className="w-full pt-1 text-xs text-muted-foreground hover:text-foreground">← back</button>
             </div>
           )}
-        </div>
+          </div>
+          <small>Guest progress is saved on this device.</small>
+        </section>
+        <section className="movement-card" aria-label="Exercise library preview">
+          <header><span>Movement library</span><span>{String(index + 1).padStart(2, "0")} / 03</span></header>
+          <div className="movement-plate"><img src={`/gymmane/exercises/${movement.slug}.svg#still`} alt={movement.name + " exercise illustration"} /></div>
+          <footer><div aria-live="polite"><p>{movement.equipment} · {movement.pattern}</p><h2>{movement.name}</h2></div>
+          <div className="movement-controls">{[-1, 1].map(delta => <button key={delta} type="button" aria-label={delta < 0 ? "Previous exercise" : "Next exercise"} onClick={() => setIndex((i) => (i + delta + movements.length) % movements.length)}>{delta < 0 ? <ChevronLeft /> : <ChevronRight />}</button>)}</div></footer>
+        </section>
       </div>
-    </MobileFrame>
+    </main>
   );
 }

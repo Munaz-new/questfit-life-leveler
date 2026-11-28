@@ -348,3 +348,48 @@ html { color-scheme: dark; }
   background: #fff;
   color: #111;
 }
+
+/* Public studio and shared training workspace */
+.studio { min-height:100svh; background:#121914; color:#f1f2e9; padding:0 clamp(20px,6vw,92px) 36px; font-family:Inter,system-ui,sans-serif }
+.studio-header,.studio-layout { max-width:1240px; margin-inline:auto }
+.studio-header,.quest-mast { display:flex; align-items:center; justify-content:space-between; border-bottom:1px solid #ffffff24 }
+.studio-header { padding-block:22px; color:#c2cabb; font-size:.9rem }
+.studio-brand { display:inline-flex; align-items:center; gap:10px; font-size:1.6rem; font-weight:800; letter-spacing:-.06em; color:#f6f7ed }
+.studio-brand svg { box-sizing:content-box; padding:7px; border-radius:11px; color:#142015; background:#c6ef79 }
+.studio-layout { display:grid; align-items:center; gap:clamp(30px,5vw,85px); padding-block:clamp(36px,8vh,108px); grid-template-columns:1.05fr 1fr }
+.studio-intro h1 { font:700 clamp(2.9rem,5.8vw,6.3rem)/.99 system-ui,sans-serif; letter-spacing:-.075em }
+.studio-intro em { color:#c6ef79; font-family:Georgia,serif; font-weight:400; letter-spacing:-.065em }
+.studio-intro>p { color:#c2cabb; font-size:clamp(1rem,1.45vw,1.22rem); line-height:1.55; max-width:38ch; margin:24px 0 }
+.studio-actions { display:grid; gap:10px; max-width:340px }
+.studio-actions>button:last-child { background:#c6ef79; color:#182015; font-weight:700; justify-content:space-between; border-radius:12px; padding-inline:20px }
+.studio-intro small { display:block; color:#b7c1b4; margin-top:12px }
+.movement-card { background:#e6e9dc; color:#202a23; border-radius:24px; padding:clamp(18px,2.8vw,36px); overflow:hidden }
+.movement-card header,.movement-card footer,.movement-controls { display:flex; justify-content:space-between; align-items:center; gap:8px }
+.movement-card header,.movement-card footer p { font:600 .76rem/1.5 ui-monospace,monospace; letter-spacing:.06em; text-transform:uppercase }
+.movement-plate { margin:18px 0; display:grid; place-items:center; background:radial-gradient(#929f914f 1px,transparent 1.5px) 0 0/15px 15px; border-block:1px solid #27362430 }
+.movement-plate img { width:82%; height:clamp(190px,30vw,380px); object-fit:contain; filter:brightness(0) saturate(0); opacity:.86 }
+.movement-card footer h2 { font-size:clamp(1.6rem,3vw,2.8rem); letter-spacing:-.06em; line-height:1.2 }
+.movement-controls button { display:grid; place-items:center; height:44px; width:44px; border:1px solid #7f8b7d; border-radius:50%; cursor:pointer }
+.movement-controls button:hover { background:#c6ef79 }
+.studio :focus-visible,.quest-shell :focus-visible { outline:3px solid currentColor; outline-offset:3px }
+.quest-shell { max-width:960px }
+.quest-mast { padding:14px 20px; color:var(--foreground); background:var(--background) }
+.quest-mast span:first-child { font-size:1.3rem; font-weight:800; letter-spacing:-.06em }
+.quest-mast span:last-child { color:var(--primary); font-size:.8rem; font-weight:600 }
+.studio-loading { display:grid; place-items:center }
+@media(min-width:760px) {
+  .quest-shell { padding-inline:clamp(12px,4vw,55px) }
+  .quest-shell>main { width:100%; max-width:760px; align-self:center }
+  .quest-shell:has(>.quest-nav) { padding-top:75px }
+  .quest-shell:has(>.quest-nav)>.quest-mast { position:absolute; top:0; left:0; right:0; height:74px; padding-inline:32px }
+  .quest-nav { position:absolute; top:12px; bottom:auto; max-width:530px }
+  .quest-nav>div { box-shadow:none; background:transparent; border:0; backdrop-filter:none }
+  .quest-nav a { flex-direction:row; justify-content:center; padding:0 }
+  .quest-nav a span { font-size:.77rem }
+}
+@media(max-width:759px) {
+  .studio-layout { grid-template-columns:1fr; max-width:520px }
+  .studio-intro h1 { font-size:clamp(3rem,11vw,5rem) }
+  .studio-actions { max-width:none }
+  .movement-plate img { height:clamp(165px,45vw,245px) }
+}
